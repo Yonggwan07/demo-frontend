@@ -1,15 +1,22 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   useDispatch,
   useSelector,
 } from '../../../node_modules/react-redux/es/exports';
 import AuthForm from '../../components/auth/AuthForm';
-import { changeField, initializeForm } from '../../modules/auth';
+import { changeField, initializeForm, signin } from '../../modules/auth';
+import { useNavigate } from 'react-router-dom';
+import { check } from '../../modules/user';
 
 const LoginForm = () => {
+  const [error, setError] = useState(null);
   const dispatch = useDispatch();
-  const { form } = useSelector(({ auth }) => ({
+  const navigate = useNavigate();
+  const { form, _auth, _authError, user } = useSelector(({ auth, userInfo }) => ({
     form: auth.login,
+    _auth: auth.auth,
+    _authError: auth.authError,
+    user: userInfo.userInfo,
   }));
 
   const onChange = (e) => {
@@ -18,13 +25,61 @@ const LoginForm = () => {
   };
   const onSubmit = (e) => {
     e.preventDefault();
+    const { id, pw } = form;
+
+    if ([id, pw].includes('')) {
+      return;
+    }
+
+    dispatch(signin({ id, pw, scnbYsno: '1' }));
   };
 
   useEffect(() => {
     dispatch(initializeForm('login'));
   }, [dispatch]);
 
-  return <AuthForm form={form} onChange={onChange} onSubmit={onSubmit} />;
+  useEffect(() => {
+    if (_authError) {
+      switch (_authError.response.status) {
+        case 401:
+          setError('Invalid password!');
+          break;
+
+        case 504:
+          setError('504 - Gateway timeout!');
+          break;
+
+        default:
+          setError('Unknown error!');
+      }
+    }
+
+    // 로그인 성공
+    if (_auth) {
+      dispatch(check());
+      try {
+        localStorage.setItem('user', JSON.stringify(_auth));
+      } catch (e) {
+        console.log('localStorage is not working!');
+      }
+      navigate('/main');
+    }
+  }, [_auth, _authError, dispatch, navigate]);
+
+  useEffect(() => {
+    if (user) {
+      navigate('/main');
+    }
+  }, [user, navigate]);
+
+  return (
+    <AuthForm
+      form={form}
+      onChange={onChange}
+      onSubmit={onSubmit}
+      error={error}
+    />
+  );
 };
 
 export default LoginForm;

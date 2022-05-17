@@ -42,7 +42,14 @@ const ButtonWithMarginTop = styled(Button)`
   margin-top: 1rem;
 `;
 
-const AuthForm = ({ form, onChange, onSubmit }) => {
+const ErrorMessage = styled.div`
+  color: red;
+  text-align: center;
+  font-size: 0.875rem;
+  margin-top: 1rem;
+`;
+
+const AuthForm = ({ form, onChange, onSubmit, error }) => {
   return (
     <AuthFormBlock>
       <form onSubmit={onSubmit}>
@@ -55,12 +62,13 @@ const AuthForm = ({ form, onChange, onSubmit }) => {
         />
         <StyledInput
           autoComplete="password"
-          name="password"
+          name="pw"
           placeholder="Password"
           type="password"
           onChange={onChange}
           value={form.password}
         />
+        {error && <ErrorMessage>{error}</ErrorMessage>}
         <ButtonWithMarginTop cyan fullWidth>
           Log In
         </ButtonWithMarginTop>
