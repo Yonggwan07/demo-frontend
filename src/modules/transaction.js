@@ -1,4 +1,5 @@
 import { takeLatest } from 'redux-saga/effects';
+import produce from 'immer';
 import { createAction, handleActions } from 'redux-actions';
 import createRequestSaga, {
   createRequestActionTypes,
@@ -8,11 +9,22 @@ import * as transactionAPI from '../lib/api/transaction';
 const [SEARCH, SEARCH_SUCCESS, SEARCH_FAILURE] =
   createRequestActionTypes('SEARCH');
 
-export const search = createAction(SEARCH, ({ menuId, workId, params }) => ({
-  menuId,
-  workId,
-  params,
-}));
+const SET_TRANSACTION_ID = 'SET_TRANSACTION_ID';
+const UNLOAD_DATA = 'UNLOAD_DATA';
+
+export const setTransactionId = createAction(
+  SET_TRANSACTION_ID,
+  ({ menuId, workId }) => ({ menuId, workId }),
+);
+export const unloadData = createAction(UNLOAD_DATA);
+
+export const search = createAction(SEARCH, ({ menuId, workId, params }) => {
+  return {
+    menuId,
+    workId,
+    params,
+  };
+});
 
 const searchSaga = createRequestSaga(SEARCH, transactionAPI.search);
 
@@ -22,11 +34,18 @@ export function* transactionSaga() {
 
 const initialState = {
   data: null,
+  menuId: '',
+  workId: '',
   error: null,
 };
 
 export default handleActions(
   {
+    [SET_TRANSACTION_ID]: (state, { payload: { menuId, workId } }) =>
+      produce(state, (draft) => {
+        draft.menuId = menuId;
+        draft.workId = workId;
+      }),
     [SEARCH_SUCCESS]: (state, { payload: data }) => ({
       ...state,
       data,
@@ -37,6 +56,7 @@ export default handleActions(
       data: null,
       error: error.message,
     }),
+    [UNLOAD_DATA]: () => initialState,
   },
   initialState,
 );

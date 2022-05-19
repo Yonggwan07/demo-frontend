@@ -1,0 +1,87 @@
+import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { search, setTransactionId } from '../../modules/transaction';
+import { DataGrid } from '@mui/x-data-grid';
+import ComButtons from '../../components/common/ComButtons';
+
+const MENU_ID = 'tmma0012';
+
+const TMMA0012 = () => {
+  const [searchParams, setSearchParams] = useState({
+    commCdnm: '',
+    systCode: '',
+  });
+  const [rows, setRows] = useState([]);
+
+  const { tData } = useSelector(({ transaction }) => ({
+    tData: transaction,
+  }));
+
+  const dispatch = useDispatch();
+
+  const onSearch = () => {
+    dispatch(setTransactionId({ menuId: MENU_ID, workId: 'search00' }));
+    dispatch(
+      search({
+        menuId: MENU_ID,
+        workId: 'search00',
+        params: searchParams,
+      }),
+    );
+  };
+
+  const onChange = (e) => {
+    const { value, name } = e.target;
+    setSearchParams({ ...searchParams, [name]: value });
+  };
+
+  useEffect(() => {
+    if (
+      tData.data &&
+      tData.menuId === MENU_ID &&
+      tData.workId === 'search00'
+    ) {
+      setRows(tData.data);
+    } else {
+      setRows([]);
+    }
+  }, [tData]);
+
+  const columns = [
+    { field: 'commCode', headerName: '0020_공통코드' },
+    { field: 'commCdnm', headerName: '0020_공통코드명' },
+    { field: 'systCode', headerName: '0020_시스템코드' },
+    { field: 'cbdgCode', headerName: '0020_코드구분코드' },
+    { field: 'cocdLnth', headerName: '0020_세부코드길이' },
+    { field: 're1fDesc', headerName: '0020_보조1필드설명' },
+    { field: 're2fDesc', headerName: '0020_보조2필드설명' },
+    { field: 're3fDesc', headerName: '0020_보조3필드설명' },
+    { field: 're4fDesc', headerName: '0020_보조4필드설명' },
+    { field: 're5fDesc', headerName: '0020_보조5필드설명' },
+    { field: 're6fDesc', headerName: '0020_보조6필드설명' },
+    { field: 'remk100x', headerName: '0020_비고100' },
+  ];
+
+  return (
+    <div>
+      <input
+        name="commCdnm"
+        placeholder="공통코드명"
+        onChange={onChange}
+        value={searchParams.commCdnm}
+      />
+      <input
+        name="systCode"
+        placeholder="시스템코드"
+        onChange={onChange}
+        value={searchParams.systCode}
+      />
+      <ComButtons search={onSearch} />
+      <div style={{ height: 500 }}>
+        <DataGrid columns={columns} rows={rows} />
+      </div>
+    </div>
+  );
+};
+
+export default TMMA0012;
