@@ -2,7 +2,7 @@ import Button from './Button';
 import styled from 'styled-components';
 
 const ComButtonsBox = styled.div`
-  display: flex;
+  display: flex;;
   justify-content: flex-end;
   margin: 1rem 0 1rem 1rem;
   button + button {
@@ -13,7 +13,7 @@ const ComButtonsBox = styled.div`
 const ComButtons = ({ search, insert, save }) => (
   <ComButtonsBox>
     {search && (
-      <Button type="submit" onClick={search}>
+      <Button type="submit" form="searchArea">
         조회
       </Button>
     )}

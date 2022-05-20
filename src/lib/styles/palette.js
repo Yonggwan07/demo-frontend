@@ -23,6 +23,8 @@ const palette = {
       '#0c8599',
       '#0b7285',
     ],
+    required_background: '#ffe9d6',
+    required_border: '#ef684a',
   };
   
   export default palette;

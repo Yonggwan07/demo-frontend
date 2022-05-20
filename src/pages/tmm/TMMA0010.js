@@ -14,7 +14,9 @@ const MENU_ID = 'tmma0010';
 const searchedCombo = { commCode: 'SYST_CODE', usexYsno: '1' };
 
 const TMMA0010 = () => {
+  // 조회조건
   const [searchParams, setSearchParams] = useState({
+    // 조회조건 초기값 설정은 여기에서
     commCdnm: '',
     systCode: '',
     dateTest_from: '2022-05-19',
@@ -24,7 +26,7 @@ const TMMA0010 = () => {
     dayTest_to: '2022',
   });
   const [combo, setCombo] = useState([]);
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState([]); // 그리드 데이터
 
   const { tData } = useSelector(({ transaction }) => ({
     tData: transaction,
@@ -32,20 +34,26 @@ const TMMA0010 = () => {
 
   const dispatch = useDispatch();
 
-  const onSearch = useCallback(() => {
-    dispatch(setTransactionId({ menuId: MENU_ID, workId: 'search00' }));
-    dispatch(
-      search({
-        menuId: MENU_ID,
-        workId: 'search00',
-        params: searchParams,
-      }),
-    );
+  const handleSearch = useCallback(
+    (e) => {
+      e.preventDefault();
 
-    return () => {
-      dispatch(unloadData());
-    };
-  }, [dispatch, searchParams]);
+      dispatch(setTransactionId({ menuId: MENU_ID, workId: 'search00' }));
+      dispatch(
+        search({
+          menuId: MENU_ID,
+          workId: 'search00',
+          params: searchParams,
+        }),
+      );
+
+      return () => {
+        dispatch(unloadData());
+      };
+    },
+    [dispatch, searchParams],
+  );
+
   const onInsert = useCallback(() => {
     console.log('Insert');
   }, []);
@@ -90,49 +98,50 @@ const TMMA0010 = () => {
     );
   }, [dispatch]);
 
+  // 조회조건 설정
   const searchItems = [
+    // 모든 항목에 label, name, onChange 필수
     {
       label: '공통코드/명',
       name: 'commCdnm',
-      style: { width: '10rem' },
-      //maxLength: 9,
       onChange: onChangeSearchParams,
-      mendatory: true,
+      style: { width: '10rem' },
+      maxLength: 9,
     },
     {
       label: '시스템코드',
       name: 'systCode',
+      onChange: onChangeSearchParams,
       type: 'select',
       options: combo,
-      nullvalue: '- 전체 -',
+      nullvalue: 'all',   // all, select
       style: { width: '10rem' },
-      onChange: onChangeSearchParams,
     },
     {
       label: '조회일자',
       name: 'dateTest',
-      type: 'dateToDate',
       onChange: onChangeSearchParams,
+      type: 'dateToDate',
       value_from: searchParams.dateTest_from,
+      required: true,
     },
     {
       label: '여부',
       name: 'chkTest',
-      type: 'checkbox',
       onChange: onChangeSearchParams,
-      mendatory: true,
+      type: 'checkbox',
     },
     {
       label: '월',
       name: 'dayTest',
-      type: 'yearToYear',
       onChange: onChangeSearchParams,
-      mendatory: true,
+      type: 'yearToYear',
       value_to: searchParams.dayTest_to,
       style: { width: '5rem', textAlign: 'center' },
     },
   ];
 
+  // 그리드 컬럼 설정
   const columns = [
     {
       field: 'commCode',
@@ -184,8 +193,8 @@ const TMMA0010 = () => {
 
   return (
     <ComWorkframe>
-      <ComButtons search={onSearch} insert={onInsert} save={onSave} />
-      <ComSearchArea props={searchItems} />
+      <ComButtons search insert={onInsert} save={onSave} />
+      <ComSearchArea onSubmit={handleSearch} props={searchItems} />
       <div style={{ height: 700 }}>
         <DataGrid
           columns={columns}

@@ -4,15 +4,14 @@ import DateToDate from './DateToDate';
 import Input from './Input';
 import Select from './Select';
 
-/* 조회영역 박스 */
-const SearchAreaBox = styled.div`
+/* 조회영역 폼 */
+const SearchAreaForm = styled.form`
   display: flex;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.025);
   padding: 1rem;
   background: lightgray;
   border-radius: 2px;
   height: 1.5rem;
-  align-items: center;
 `;
 /* 조회조건 아이템 */
 const SearchAreaItem = styled.div`
@@ -24,10 +23,13 @@ const SearchAreaItem = styled.div`
 `;
 /* 조회조건 아이템 - 레이블 */
 const SearchAreaLabel = styled.label`
-  font-size: 1rem;
+  font-size: 0.75rem;
   font-weight: bold;
+  line-height: 1.5rem;
+  user-select: none;
+  font-family: 'Malgun Gothic';
   ${(props) =>
-    props.mendatory &&
+    props.required &&
     css`
       &::before {
         content: '* ';
@@ -60,18 +62,18 @@ const renderComp = (prop) => {
   }
 };
 
-const ComSearchArea = ({ props }) => (
-  <SearchAreaBox>
+const ComSearchArea = ({ onSubmit, props }) => (
+  <SearchAreaForm id="searchArea" onSubmit={onSubmit}>
     {Array.isArray(props) &&
       props.map((prop) => (
         <SearchAreaItem key={prop.name}>
-          <SearchAreaLabel mendatory={prop.mendatory}>
+          <SearchAreaLabel required={prop.required}>
             {prop.label}
           </SearchAreaLabel>
           <SearchAreaComp>{renderComp(prop)}</SearchAreaComp>
         </SearchAreaItem>
       ))}
-  </SearchAreaBox>
+  </SearchAreaForm>
 );
 
 ComSearchArea.propTypes = {

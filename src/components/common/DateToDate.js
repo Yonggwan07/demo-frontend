@@ -1,11 +1,37 @@
 import { useEffect } from 'react';
+import { PropTypes } from 'prop-types';
 import styled, { css } from 'styled-components';
+import palette from '../../lib/styles/palette';
 
 const StyledInput = styled.input`
+  border: 1px solid ${palette.gray[5]};
+  font-family: 'Malgun Gothic';
+
+  &:hover {
+    border-color: #5585e5;
+    background: #f1f8ff;
+  }
+
   ${(props) =>
-    props.mendatory &&
+    props.type === 'date' &&
     css`
-      background: lightyellow;
+      height: 1.375rem;
+    `}
+
+  ${(props) =>
+    props.type === 'number' &&
+    css`
+      height: 1.25rem;
+    `}
+
+  ${(props) =>
+    props.required &&
+    css`
+      background: ${palette.required_background};
+      &:hover {
+        background: ${palette.required_background};
+        border-color: #ef684a;
+      }
     `}
 `;
 
@@ -75,6 +101,12 @@ const DateToDate = (props) => {
       />
     </div>
   );
+};
+
+DateToDate.propTypes = {
+  label: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
 };
 
 export default DateToDate;

@@ -1,10 +1,28 @@
+import { PropTypes } from 'prop-types';
 import styled, { css } from 'styled-components';
+import palette from '../../lib/styles/palette';
 
 const StyledInput = styled.input`
+  border: 1px solid ${palette.gray[5]};
+  height: 1.25rem;
+  font-family: 'Malgun Gothic';
+
+  &:hover {
+    border-color: #5585e5;
+    background: #f1f8ff;
+  }
+
   ${(props) =>
-    props.mendatory &&
+    props.required &&
     css`
-      background: lightyellow;
+      background: ${palette.required_background};
+      &:hover: {
+        border-color: #ef684a;
+        &:hover {
+          background: ${palette.required_background};
+          border-color: #ef684a;
+        }
+      }
     `}
 `;
 
@@ -25,5 +43,11 @@ const Input = (props) => (
     />
   </div>
 );
+
+Input.propTypes = {
+  label: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+};
 
 export default Input;

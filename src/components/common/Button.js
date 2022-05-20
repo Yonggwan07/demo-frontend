@@ -2,20 +2,22 @@ import styled, { css } from 'styled-components';
 import palette from '../../lib/styles/palette';
 
 const StyledButton = styled.button`
-  border: none;
-  border-radius: 4px;
-  font-size: 1rem;
+  border: 1px solid #5585e5;
+  border-radius: 5px;
+  font-size: 0.8rem;
   font-weight: bold;
   padding: 0.25rem 1rem;
-  color: white;
+  color: #3264c8;
   outline: none;
   cursor: pointer;
 
-  background: ${palette.gray[8]};
+  background: white;
   &:hover {
-    background: ${palette.gray[6]};
+    background: #5585e5;
+    color: white;
   }
 
+  /*
   ${(props) =>
     props.fullWidth &&
     css`
@@ -33,6 +35,7 @@ const StyledButton = styled.button`
         background: ${palette.cyan[4]};
       }
     `}
+    */
 `;
 
 const Button = (props) => <StyledButton {...props} />;
