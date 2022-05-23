@@ -3,6 +3,7 @@ import './App.css';
 import PageNotFound from './pages/PageNotFound';
 import LoginPage from './pages/LoginPage';
 import MainPage from './pages/MainPage';
+import './lib/styles/styles.css';
 
 function App() {
   return (

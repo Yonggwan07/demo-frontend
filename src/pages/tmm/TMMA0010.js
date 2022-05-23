@@ -6,25 +6,15 @@ import {
   unloadData,
 } from '../../modules/transaction';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import ComButtons from '../../components/common/ComButtons';
+import ComWorkTitleArea from '../../components/common/ComWorkTitleArea';
 import ComSearchArea from '../../components/common/ComSearchArea';
 import ComWorkframe from '../../components/common/ComWorkframe';
+import ComCompArea from '../../components/common/ComCompArea';
 
 const MENU_ID = 'tmma0010';
 const searchedCombo = { commCode: 'SYST_CODE', usexYsno: '1' };
 
 const TMMA0010 = () => {
-  // 조회조건
-  const [searchParams, setSearchParams] = useState({
-    // 조회조건 초기값 설정은 여기에서
-    commCdnm: '',
-    systCode: '',
-    dateTest_from: '2022-05-19',
-    dateTest_to: '',
-    chkTest: 0,
-    dayTest_from: '',
-    dayTest_to: '2022',
-  });
   const [combo, setCombo] = useState([]);
   const [rows, setRows] = useState([]); // 그리드 데이터
 
@@ -35,15 +25,13 @@ const TMMA0010 = () => {
   const dispatch = useDispatch();
 
   const handleSearch = useCallback(
-    (e) => {
-      e.preventDefault();
-
+    (data) => {
       dispatch(setTransactionId({ menuId: MENU_ID, workId: 'search00' }));
       dispatch(
         search({
           menuId: MENU_ID,
           workId: 'search00',
-          params: searchParams,
+          params: data,
         }),
       );
 
@@ -51,7 +39,7 @@ const TMMA0010 = () => {
         dispatch(unloadData());
       };
     },
-    [dispatch, searchParams],
+    [dispatch],
   );
 
   const onInsert = useCallback(() => {
@@ -60,13 +48,15 @@ const TMMA0010 = () => {
   const onSave = useCallback(() => {
     console.log('Save');
   }, []);
-  const onChangeSearchParams = useCallback(
-    (e) => {
-      const { value, name } = e.target;
-      setSearchParams({ ...searchParams, [name]: value });
-    },
-    [searchParams],
-  );
+
+  // const onChangeSearchParams = useCallback(
+  //   (e) => {
+  //     const { value, name } = e.target;
+  //     setSearchParams({ ...searchParams, [name]: value });
+  //   },
+  //   [searchParams],
+  // );
+
   const onRowClickHandler = (params) => {
     console.log(params);
   };
@@ -100,43 +90,41 @@ const TMMA0010 = () => {
 
   // 조회조건 설정
   const searchItems = [
-    // 모든 항목에 label, name, onChange 필수
+    // 모든 항목에 label, name 필수
     {
       label: '공통코드/명',
       name: 'commCdnm',
-      onChange: onChangeSearchParams,
       style: { width: '10rem' },
       maxLength: 9,
     },
     {
       label: '시스템코드',
       name: 'systCode',
-      onChange: onChangeSearchParams,
       type: 'select',
       options: combo,
-      nullvalue: 'all',   // all, select
+      nullvalue: 'all', // all, select
       style: { width: '10rem' },
     },
     {
       label: '조회일자',
       name: 'dateTest',
-      onChange: onChangeSearchParams,
       type: 'dateToDate',
-      value_from: searchParams.dateTest_from,
+      valueFrom: '2022-05-22',
+      valueTo: '2022-05-31',
+      style: { width: '6.5rem', textAlign: 'center' },
       required: true,
+      
     },
     {
       label: '여부',
       name: 'chkTest',
-      onChange: onChangeSearchParams,
       type: 'checkbox',
     },
     {
       label: '월',
       name: 'dayTest',
-      onChange: onChangeSearchParams,
       type: 'yearToYear',
-      value_to: searchParams.dayTest_to,
+      valueTo: '2022',
       style: { width: '5rem', textAlign: 'center' },
     },
   ];
@@ -193,9 +181,15 @@ const TMMA0010 = () => {
 
   return (
     <ComWorkframe>
-      <ComButtons search insert={onInsert} save={onSave} />
+      <ComWorkTitleArea
+        id={MENU_ID}
+        title="공통코드관리"
+        search
+        insert={onInsert}
+        save={onSave}
+      />
       <ComSearchArea onSubmit={handleSearch} props={searchItems} />
-      <div style={{ height: 700 }}>
+      <ComCompArea>
         <DataGrid
           columns={columns}
           rows={rows == null ? [] : rows}
@@ -205,7 +199,11 @@ const TMMA0010 = () => {
           onRowClick={onRowClickHandler}
           editMode="row"
         />
-      </div>
+        <ComCompArea direction='v'>
+          <div style={{border: '1px solid black'}}>aaa</div>
+          <div style={{border: '1px solid black'}}>bbb</div>
+        </ComCompArea>
+      </ComCompArea>
     </ComWorkframe>
   );
 };

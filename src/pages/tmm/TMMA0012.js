@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { search, setTransactionId } from '../../modules/transaction';
 import { DataGrid } from '@mui/x-data-grid';
-import ComButtons from '../../components/common/ComButtons';
+import ComWorkTitleArea from '../../components/common/ComWorkTitleArea';
+import ComSearchArea from '../../components/common/ComSearchArea';
+import ComWorkframe from '../../components/common/ComWorkframe';
 
 const MENU_ID = 'tmma0012';
 
@@ -36,11 +38,7 @@ const TMMA0012 = () => {
   };
 
   useEffect(() => {
-    if (
-      tData.data &&
-      tData.menuId === MENU_ID &&
-      tData.workId === 'search00'
-    ) {
+    if (tData.data && tData.menuId === MENU_ID && tData.workId === 'search00') {
       setRows(tData.data);
     } else {
       setRows([]);
@@ -63,8 +61,8 @@ const TMMA0012 = () => {
   ];
 
   return (
-    <div>
-      <input
+    <ComWorkframe>
+      {/* <input
         name="commCdnm"
         placeholder="공통코드명"
         onChange={onChange}
@@ -75,12 +73,13 @@ const TMMA0012 = () => {
         placeholder="시스템코드"
         onChange={onChange}
         value={searchParams.systCode}
-      />
-      <ComButtons search={onSearch} />
+      /> */}
+      <ComWorkTitleArea id={MENU_ID} title="세부코드관리" search={onSearch} />
+      <ComSearchArea />
       <div style={{ height: 500 }}>
         <DataGrid columns={columns} rows={rows} />
       </div>
-    </div>
+    </ComWorkframe>
   );
 };
 

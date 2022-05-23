@@ -1,0 +1,100 @@
+.mainFrame {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  background: #f4f7fa;
+}
+
+.header {
+  height: 3.25rem;
+}
+
+input {
+  border: 1px solid #adb5bd;
+  height: 1.25rem;
+  font-family: 'Malgun Gothic';
+}
+input:hover {
+  border-color: #5585e5;
+  background: #f1f8ff;
+}
+input[required] {
+  background: #ffe9d6;
+}
+input[required]:hover {
+  border-color: #ef684a;
+}
+
+select {
+  border: 1px solid #adb5bd;
+  height: 1.5rem;
+  font-family: 'Malgun Gothic';
+}
+select:hover {
+  border-color: #5585e5;
+  background: #f1f8ff;
+}
+
+.searchAreaForm {
+  display: flex;
+  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.025);
+  padding: 0 1.5rem 0.5rem 1.5rem;
+  background: white;
+  height: auto;
+  border: 1px solid #d5dde0;
+  margin-bottom: 0.625rem;
+  flex-wrap: wrap;
+}
+
+.compLabel {
+  display: flex;
+  height: 1.5rem;
+  padding-top: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: bold;
+  line-height: 1.5rem;
+  -webkit-user-select: none;
+  user-select: none;
+  margin-right: 1.5rem;
+}
+.compLabel[required]:before {
+  content: '*';
+  color: red;
+  padding-right: 0.125rem;
+}
+.compLabel .searchAreaComp:first-child {
+  margin-left: 0.5rem;
+}
+.compLabel div > input + span {
+  margin-left: 0.25rem;
+}
+.compLabel div > input + span + input {
+  margin-left: 0.25rem;
+}
+
+.horizontalWrapper {
+  display: flex;
+  height: 100%;
+  background: white;
+}
+.horizontalWrapper > div {
+  flex: 1;
+}
+.horizontalWrapper > div + div {
+  margin-left: 0.625rem;
+}
+
+.verticalWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: white;
+}
+.verticalWrapper > div {
+  flex: 1;
+}
+.verticalWrapper > div + div {
+  margin-top: 0.625rem;
+}

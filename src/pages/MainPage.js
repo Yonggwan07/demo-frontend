@@ -10,7 +10,7 @@ const MainPage = () => {
   const { user } = useSelector(({ userInfo }) => ({
     user: userInfo.userInfo,
   }));
-  
+
   const dispatch = useDispatch();
   const onLogout = () => {
     dispatch(logout());
@@ -25,18 +25,30 @@ const MainPage = () => {
   return (
     <>
       {user ? (
-        <div style={{ height: '100%' }}>
-          This is mainpage. <b>ID: {user.userIdxx}</b>
-          <Button type="submit" onClick={onLogout}>
-            Logout
-          </Button>
-          <div>
-            <Button name="currMenu" value="TMMA0010" onClick={onClick}>
-              공통코드관리
+        <div className="mainFrame">
+          <div className='header'>
+            This is mainpage. <b>ID: {user.userIdxx}</b>
+            <Button type="submit" onClick={onLogout}>
+              Logout
             </Button>
-            <Button name="currMenu" value="TMMA0012" onClick={onClick}>
-              세부코드관리
-            </Button>
+            <div>
+              <Button
+                type="button"
+                name="currMenu"
+                value="TMMA0010"
+                onClick={onClick}
+              >
+                공통코드관리
+              </Button>
+              <Button
+                type="button"
+                name="currMenu"
+                value="TMMA0012"
+                onClick={onClick}
+              >
+                세부코드관리
+              </Button>
+            </div>
           </div>
           <Menu />
         </div>
