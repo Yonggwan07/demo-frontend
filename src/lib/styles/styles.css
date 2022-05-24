@@ -26,6 +26,10 @@ input[required] {
 input[required]:hover {
   border-color: #ef684a;
 }
+input:read-only {
+  border-color: #b5bdc4;
+  background: #f0f0f0;
+}
 
 select {
   border: 1px solid #adb5bd;
@@ -35,6 +39,19 @@ select {
 select:hover {
   border-color: #5585e5;
   background: #f1f8ff;
+}
+select[required] {
+  background: #ffe9d6;
+}
+select[required]:hover {
+  border-color: #ef684a;
+}
+select[readOnly] {
+  border-color: #b5bdc4;
+  background: #f0f0f0;
+}
+select[readOnly] > option {
+  color: #b5bdc4;
 }
 
 .searchAreaForm {
@@ -77,7 +94,6 @@ select:hover {
 .horizontalWrapper {
   display: flex;
   height: 100%;
-  background: white;
 }
 .horizontalWrapper > div {
   flex: 1;
@@ -90,11 +106,64 @@ select:hover {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: white;
 }
 .verticalWrapper > div {
   flex: 1;
 }
 .verticalWrapper > div + div {
   margin-top: 0.625rem;
+}
+
+.workTable {
+  border-top: 2px solid #9babc8;
+  border-bottom: 1px solid #afb7c6;
+  border-spacing: 0;
+  width: 100%;
+}
+.workTable > thead > tr,
+.workTable > tbody > tr {
+  height: 1.875rem;
+}
+.workTable > thead {
+  background: #e9f0fa;
+}
+.workTable > thead > tr > th {
+  padding: 0px 8px;
+  border-right: 1px solid #ccd6de;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+.workTable > thead > tr > th:last-child {
+  border-right: 0px none;
+}
+.workTable > tbody {
+  background: white;
+}
+.workTable > tbody > tr > th {
+  padding: 1px 8px 0px 15px;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: bold;
+  background: #e9f0fa;
+  border-top: 1px solid #d5dde4;
+}
+.workTable > tbody > tr > td {
+  padding: 3px;
+  border-top: 1px solid #d5dde4;
+  height: 1.5rem;
+}
+.workTable > tbody > tr > td + td {
+  border-left: 1px solid #d5dde4;
+}
+.workTable > tbody > tr > td > input {
+  width: calc(100% - 0.375rem);
+}
+.workTable > tbody > tr > td > input[type='checkbox'] {
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+}
+.workTable > tbody > tr > td > select {
+  width: 100%;
 }

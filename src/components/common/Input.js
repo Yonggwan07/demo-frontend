@@ -1,18 +1,28 @@
 import { PropTypes } from 'prop-types';
 
-const Input = (props) => {
+const Input = ({
+  register,
+  name,
+  required,
+  className,
+  defaultValue,
+  label,
+  type,
+  style,
+  readOnly
+}) => {
   return (
     <>
       <input
-        {...props.register(props.name, { required: props.required })}
-        // TODO: checkbox WIP
-        className={props.className}
-        defaultValue={props.defaultValue}
-        title={props.label}
-        type={props.type}
-        required={props.required}
+        {...register(name, { required: required })}
+        className={className}
+        defaultValue={defaultValue}
+        title={label}
+        type={type}
+        required={required}
         autoComplete="none"
-        style={props.style}
+        style={style}
+        readOnly={readOnly}
       />
     </>
   );

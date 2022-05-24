@@ -1,4 +1,5 @@
 import { PropTypes } from 'prop-types';
+import { useEffect, useState } from 'react';
 
 const setNullValue = (nullvalue) => {
   switch (nullvalue) {
@@ -21,33 +22,74 @@ const setNullValue = (nullvalue) => {
 
 const Select = (props) => {
   const nullvalue = setNullValue(props.nullvalue);
+  const { options, name, setValue: propsSetValue, defaultValue, watch } = props;
+  const [value, setValue] = useState('');
+
+  const onChange = (e) => {
+    setValue(e.target.value);
+    propsSetValue(name, e.target.value);
+  };
+
+  useEffect(() => {
+      setValue(watch ? watch : '');
+  }, [watch]);
+
+  useEffect(() => {
+    if (options && options.length > 0) {
+      const val = nullvalue ? '' : options[0]['comdCode'];
+      setValue(val);
+      propsSetValue(name, val);
+    }
+
+    if (defaultValue) {
+      for (const key in options) {
+        if (
+          options[key].comdCode === defaultValue ||
+          options[key].comdCdnm === defaultValue
+        ) {
+          const val = options[key].comdCode;
+          setValue(val);
+          propsSetValue(name, val);
+          return;
+        }
+      }
+    }
+  }, [defaultValue, name, nullvalue, options, propsSetValue]);
 
   return (
-    <select
-      {...props.register(props.name, { required: props.required })}
-      className={props.className}
-      style={props.style}
-      title={props.label}
-    >
-      {nullvalue && (
-        <option key={'nullvalue'} value={''}>
-          {nullvalue}
-        </option>
-      )}
-      {props.options &&
-        props.options.map((option) => (
-          <option key={option.id} value={option.comdCode}>
-            {option.comdCdnm}
+    <>
+      <select
+        className={props.className}
+        style={props.style}
+        title={props.label}
+        value={value}
+        onChange={onChange}
+        disabled={props.readOnly}
+        required={props.required}
+      >
+        {nullvalue && (
+          <option key={'nullvalue'} value={''}>
+            {nullvalue}
           </option>
-        ))}
-    </select>
+        )}
+        {props.options &&
+          props.options.map((option) => (
+            <option key={option.id} value={option.comdCode}>
+              {option.comdCdnm}
+            </option>
+          ))}
+      </select>
+      <input
+        type={'hidden'}
+        {...props.register(props.name, { required: props.required })}
+      />
+    </>
   );
 };
 
 Select.propTypes = {
   label: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  options: PropTypes.array.isRequired,
 };
 
 export default Select;

@@ -21,13 +21,16 @@ const DateToDate = (props) => {
   const [max, setMax] = useState('');
 
   useEffect(() => {
-    if (props.valueFrom && props.valueFrom !== '') {
-      setMin(props.valueFrom);
-    }
     if (props.valueTo && props.valueTo !== '') {
       setMax(props.valueTo);
     }
-  }, [props.valueFrom, props.valueTo]);
+  }, [props.valueTo]);
+
+  useEffect(() => {
+    if (props.valueFrom && props.valueFrom !== '') {
+      setMin(props.valueFrom);
+    }
+  }, [props.valueFrom])
 
   const onChange = (e) => {
     if (e.target.name.includes('_from')) {
@@ -41,7 +44,9 @@ const DateToDate = (props) => {
   return (
     <div>
       <input
-        {...props.register(props.name + '_from', { required: props.required })}
+        {...props.register(props.name + '_from', {
+          required: props.required,
+        })}
         className={props.className}
         defaultValue={props.valueFrom}
         required={props.required}
@@ -53,7 +58,9 @@ const DateToDate = (props) => {
       />
       <span>~</span>
       <input
-        {...props.register(props.name + '_to', { required: props.required })}
+        {...props.register(props.name + '_to', {
+          required: props.required,
+        })}
         className={props.className}
         defaultValue={props.valueTo}
         required={props.required}

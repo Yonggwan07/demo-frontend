@@ -3,29 +3,48 @@ import DateToDate from './DateToDate';
 import Input from './Input';
 import Select from './Select';
 import { useForm } from 'react-hook-form';
+import Checkbox from './Checkbox';
 
 const ComSearchArea = ({ onSubmit, props }) => {
-  const {
-    register,
-    handleSubmit,
-    //watch,
-    //formState: { errors },
-  } = useForm();
+  const { register, handleSubmit, setValue } = useForm();
 
   /* 타입에 따른 컴포넌트 렌더링 */
   const renderComp = (_props, _register) => {
     switch (_props.type) {
       case undefined:
       case 'text':
-      case 'checkbox':
       case 'date':
-        return <Input className="searchAreaComp" {..._props} register={_register} />;
+        return (
+          <Input className="searchAreaComp" {..._props} register={_register} />
+        );
+      case 'checkbox':
+        return (
+          <Checkbox
+            className="searchAreaComp"
+            {..._props}
+            register={_register}
+            setValue={setValue}
+          />
+        );
       case 'select':
-        return <Select className="searchAreaComp" {..._props} register={_register} />;
+        return (
+          <Select
+            className="searchAreaComp"
+            {..._props}
+            register={_register}
+            setValue={setValue}
+          />
+        );
       case 'dateToDate':
       case 'monthToMonth':
       case 'yearToYear':
-        return <DateToDate className="searchAreaComp" {..._props} register={_register} />;
+        return (
+          <DateToDate
+            className="searchAreaComp"
+            {..._props}
+            register={_register}
+          />
+        );
       default:
         return 'ERROR!';
     }

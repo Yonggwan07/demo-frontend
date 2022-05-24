@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { search, setTransactionId } from '../../modules/transaction';
+import { search } from '../../modules/transaction';
 import { DataGrid } from '@mui/x-data-grid';
 import ComWorkTitleArea from '../../components/common/ComWorkTitleArea';
 import ComSearchArea from '../../components/common/ComSearchArea';
@@ -22,7 +22,6 @@ const TMMA0012 = () => {
   const dispatch = useDispatch();
 
   const onSearch = () => {
-    dispatch(setTransactionId({ menuId: MENU_ID, workId: 'search00' }));
     dispatch(
       search({
         menuId: MENU_ID,
