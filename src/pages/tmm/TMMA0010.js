@@ -9,26 +9,28 @@ import ComCompArea from '../../components/common/ComCompArea';
 import { useForm } from 'react-hook-form';
 import Select from '../../components/common/Select';
 import Checkbox from '../../components/common/Checkbox';
+import { addCommonCode } from '../../modules/commonCode';
 
 const MENU_ID = 'tmma0010';
-const searchedCombo = [
+const codeOption = [
   { commCode: 'SYST_CODE', usexYsno: '1' },
   { commCode: 'CDGB_CODE', usexYsno: '1' },
   { commCode: 'REXT_CODE', usexYsno: '1' },
 ];
 
 const TMMA0010 = () => {
-  const [combo, setCombo] = useState([]);
   const [rows, setRows] = useState([]); // 그리드 데이터
 
   const { register, handleSubmit, setValue, watch } = useForm();
 
-  const { tData } = useSelector(({ transaction }) => ({
+  const { tData, commCode } = useSelector(({ transaction, commonCode }) => ({
     tData: transaction,
+    commCode: commonCode.storedCommonCode,
   }));
 
   const dispatch = useDispatch();
 
+  /* 조회 버튼 클릭 */
   const handleSearch = useCallback(
     (data) => {
       dispatch(
@@ -45,19 +47,24 @@ const TMMA0010 = () => {
     [dispatch],
   );
 
+  /* 입력 버튼 클릭 */
   const onInsert = useCallback(() => {
     console.log('Insert');
   }, []);
+  
+  /* 저장 버튼 클릭 */
   const onSave = useCallback(() => {
     console.log('Save');
   }, []);
 
+  /* 그리드 행 클릭 */
   const onRowClickHandler = (params) => {
     for (const key in columns) {
       setValue(columns[key].field, params.row[columns[key].field]);
     }
   };
 
+  /* 조회 데이터 처리 */
   useEffect(() => {
     if (tData.data && tData.menuId === MENU_ID && tData.workId === 'search00') {
       setRows(tData.data);
@@ -65,26 +72,44 @@ const TMMA0010 = () => {
     }
   }, [dispatch, tData]);
 
+  /* 공통코드 조회 */
+  useEffect(() => {
+    let searchArr = [];
+
+    codeOption.forEach((element) => {
+      let isExist = false;
+      if (commCode.hasOwnProperty(element.commCode)) {
+        isExist = true;
+      }
+
+      if (!isExist) {
+        searchArr.push(element);
+      }
+    });
+
+    if (searchArr.length > 0) {
+      dispatch(
+        search({
+          menuId: 'comCombo',
+          workId: 'getCombo',
+          params: searchArr,
+        }),
+      );
+    }
+  }, [commCode, dispatch]);
+
+  /* 조회된 공통코드 처리 */
   useEffect(() => {
     if (
       tData.data &&
       tData.menuId === 'comCombo' &&
       tData.workId === 'getCombo'
     ) {
-      setCombo(tData.data);
+      // Add to stored Combo
+      dispatch(addCommonCode(tData.data));
       dispatch(unloadData());
     }
   }, [dispatch, tData]);
-
-  useEffect(() => {
-    dispatch(
-      search({
-        menuId: 'comCombo',
-        workId: 'getCombo',
-        params: searchedCombo,
-      }),
-    );
-  }, [dispatch]);
 
   // 조회조건 설정
   const searchItems = [
@@ -99,7 +124,7 @@ const TMMA0010 = () => {
       label: '시스템코드',
       name: 'SYST_CODE',
       type: 'select',
-      options: combo.SYST_CODE,
+      options: commCode.SYST_CODE,
       nullvalue: 'all', // all, select
       style: { width: '10rem' },
       //readOnly: true,
@@ -197,7 +222,7 @@ const TMMA0010 = () => {
                         label="시스템구분"
                         name="SYST_CODE"
                         nullvalue="select"
-                        options={combo.SYST_CODE}
+                        options={commCode.SYST_CODE}
                         required={true}
                         setValue={setValue}
                         watch={watch('SYST_CODE')}
@@ -210,7 +235,7 @@ const TMMA0010 = () => {
                         label="코드구분"
                         name="CDGB_CODE"
                         nullvalue="select"
-                        options={combo.CDGB_CODE}
+                        options={commCode.CDGB_CODE}
                         required={true}
                         setValue={setValue}
                         watch={watch('CDGB_CODE')}
@@ -266,7 +291,7 @@ const TMMA0010 = () => {
                         label="보조1필드입력형태코드"
                         name="RE1T_CODE"
                         nullvalue="select"
-                        options={combo.REXT_CODE}
+                        options={commCode.REXT_CODE}
                         setValue={setValue}
                         watch={watch('RE1T_CODE')}
                       />

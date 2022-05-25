@@ -4,12 +4,14 @@ import auth, { authSaga } from './auth';
 import loading from './loading';
 import userInfo, { userSaga } from './user';
 import transaction, { transactionSaga } from './transaction';
+import commonCode from './commonCode';
 
 const rootReducer = combineReducers({
   auth,
   loading,
   userInfo,
-  transaction
+  transaction,
+  commonCode,
 });
 
 export function* rootSaga() {
