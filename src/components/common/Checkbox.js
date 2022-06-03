@@ -2,7 +2,9 @@ import { PropTypes } from 'prop-types';
 import { useEffect, useState } from 'react';
 
 const Checkbox = (props) => {
-  const { defaultValue, name, setValue: propsSetValue, watch } = props;
+  const { defaultValue, name } = props;
+  const { register, setValue: propsSetValue } = props.form;
+  const watch = props.form.watch(name);
   const [checked, setChecked] = useState(false);
 
   const onChange = (e) => {
@@ -32,7 +34,7 @@ const Checkbox = (props) => {
         checked={checked}
         disabled={props.readOnly}
       />
-      <input {...props.register(props.name)} type={'hidden'} />
+      <input {...register(name)} type={'hidden'} />
     </>
   );
 };

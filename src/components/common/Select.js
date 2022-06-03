@@ -22,7 +22,9 @@ const setNullValue = (nullvalue) => {
 
 const Select = (props) => {
   const nullvalue = setNullValue(props.nullvalue);
-  const { options, name, setValue: propsSetValue, defaultValue, watch } = props;
+  const { options, name, defaultValue } = props;
+  const { register, setValue: propsSetValue } = props.form;
+  const watch = props.form.watch(name);
   const [value, setValue] = useState('');
 
   const onChange = (e) => {
@@ -31,7 +33,7 @@ const Select = (props) => {
   };
 
   useEffect(() => {
-      setValue(watch ? watch : '');
+    setValue(watch ? watch : '');
   }, [watch]);
 
   useEffect(() => {
@@ -81,7 +83,7 @@ const Select = (props) => {
       </select>
       <input
         type={'hidden'}
-        {...props.register(props.name, { required: props.required })}
+        {...register(props.name, { required: props.required })}
       />
     </>
   );

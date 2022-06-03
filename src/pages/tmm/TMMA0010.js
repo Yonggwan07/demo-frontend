@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form';
 import Select from '../../components/common/Select';
 import Checkbox from '../../components/common/Checkbox';
 import { addCommonCode } from '../../modules/commonCode';
+import { gridInit } from '../../components/common/GridComponents';
 
 const MENU_ID = 'tmma0010';
 const codeOption = [
@@ -18,10 +19,37 @@ const codeOption = [
   { commCode: 'REXT_CODE', usexYsno: '1' },
 ];
 
-const TMMA0010 = () => {
-  const [rows, setRows] = useState([]); // 그리드 데이터
+// 그리드 컬럼 설정
+const COL = [
+  {
+    field: 'COMM_CODE',
+    headerName: '공통코드',
+    width: 150,
+  },
+  {
+    field: 'COMM_CDNM',
+    headerName: '공통코드명',
+    width: 200,
+    editable: true,
+  },
+  {
+    field: 'SYST_CODE',
+    headerName: '시스템구분',
+    compType: 'select',
+    editable: true,
+  },
+  { field: 'CDGB_CODE', headerName: '코드구분' },
+  { field: 'COCD_LNTH', headerName: '세부코드길이' },
+  { field: 'ISET_YSNO', headerName: '초기세팅여부' },
+  { field: 'RE1F_DESC', headerName: '보조1필드설명' },
+  { field: 'RE1T_CODE', headerName: '보조1필드입력형태코드' },
+];
 
-  const { register, handleSubmit, setValue, watch } = useForm();
+const TMMA0010 = () => {
+  const [rows, setRows] = useState([]); // grid row
+  const [columns, setColumns] = useState([]); // grid column
+
+  const tableForm = useForm(); // 우측 테이블 form
 
   const { tData, commCode } = useSelector(({ transaction, commonCode }) => ({
     tData: transaction,
@@ -29,6 +57,10 @@ const TMMA0010 = () => {
   }));
 
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    setColumns(gridInit(COL, commCode, tableForm));
+  }, [commCode, tableForm]);
 
   /* 조회 버튼 클릭 */
   const handleSearch = useCallback(
@@ -51,7 +83,7 @@ const TMMA0010 = () => {
   const onInsert = useCallback(() => {
     console.log('Insert');
   }, []);
-  
+
   /* 저장 버튼 클릭 */
   const onSave = useCallback(() => {
     console.log('Save');
@@ -60,7 +92,7 @@ const TMMA0010 = () => {
   /* 그리드 행 클릭 */
   const onRowClickHandler = (params) => {
     for (const key in columns) {
-      setValue(columns[key].field, params.row[columns[key].field]);
+      tableForm.setValue(columns[key].field, params.row[columns[key].field]);
     }
   };
 
@@ -155,22 +187,6 @@ const TMMA0010 = () => {
     },
   ];
 
-  // 그리드 컬럼 설정
-  const columns = [
-    {
-      field: 'COMM_CODE',
-      headerName: '공통코드',
-      width: 150,
-    },
-    { field: 'COMM_CDNM', headerName: '공통코드명', width: 200 },
-    { field: 'SYST_CODE', headerName: '시스템구분' },
-    { field: 'CDGB_CODE', headerName: '코드구분' },
-    { field: 'COCD_LNTH', headerName: '세부코드길이' },
-    { field: 'ISET_YSNO', headerName: '초기세팅여부' },
-    { field: 'RE1F_DESC', headerName: '보조1필드설명' },
-    { field: 'RE1T_CODE', headerName: '보조1필드입력형태코드' },
-  ];
-
   return (
     <ComWorkframe>
       <ComWorkTitleArea
@@ -190,12 +206,13 @@ const TMMA0010 = () => {
               Toolbar: GridToolbar,
             }}
             onRowClick={onRowClickHandler}
-            editMode="row"
+            //editMode="row"
+            experimentalFeatures={{ newEditingApi: true }}
           />
         </div>
         <ComCompArea direction="v">
           <div style={{ flex: 0 }}>
-            <form>
+            <form onSubmit={tableForm.handleSubmit()}>
               <table className="workTable">
                 <colgroup>
                   <col style={{ minWidth: '8.125rem' }} />
@@ -207,54 +224,48 @@ const TMMA0010 = () => {
                   <tr>
                     <th>공통코드</th>
                     <td>
-                      <input {...register('COMM_CODE')} readOnly />
+                      <input {...tableForm.register('COMM_CODE')} readOnly />
                     </td>
                     <th>공통코드명</th>
                     <td>
-                      <input {...register('COMM_CDNM')} required />
+                      <input {...tableForm.register('COMM_CDNM')} required />
                     </td>
                   </tr>
                   <tr>
                     <th>시스템구분</th>
                     <td>
                       <Select
-                        register={register}
                         label="시스템구분"
                         name="SYST_CODE"
                         nullvalue="select"
                         options={commCode.SYST_CODE}
                         required={true}
-                        setValue={setValue}
-                        watch={watch('SYST_CODE')}
+                        form={tableForm}
                       />
                     </td>
                     <th>코드구분</th>
                     <td>
                       <Select
-                        register={register}
                         label="코드구분"
                         name="CDGB_CODE"
                         nullvalue="select"
                         options={commCode.CDGB_CODE}
                         required={true}
-                        setValue={setValue}
-                        watch={watch('CDGB_CODE')}
+                        form={tableForm}
                       />
                     </td>
                   </tr>
                   <tr>
                     <th>세부코드길이</th>
                     <td>
-                      <input {...register('COCD_LNTH')} />
+                      <input {...tableForm.register('COCD_LNTH')} />
                     </td>
                     <th>초기세팅여부</th>
                     <td>
                       <Checkbox
-                        register={register}
                         label="초기세팅여부"
                         name="ISET_YSNO"
-                        setValue={setValue}
-                        watch={watch('ISET_YSNO')}
+                        form={tableForm}
                       />
                     </td>
                   </tr>
@@ -283,17 +294,15 @@ const TMMA0010 = () => {
                   <tr>
                     <th>항목1</th>
                     <td>
-                      <input {...register('RE1F_DESC')} />
+                      <input {...tableForm.register('RE1F_DESC')} />
                     </td>
                     <td>
                       <Select
-                        register={register}
                         label="보조1필드입력형태코드"
                         name="RE1T_CODE"
                         nullvalue="select"
                         options={commCode.REXT_CODE}
-                        setValue={setValue}
-                        watch={watch('RE1T_CODE')}
+                        form={tableForm}
                       />
                     </td>
                     <td>

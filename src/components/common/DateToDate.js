@@ -30,7 +30,7 @@ const DateToDate = (props) => {
     if (props.valueFrom && props.valueFrom !== '') {
       setMin(props.valueFrom);
     }
-  }, [props.valueFrom])
+  }, [props.valueFrom]);
 
   const onChange = (e) => {
     if (e.target.name.includes('_from')) {
@@ -44,7 +44,7 @@ const DateToDate = (props) => {
   return (
     <div>
       <input
-        {...props.register(props.name + '_from', {
+        {...props.form.register(props.name + '_from', {
           required: props.required,
         })}
         className={props.className}
@@ -58,7 +58,7 @@ const DateToDate = (props) => {
       />
       <span>~</span>
       <input
-        {...props.register(props.name + '_to', {
+        {...props.form.register(props.name + '_to', {
           required: props.required,
         })}
         className={props.className}

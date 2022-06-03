@@ -6,24 +6,23 @@ import { useForm } from 'react-hook-form';
 import Checkbox from './Checkbox';
 
 const ComSearchArea = ({ onSubmit, props }) => {
-  const { register, handleSubmit, setValue } = useForm();
+  const searchForm = useForm();
 
   /* 타입에 따른 컴포넌트 렌더링 */
-  const renderComp = (_props, _register) => {
+  const renderComp = (_props, form) => {
     switch (_props.type) {
       case undefined:
       case 'text':
       case 'date':
         return (
-          <Input className="searchAreaComp" {..._props} register={_register} />
+          <Input className="searchAreaComp" {..._props} form={form} />
         );
       case 'checkbox':
         return (
           <Checkbox
             className="searchAreaComp"
             {..._props}
-            register={_register}
-            setValue={setValue}
+            form={form}
           />
         );
       case 'select':
@@ -31,8 +30,7 @@ const ComSearchArea = ({ onSubmit, props }) => {
           <Select
             className="searchAreaComp"
             {..._props}
-            register={_register}
-            setValue={setValue}
+            form={form}
           />
         );
       case 'dateToDate':
@@ -42,7 +40,7 @@ const ComSearchArea = ({ onSubmit, props }) => {
           <DateToDate
             className="searchAreaComp"
             {..._props}
-            register={_register}
+            form={form}
           />
         );
       default:
@@ -56,7 +54,7 @@ const ComSearchArea = ({ onSubmit, props }) => {
         <form
           id="searchArea"
           className="searchAreaForm"
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={searchForm.handleSubmit(onSubmit)}
         >
           {Array.isArray(props) &&
             props.map((prop) => (
@@ -66,7 +64,7 @@ const ComSearchArea = ({ onSubmit, props }) => {
                 required={prop.required}
               >
                 {prop.label}
-                {renderComp(prop, register)}
+                {renderComp(prop, searchForm)}
               </label>
             ))}
         </form>

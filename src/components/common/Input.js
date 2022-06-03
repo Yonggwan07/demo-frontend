@@ -1,7 +1,7 @@
 import { PropTypes } from 'prop-types';
 
 const Input = ({
-  register,
+  form,
   name,
   required,
   className,
@@ -9,12 +9,12 @@ const Input = ({
   label,
   type,
   style,
-  readOnly
+  readOnly,
 }) => {
   return (
     <>
       <input
-        {...register(name, { required: required })}
+        {...form.register(name, { required: required })}
         className={className}
         defaultValue={defaultValue}
         title={label}
