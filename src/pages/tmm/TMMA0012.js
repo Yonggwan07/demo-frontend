@@ -8,6 +8,16 @@ import ComWorkframe from '../../components/common/ComWorkframe';
 
 const MENU_ID = 'tmma0012';
 
+const searchItems = [
+  // 모든 항목에 label, name 필수
+  {
+    label: '공통코드/명',
+    name: 'COMM_CDNM',
+    style: { width: '10rem' },
+    maxLength: 9,
+  },
+];
+
 const TMMA0012 = () => {
   const [searchParams, setSearchParams] = useState({
     commCdnm: '',
@@ -74,7 +84,7 @@ const TMMA0012 = () => {
         value={searchParams.systCode}
       /> */}
       <ComWorkTitleArea id={MENU_ID} title="세부코드관리" search={onSearch} />
-      <ComSearchArea />
+      <ComSearchArea props={searchItems} />
       <div style={{ height: 500 }}>
         <DataGrid columns={columns} rows={rows} />
       </div>

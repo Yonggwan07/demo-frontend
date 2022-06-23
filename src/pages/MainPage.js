@@ -3,10 +3,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import Button from '../components/common/Button';
 import { logout } from '../modules/user';
 import React, { useState } from 'react';
-import { menus } from '../components/menuList';
+import ComWorkframeTab from '../components/common/ComWorkframeTab';
 
 const MainPage = () => {
-  const [currMenuId, setCurrMenuId] = useState('TMMA0010');
+  const [tabs, setTabs] = useState([]);
+  const [tabValue, setTabValue] = useState(0);
   const { user } = useSelector(({ userInfo }) => ({
     user: userInfo.userInfo,
   }));
@@ -17,16 +18,26 @@ const MainPage = () => {
   };
 
   const onClick = (e) => {
-    setCurrMenuId(e.target.value);
+    if (tabs.filter((tab) => tab.menuId === e.target.value).length === 0) {
+      setTabs([
+        ...tabs,
+        {
+          index: tabs.length,
+          menuId: e.target.value,
+          label: e.target.innerText,
+        },
+      ]);
+      setTabValue(tabs.length);
+    } else {
+      setTabValue(tabs.find((tab) => tab.menuId === e.target.value).index);
+    }
   };
-
-  const Menu = menus[currMenuId];
 
   return (
     <>
       {user ? (
         <div className="mainFrame">
-          <div className='header'>
+          <div className="header">
             This is mainpage. <b>ID: {user.userIdxx}</b>
             <Button type="submit" onClick={onLogout}>
               Logout
@@ -50,7 +61,11 @@ const MainPage = () => {
               </Button>
             </div>
           </div>
-          <Menu />
+          <ComWorkframeTab
+            tabs={tabs}
+            tabValue={tabValue}
+            setTabValue={setTabValue}
+          />
         </div>
       ) : (
         <LoginPage />
