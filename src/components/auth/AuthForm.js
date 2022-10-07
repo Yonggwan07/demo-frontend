@@ -59,6 +59,7 @@ const AuthForm = ({ form, onChange, onSubmit, error }) => {
           placeholder="ID"
           onChange={onChange}
           value={form.id}
+          required
         />
         <StyledInput
           autoComplete="password"
@@ -67,6 +68,8 @@ const AuthForm = ({ form, onChange, onSubmit, error }) => {
           type="password"
           onChange={onChange}
           value={form.password}
+          maxLength="15"
+          required
         />
         {error && <ErrorMessage>{error}</ErrorMessage>}
         <ButtonWithMarginTop cyan fullWidth>

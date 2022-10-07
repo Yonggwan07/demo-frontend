@@ -43,6 +43,8 @@ const COL = [
   { field: 'ISET_YSNO', headerName: '초기세팅여부' },
   { field: 'RE1F_DESC', headerName: '보조1필드설명' },
   { field: 'RE1T_CODE', headerName: '보조1필드입력형태코드' },
+  { field: 'RE2F_DESC', headerName: '보조2필드설명' },
+  { field: 'RE2T_CODE', headerName: '보조2필드입력형태코드' },
 ];
 
 const TMMA0010 = () => {
@@ -310,12 +312,18 @@ const TMMA0010 = () => {
                     </td>
                   </tr>
                   <tr>
-                    <th>세부코드길이</th>
+                    <th>항목2</th>
                     <td>
-                      <input readOnly />
+                      <input  {...tableForm.register('RE2F_DESC')}  />
                     </td>
                     <td>
-                      <select></select>
+                    <Select
+                        label="보조2필드입력형태코드"
+                        name="RE2T_CODE"
+                        nullvalue="select"
+                        options={commCode.REXT_CODE}
+                        form={tableForm}
+                      />
                     </td>
                     <td>
                       <input readOnly />
