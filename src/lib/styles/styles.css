@@ -54,6 +54,26 @@ select[readOnly] > option {
   color: #b5bdc4;
 }
 
+textarea {
+  border: 1px solid #adb5bd;
+  font-family: 'Malgun Gothic';
+  resize: none;
+}
+textarea:hover {
+  border-color: #5585e5;
+  background: #f1f8ff;
+}
+textarea[required] {
+  background: #ffe9d6;
+}
+textarea[required]:hover {
+  border-color: #ef684a;
+}
+textarea:read-only {
+  border-color: #b5bdc4;
+  background: #f0f0f0;
+}
+
 .searchAreaForm {
   display: flex;
   box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.025);
@@ -114,6 +134,10 @@ select[readOnly] > option {
   margin-top: 0.625rem;
 }
 
+.gridWrapper {
+  background: white;
+}
+
 .workTable {
   border-top: 2px solid #9babc8;
   border-bottom: 1px solid #afb7c6;
@@ -149,7 +173,7 @@ select[readOnly] > option {
   border-top: 1px solid #d5dde4;
 }
 .workTable > tbody > tr > td {
-  padding: 3px;
+  padding: 0.1875rem;
   border-top: 1px solid #d5dde4;
   height: 1.5rem;
 }
@@ -166,4 +190,7 @@ select[readOnly] > option {
 }
 .workTable > tbody > tr > td > select {
   width: 100%;
+}
+.workTable > tbody > tr > td > textarea {
+  width: calc(100% - 0.375rem);
 }

@@ -11,9 +11,10 @@ import Select from '../../components/common/Select';
 import Checkbox from '../../components/common/Checkbox';
 import { addCommonCode } from '../../modules/commonCode';
 import { gridInit } from '../../components/common/GridComponents';
+import { getFirstDateOfMonth, getToday } from '../../utils/dateUtil';
 
 const MENU_ID = 'tmma0010';
-const codeOption = [
+const codeOptions = [
   { commCode: 'SYST_CODE', usexYsno: '1' },
   { commCode: 'CDGB_CODE', usexYsno: '1' },
   { commCode: 'REXT_CODE', usexYsno: '1' },
@@ -29,12 +30,13 @@ const COL = [
   {
     field: 'COMM_CDNM',
     headerName: '공통코드명',
-    width: 200,
+    flex: 1,
     editable: true,
   },
   {
     field: 'SYST_CODE',
     headerName: '시스템구분',
+    width: 150,
     compType: 'select',
     editable: true,
   },
@@ -45,6 +47,23 @@ const COL = [
   { field: 'RE1T_CODE', headerName: '보조1필드입력형태코드' },
   { field: 'RE2F_DESC', headerName: '보조2필드설명' },
   { field: 'RE2T_CODE', headerName: '보조2필드입력형태코드' },
+  { field: 'RE3F_DESC', headerName: '보조3필드설명' },
+  { field: 'RE3T_CODE', headerName: '보조3필드입력형태코드' },
+  { field: 'RE4F_DESC', headerName: '보조4필드설명' },
+  { field: 'RE4T_CODE', headerName: '보조4필드입력형태코드' },
+  { field: 'RE5F_DESC', headerName: '보조5필드설명' },
+  { field: 'RE5T_CODE', headerName: '보조5필드입력형태코드' },
+  { field: 'RE6F_DESC', headerName: '보조6필드설명' },
+  { field: 'RE6T_CODE', headerName: '보조6필드입력형태코드' },
+  { field: 'RE7F_DESC', headerName: '보조7필드설명' },
+  { field: 'RE7T_CODE', headerName: '보조7필드입력형태코드' },
+  { field: 'RE8F_DESC', headerName: '보조8필드설명' },
+  { field: 'RE8T_CODE', headerName: '보조8필드입력형태코드' },
+  { field: 'RE9F_DESC', headerName: '보조9필드설명' },
+  { field: 'RE9T_CODE', headerName: '보조9필드입력형태코드' },
+  { field: 'R10F_DESC', headerName: '보조10필드설명' },
+  { field: 'R10T_CODE', headerName: '보조10필드입력형태코드' },
+  { field: 'REMK_100X', headerName: '비고' },
 ];
 
 const TMMA0010 = () => {
@@ -110,7 +129,7 @@ const TMMA0010 = () => {
   useEffect(() => {
     let searchArr = [];
 
-    codeOption.forEach((element) => {
+    codeOptions.forEach((element) => {
       let isExist = false;
       if (commCode.hasOwnProperty(element.commCode)) {
         isExist = true;
@@ -168,8 +187,8 @@ const TMMA0010 = () => {
       label: '조회일자',
       name: 'dateTest',
       type: 'dateToDate',
-      valueFrom: '2022-05-22',
-      valueTo: '2022-05-31',
+      valueFrom: getFirstDateOfMonth(),
+      valueTo: getToday(),
       style: { width: '6.5rem', textAlign: 'center' },
       required: true,
     },
@@ -200,7 +219,7 @@ const TMMA0010 = () => {
       />
       <ComSearchArea onSubmit={handleSearch} props={searchItems} />
       <ComCompArea>
-        <div style={{ background: 'white' }}>
+        <div className="gridWrapper">
           <DataGrid
             columns={columns}
             rows={rows == null ? [] : rows}
@@ -210,6 +229,36 @@ const TMMA0010 = () => {
             onRowClick={onRowClickHandler}
             //editMode="row"
             experimentalFeatures={{ newEditingApi: true }}
+            initialState={{
+              columns: {
+                columnVisibilityModel: {
+                  CDGB_CODE: false,
+                  COCD_LNTH: false,
+                  ISET_YSNO: false,
+                  RE1F_DESC: false,
+                  RE1T_CODE: false,
+                  RE2F_DESC: false,
+                  RE2T_CODE: false,
+                  RE3F_DESC: false,
+                  RE3T_CODE: false,
+                  RE4F_DESC: false,
+                  RE4T_CODE: false,
+                  RE5F_DESC: false,
+                  RE5T_CODE: false,
+                  RE6F_DESC: false,
+                  RE6T_CODE: false,
+                  RE7F_DESC: false,
+                  RE7T_CODE: false,
+                  RE8F_DESC: false,
+                  RE8T_CODE: false,
+                  RE9F_DESC: false,
+                  RE9T_CODE: false,
+                  R10F_DESC: false,
+                  R10T_CODE: false,
+                  REMK_100X: false,
+                },
+              },
+            }}
           />
         </div>
         <ComCompArea direction="v">
@@ -276,8 +325,8 @@ const TMMA0010 = () => {
             </form>
           </div>
           <div>
-            <form>
-              <table className="workTable">
+            <form style={{ height: '100%' }}>
+              <table className="workTable" style={{ height: '100%' }}>
                 <colgroup>
                   <col style={{ minWidth: '8.125rem' }} />
                   <col style={{ width: '40%' }} />
@@ -293,15 +342,35 @@ const TMMA0010 = () => {
                   </tr>
                 </thead>
                 <tbody>
+                  {[...Array(9).keys()].map((i) => (
+                    <tr key={i}>
+                      <th>{'항목' + (i + 1)}</th>
+                      <td>
+                        <input {...tableForm.register(`RE${i + 1}F_DESC`)} />
+                      </td>
+                      <td>
+                        <Select
+                          label={`보조${i + 1}필드입력형태코드`}
+                          name={`RE${i + 1}T_CODE`}
+                          nullvalue="select"
+                          options={commCode.REXT_CODE}
+                          form={tableForm}
+                        />
+                      </td>
+                      <td>
+                        <input readOnly />
+                      </td>
+                    </tr>
+                  ))}
                   <tr>
-                    <th>항목1</th>
+                    <th>항목10</th>
                     <td>
-                      <input {...tableForm.register('RE1F_DESC')} />
+                      <input {...tableForm.register('R10F_DESC')} />
                     </td>
                     <td>
                       <Select
-                        label="보조1필드입력형태코드"
-                        name="RE1T_CODE"
+                        label="보조10필드입력형태코드"
+                        name="R10T_CODE"
                         nullvalue="select"
                         options={commCode.REXT_CODE}
                         form={tableForm}
@@ -311,22 +380,15 @@ const TMMA0010 = () => {
                       <input readOnly />
                     </td>
                   </tr>
-                  <tr>
-                    <th>항목2</th>
-                    <td>
-                      <input  {...tableForm.register('RE2F_DESC')}  />
-                    </td>
-                    <td>
-                    <Select
-                        label="보조2필드입력형태코드"
-                        name="RE2T_CODE"
-                        nullvalue="select"
-                        options={commCode.REXT_CODE}
-                        form={tableForm}
+                  <tr style={{ height: '100%' }}>
+                    <th>비고</th>
+                    <td colSpan={3}>
+                      <textarea
+                        {...tableForm.register('REMK_100X')}
+                        style={{
+                          height: 'calc(100% - 0.375rem)',
+                        }}
                       />
-                    </td>
-                    <td>
-                      <input readOnly />
                     </td>
                   </tr>
                 </tbody>
