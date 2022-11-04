@@ -8,8 +8,15 @@ const Checkbox = (props) => {
   const [checked, setChecked] = useState(false);
 
   const onChange = (e) => {
+    e.target.name = props.name;
+    e.target.value = e.target.checked ? '1' : '0';
+
     setChecked(e.target.checked);
-    propsSetValue(props.name, e.target.checked ? '1' : '0');
+    propsSetValue(e.target.name, e.target.value);
+
+    if (props.onChange !== undefined) {
+      props.onChange(e);
+    }
   };
 
   useEffect(() => {

@@ -28,8 +28,14 @@ const Select = (props) => {
   const [value, setValue] = useState('');
 
   const onChange = (e) => {
+    e.target.name = name;
+
     setValue(e.target.value);
     propsSetValue(name, e.target.value);
+
+    if (props.onChange !== undefined) {
+      props.onChange(e);
+    }
   };
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { search, unloadData } from '../../modules/transaction';
+import { search, save, unloadData } from '../../modules/transaction';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import ComWorkTitleArea from '../../components/common/ComWorkTitleArea';
 import ComSearchArea from '../../components/common/ComSearchArea';
@@ -68,7 +68,10 @@ const COL = [
 
 const TMMA0010 = () => {
   const [rows, setRows] = useState([]); // grid row
+  const [currentRowId, setCurrentRowId] = useState('');
+  const [changedRows, setChangedRows] = useState([]);
   const [columns, setColumns] = useState([]); // grid column
+  const [origData, setOrigData] = useState([]);
 
   const tableForm = useForm(); // 우측 테이블 form
 
@@ -107,13 +110,69 @@ const TMMA0010 = () => {
 
   /* 저장 버튼 클릭 */
   const onSave = useCallback(() => {
-    console.log('Save');
-  }, []);
+    dispatch(save({ menuId: MENU_ID, workId: 'save00', data: changedRows }));
+  }, [changedRows, dispatch]);
+
+  const onChangeTableValue = (e) => {
+    tableForm.setValue(e.target.name, e.target.value);
+    const formData = tableForm.watch();
+
+    const modifiedRows = rows.map((row) => {
+      if (row.id === currentRowId) {
+        // 변경된 row 배열에 이미 존재하는 항목인지 확인
+        if (
+          changedRows.find((changedRow) => {
+            return changedRow.id === currentRowId;
+          })
+        ) {
+          // 원본 데이터와 비교하여 수정된 값이 원본과 같을 경우
+          // 변경된 row 배열에서 제거
+          const orig = origData.find((data) => data.id === currentRowId);
+          let isSame = true;
+          for (const [key, value] of Object.entries(formData)) {
+            if (value !== orig[key] && !(value === '' && orig[key] === null)) {
+              isSame = false;
+              break;
+            }
+          }
+          if (isSame) {
+            const newChangedRows = changedRows.filter(
+              (cRow) => cRow.id !== row.id,
+            );
+            setChangedRows(newChangedRows);
+          } else {
+            // 이미 존재하는 항목인 경우 기존 항목 대체
+            const newChangedRows = changedRows.map((cRow) => {
+              return row.id === cRow.id
+                ? {
+                    ...formData,
+                    id: row.id,
+                    state: row.state !== 'i' ? 'm' : row.state,
+                  }
+                : cRow;
+            });
+            setChangedRows(newChangedRows);
+          }
+        } else {
+          // 새로 변경된 항목인 경우 변경된 row 배열에 추가
+          setChangedRows([
+            ...changedRows,
+            { ...formData, id: row.id, state: 'm' },
+          ]);
+        }
+        return { ...formData, id: row.id };
+      } else {
+        return row;
+      }
+    });
+    setRows(modifiedRows);
+  };
 
   /* 그리드 행 클릭 */
-  const onRowClickHandler = (params) => {
+  const onRowClickHandler = (e) => {
+    setCurrentRowId(e.id);
     for (const key in columns) {
-      tableForm.setValue(columns[key].field, params.row[columns[key].field]);
+      tableForm.setValue(columns[key].field, e.row[columns[key].field]);
     }
   };
 
@@ -121,9 +180,17 @@ const TMMA0010 = () => {
   useEffect(() => {
     if (tData.data && tData.menuId === MENU_ID && tData.workId === 'search00') {
       setRows(tData.data);
+      setOrigData(tData.data);
+      dispatch(unloadData());
+    } else if (
+      tData.count > -1 &&
+      tData.menuId === MENU_ID &&
+      tData.workId === 'save00'
+    ) {
+      setOrigData(rows);
       dispatch(unloadData());
     }
-  }, [dispatch, tData]);
+  }, [dispatch, tData, rows]);
 
   /* 공통코드 조회 */
   useEffect(() => {
@@ -279,7 +346,11 @@ const TMMA0010 = () => {
                     </td>
                     <th>공통코드명</th>
                     <td>
-                      <input {...tableForm.register('COMM_CDNM')} required />
+                      <input
+                        {...tableForm.register('COMM_CDNM')}
+                        required
+                        onChange={onChangeTableValue}
+                      />
                     </td>
                   </tr>
                   <tr>
@@ -292,6 +363,7 @@ const TMMA0010 = () => {
                         options={commCode.SYST_CODE}
                         required={true}
                         form={tableForm}
+                        onChange={onChangeTableValue}
                       />
                     </td>
                     <th>코드구분</th>
@@ -303,13 +375,17 @@ const TMMA0010 = () => {
                         options={commCode.CDGB_CODE}
                         required={true}
                         form={tableForm}
+                        onChange={onChangeTableValue}
                       />
                     </td>
                   </tr>
                   <tr>
                     <th>세부코드길이</th>
                     <td>
-                      <input {...tableForm.register('COCD_LNTH')} />
+                      <input
+                        {...tableForm.register('COCD_LNTH')}
+                        onChange={onChangeTableValue}
+                      />
                     </td>
                     <th>초기세팅여부</th>
                     <td>
@@ -317,6 +393,7 @@ const TMMA0010 = () => {
                         label="초기세팅여부"
                         name="ISET_YSNO"
                         form={tableForm}
+                        onChange={onChangeTableValue}
                       />
                     </td>
                   </tr>
@@ -346,7 +423,10 @@ const TMMA0010 = () => {
                     <tr key={i}>
                       <th>{'항목' + (i + 1)}</th>
                       <td>
-                        <input {...tableForm.register(`RE${i + 1}F_DESC`)} />
+                        <input
+                          {...tableForm.register(`RE${i + 1}F_DESC`)}
+                          onChange={onChangeTableValue}
+                        />
                       </td>
                       <td>
                         <Select
@@ -355,6 +435,7 @@ const TMMA0010 = () => {
                           nullvalue="select"
                           options={commCode.REXT_CODE}
                           form={tableForm}
+                          onChange={onChangeTableValue}
                         />
                       </td>
                       <td>
@@ -365,7 +446,10 @@ const TMMA0010 = () => {
                   <tr>
                     <th>항목10</th>
                     <td>
-                      <input {...tableForm.register('R10F_DESC')} />
+                      <input
+                        {...tableForm.register('R10F_DESC')}
+                        onChange={onChangeTableValue}
+                      />
                     </td>
                     <td>
                       <Select
@@ -374,6 +458,7 @@ const TMMA0010 = () => {
                         nullvalue="select"
                         options={commCode.REXT_CODE}
                         form={tableForm}
+                        onChange={onChangeTableValue}
                       />
                     </td>
                     <td>
@@ -388,6 +473,7 @@ const TMMA0010 = () => {
                         style={{
                           height: 'calc(100% - 0.375rem)',
                         }}
+                        onChange={onChangeTableValue}
                       />
                     </td>
                   </tr>

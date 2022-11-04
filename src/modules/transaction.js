@@ -8,6 +8,7 @@ import * as transactionAPI from '../lib/api/transaction';
 
 const [SEARCH, SEARCH_SUCCESS, SEARCH_FAILURE] =
   createRequestActionTypes('SEARCH');
+const [SAVE, SAVE_SUCCESS, SAVE_FAILURE] = createRequestActionTypes('SAVE');
 
 const UNLOAD_DATA = 'UNLOAD_DATA';
 
@@ -20,11 +21,21 @@ export const search = createAction(SEARCH, ({ menuId, workId, params }) => {
     params,
   };
 });
-
 const searchSaga = createRequestSaga(SEARCH, transactionAPI.search);
+
+export const save = createAction(SAVE, ({ menuId, workId, data }) => {
+  return {
+    menuId,
+    workId,
+    data,
+  };
+});
+const saveSaga = createRequestSaga(SAVE, transactionAPI.save);
+
 
 export function* transactionSaga() {
   yield takeLatest(SEARCH, searchSaga);
+  yield takeLatest(SAVE, saveSaga);
 }
 
 const initialState = {
@@ -70,7 +81,9 @@ const jsonKeyUpperCase = (obj) => {
     return obj;
   } else {
     return Object.fromEntries(
-      Object.entries(obj).map(([key, value]) => returnUpperCaseObj([key, value])),
+      Object.entries(obj).map(([key, value]) =>
+        returnUpperCaseObj([key, value]),
+      ),
     );
   }
 };
@@ -91,6 +104,21 @@ export default handleActions(
     [SEARCH_FAILURE]: (state, { payload: error }) => ({
       ...state,
       data: null,
+      error: error.message,
+    }),
+    [SAVE]: (state, {payload: {menuId, workId, data}}) => produce(state, (draft) => {
+      draft.menuId = menuId;
+      draft.workId = workId;
+      draft.data = dataValidate(data);
+    }),
+    [SAVE_SUCCESS]: (state, {payload: count}) => ({
+      ...state,
+      count: count,
+      error: null,
+    }),
+    [SAVE_FAILURE]: (state, { payload: error }) => ({
+      ...state,
+      count: -1,
       error: error.message,
     }),
     [UNLOAD_DATA]: () => initialState,
