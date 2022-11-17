@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import styled, { css } from 'styled-components';
 import palette from '../../lib/styles/palette';
 
@@ -40,4 +41,4 @@ const StyledButton = styled.button`
 
 const Button = (props) => <StyledButton {...props} />;
 
-export default Button;
+export default memo(Button);

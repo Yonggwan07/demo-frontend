@@ -2,7 +2,7 @@ import LoginPage from './LoginPage';
 import { useSelector, useDispatch } from 'react-redux';
 import Button from '../components/common/Button';
 import { logout } from '../modules/user';
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import ComWorkframeTab from '../components/common/ComWorkframeTab';
 
 const MainPage = () => {
@@ -13,25 +13,27 @@ const MainPage = () => {
   }));
 
   const dispatch = useDispatch();
-  const onLogout = () => {
+  const onLogout = useCallback(() => {
     dispatch(logout());
-  };
+  }, [dispatch]);
 
-  const onClick = (e) => {
-    if (tabs.filter((tab) => tab.menuId === e.target.value).length === 0) {
-      setTabs([
-        ...tabs,
-        {
-          index: tabs.length,
-          menuId: e.target.value,
-          label: e.target.innerText,
-        },
-      ]);
-      setTabValue(tabs.length);
-    } else {
-      setTabValue(tabs.find((tab) => tab.menuId === e.target.value).index);
-    }
-  };
+  const onMenuButtonClick = useCallback(
+    (e) => {
+      if (tabs.find((tab) => tab.menuId === e.target.value) === undefined) {
+        setTabs((tabs) =>
+          tabs.concat({
+            index: tabs.length,
+            menuId: e.target.value,
+            label: e.target.innerText,
+          }),
+        );
+        setTabValue(tabs.length);
+      } else {
+        setTabValue(tabs.find((tab) => tab.menuId === e.target.value).index);
+      }
+    },
+    [tabs],
+  );
 
   return (
     <>
@@ -47,7 +49,7 @@ const MainPage = () => {
                 type="button"
                 name="currMenu"
                 value="TMMA0010"
-                onClick={onClick}
+                onClick={onMenuButtonClick}
               >
                 공통코드관리
               </Button>
@@ -55,7 +57,7 @@ const MainPage = () => {
                 type="button"
                 name="currMenu"
                 value="TMMA0012"
-                onClick={onClick}
+                onClick={onMenuButtonClick}
               >
                 세부코드관리
               </Button>

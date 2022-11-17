@@ -1,5 +1,5 @@
 import { PropTypes } from 'prop-types';
-import { useEffect, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 
 const setNullValue = (nullvalue) => {
   switch (nullvalue) {
@@ -27,7 +27,7 @@ const Select = (props) => {
   const watch = props.form.watch(name);
   const [value, setValue] = useState('');
 
-  const onChange = (e) => {
+  const onChange = useCallback((e) => {
     e.target.name = name;
 
     setValue(e.target.value);
@@ -36,7 +36,7 @@ const Select = (props) => {
     if (props.onChange !== undefined) {
       props.onChange(e);
     }
-  };
+  }, [name, props, propsSetValue]);
 
   useEffect(() => {
     setValue(watch ? watch : '');
@@ -100,4 +100,4 @@ Select.propTypes = {
   name: PropTypes.string.isRequired,
 };
 
-export default Select;
+export default memo(Select);

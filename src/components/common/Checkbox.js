@@ -1,5 +1,5 @@
 import { PropTypes } from 'prop-types';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState, useCallback } from 'react';
 
 const Checkbox = (props) => {
   const { defaultValue, name } = props;
@@ -7,7 +7,7 @@ const Checkbox = (props) => {
   const watch = props.form.watch(name);
   const [checked, setChecked] = useState(false);
 
-  const onChange = (e) => {
+  const onChange = useCallback((e) => {
     e.target.name = props.name;
     e.target.value = e.target.checked ? '1' : '0';
 
@@ -17,7 +17,7 @@ const Checkbox = (props) => {
     if (props.onChange !== undefined) {
       props.onChange(e);
     }
-  };
+  }, [props, propsSetValue]);
 
   useEffect(() => {
     setChecked(watch === '1' ? true : false);
@@ -51,4 +51,4 @@ Checkbox.propTypes = {
   name: PropTypes.string.isRequired,
 };
 
-export default Checkbox;
+export default memo(Checkbox);

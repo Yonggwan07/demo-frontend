@@ -1,6 +1,7 @@
 import Button from './Button';
 import styled from 'styled-components';
 import { PropTypes } from 'prop-types';
+import { memo } from 'react';
 
 const ComWorkContainer = styled.div`
   display: flex;
@@ -27,7 +28,7 @@ const ComButtonsBox = styled.div`
   }
 `;
 
-const ComWorkTitleArea = ({ id, title, search, insert, save }) => (
+const ComWorkTitleArea = ({ id, title, search, insert, save, remove}) => (
   <ComWorkContainer>
     <ComWorkTitle>
       <Title>{title}</Title>
@@ -45,6 +46,7 @@ const ComWorkTitleArea = ({ id, title, search, insert, save }) => (
           저장
         </Button>
       )}
+      {remove && <Button onClick={remove}>삭제</Button>}
     </ComButtonsBox>
   </ComWorkContainer>
 );
@@ -54,4 +56,4 @@ ComWorkTitleArea.propTypes = {
   title: PropTypes.string.isRequired,
 };
 
-export default ComWorkTitleArea;
+export default memo(ComWorkTitleArea);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { search } from '../../modules/transaction';
 import { DataGrid } from '@mui/x-data-grid';
@@ -92,4 +92,4 @@ const TMMA0012 = () => {
   );
 };
 
-export default TMMA0012;
+export default memo(TMMA0012);

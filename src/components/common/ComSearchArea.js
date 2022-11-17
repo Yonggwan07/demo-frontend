@@ -4,6 +4,7 @@ import Input from './Input';
 import Select from './Select';
 import { useForm } from 'react-hook-form';
 import Checkbox from './Checkbox';
+import { memo } from 'react';
 
 const ComSearchArea = ({ onSubmit, props }) => {
   const searchForm = useForm();
@@ -14,34 +15,16 @@ const ComSearchArea = ({ onSubmit, props }) => {
       case undefined:
       case 'text':
       case 'date':
-        return (
-          <Input className="searchAreaComp" {..._props} form={form} />
-        );
+        return <Input className="searchAreaComp" {..._props} form={form} />;
       case 'checkbox':
-        return (
-          <Checkbox
-            className="searchAreaComp"
-            {..._props}
-            form={form}
-          />
-        );
+        return <Checkbox className="searchAreaComp" {..._props} form={form} />;
       case 'select':
-        return (
-          <Select
-            className="searchAreaComp"
-            {..._props}
-            form={form}
-          />
-        );
+        return <Select className="searchAreaComp" {..._props} form={form} />;
       case 'dateToDate':
       case 'monthToMonth':
       case 'yearToYear':
         return (
-          <DateToDate
-            className="searchAreaComp"
-            {..._props}
-            form={form}
-          />
+          <DateToDate className="searchAreaComp" {..._props} form={form} />
         );
       default:
         return 'ERROR!';
@@ -77,4 +60,4 @@ ComSearchArea.propTypes = {
   props: PropTypes.array.isRequired,
 };
 
-export default ComSearchArea;
+export default memo(ComSearchArea);

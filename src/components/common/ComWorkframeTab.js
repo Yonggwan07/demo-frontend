@@ -1,19 +1,50 @@
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import { menus } from '../menuList';
+import { Suspense, useState, lazy, useCallback, useMemo, memo } from 'react';
+import {
+  Alert,
+  Backdrop,
+  CircularProgress,
+  Snackbar,
+} from '../../../node_modules/@mui/material/index';
 
-function TabPanel(props) {
+const TabPanel = memo(function TabPanel(props) {
   const { children, value, index, menuId, ...other } = props;
-  const Menu = menus[menuId];
+  const Menu = useMemo(
+    () =>
+      lazy(() =>
+        import(`../../pages/${menuId.substring(0, 3).toLowerCase()}/${menuId}`),
+      ),
+    [menuId],
+  );
+
+  const [snackBarOpen, setSnackBarOpen] = useState(false);
+  const [snackBarSeverity, setSnackBarSeverity] = useState('success');
+  const [snackBarMessage, setSnackBarMessage] = useState('');
+  const handleSnackBar = useCallback((message, severity = 'success') => {
+    setSnackBarSeverity(severity);
+    setSnackBarMessage(message);
+    setSnackBarOpen(true);
+  }, []);
+
+  const [openBackdrop, setOpenBackdrop] = useState(false);
+  const handleBackdrop = (isOpen) => {
+    setOpenBackdrop(isOpen);
+  };
+
+  const handleClose = useCallback(() => {
+    setSnackBarMessage('');
+    setSnackBarOpen(false);
+  }, []);
 
   return (
     <>
       <div
         role="tabpanel"
         hidden={value !== index}
-        id={`simple-tabpanel-${index}`}
-        aria-labelledby={`simple-tab-${index}`}
+        id={`tabpanel-${index}`}
+        aria-labelledby={`tab-${index}`}
         {...other}
         style={{
           position: 'absolute',
@@ -24,11 +55,37 @@ function TabPanel(props) {
           padding: '1rem',
         }}
       >
-        <Menu />
+        <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={openBackdrop}
+        >
+          <CircularProgress coclor="inherit" />
+        </Backdrop>
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          open={snackBarOpen}
+          autoHideDuration={1500}
+          onClose={handleClose}
+        >
+          <Alert
+            severity={snackBarSeverity}
+            sx={{ width: '100%' }}
+            elevation={6} // Shadow depth
+            variant="filled"
+          >
+            {snackBarMessage}
+          </Alert>
+        </Snackbar>
+        <Suspense>
+          <Menu
+            handleSnackBar={handleSnackBar}
+            handleBackdrop={handleBackdrop}
+          />
+        </Suspense>
       </div>
     </>
   );
-}
+});
 
 function a11yProps(index) {
   return {
@@ -38,33 +95,27 @@ function a11yProps(index) {
 }
 
 const ComWorkframeTab = ({ tabs, tabValue, setTabValue }) => {
-  const handleChange = (_e, newValue) => {
-    setTabValue(newValue);
-  };
+  const handleChange = useCallback(
+    (_e, newValue) => {
+      setTabValue(newValue);
+    },
+    [setTabValue],
+  );
 
   return (
     <div style={{ height: 'calc(100% - 3.25rem)' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs
-          value={tabValue}
-          onChange={handleChange}
-          aria-label="basic tabs example"
-        >
-          {tabs.map(({ index, label }) => (
-            <Tab
-              key={index}
-              label={label}
-              {...a11yProps(index)}
-              onClick={(e) => console.log(e)}
-            />
+        <Tabs value={tabValue} onChange={handleChange}>
+          {tabs.map(({ index, label, menuId }) => (
+            <Tab key={menuId} label={label} {...a11yProps(index)} />
           ))}
         </Tabs>
       </Box>
       {tabs.map(({ index, menuId }) => (
-        <TabPanel key={index} value={tabValue} index={index} menuId={menuId} />
+        <TabPanel key={menuId} value={tabValue} index={index} menuId={menuId} />
       ))}
     </div>
   );
 };
 
-export default ComWorkframeTab;
+export default memo(ComWorkframeTab);

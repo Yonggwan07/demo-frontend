@@ -4,7 +4,7 @@ import { useGridApiContext } from '@mui/x-data-grid';
 export function SelectInputCell(props) {
   const { value, options } = props;
   const searched = options.find((option) => option.comdCode === value);
-  return <div>{searched.comdCdnm}</div>;
+  return <div>{searched !== undefined ? searched.comdCdnm : ''}</div>;
 }
 
 // DataGrid Select Edit Cell Renderer
