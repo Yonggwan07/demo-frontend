@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import Checkbox from './Checkbox';
 import { memo } from 'react';
 
-const ComSearchArea = ({ onSubmit, props }) => {
+const ComSearchArea = ({ onSubmit, props, menuId }) => {
   const searchForm = useForm();
 
   /* 타입에 따른 컴포넌트 렌더링 */
@@ -35,7 +35,7 @@ const ComSearchArea = ({ onSubmit, props }) => {
     <>
       {props && props.length > 0 && (
         <form
-          id="searchArea"
+          id={`searchArea_${menuId}`}
           className="searchAreaForm"
           onSubmit={searchForm.handleSubmit(onSubmit)}
         >

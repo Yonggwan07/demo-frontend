@@ -28,7 +28,7 @@ const ComButtonsBox = styled.div`
   }
 `;
 
-const ComWorkTitleArea = ({ id, title, search, insert, save, remove}) => (
+const ComWorkTitleArea = ({ id, title, search, insert, save, remove }) => (
   <ComWorkContainer>
     <ComWorkTitle>
       <Title>{title}</Title>
@@ -36,7 +36,7 @@ const ComWorkTitleArea = ({ id, title, search, insert, save, remove}) => (
     </ComWorkTitle>
     <ComButtonsBox>
       {search && (
-        <Button type="submit" form="searchArea">
+        <Button type="submit" form={`searchArea_${id}`}>
           조회
         </Button>
       )}
