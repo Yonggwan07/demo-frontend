@@ -1,58 +1,50 @@
-import { memo, useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { search } from '../../modules/transaction';
 import { DataGrid } from '@mui/x-data-grid';
-import ComWorkTitleArea from '../../components/common/ComWorkTitleArea';
+import { useCallback, useEffect, useState, memo } from 'react';
+import { useForm } from 'react-hook-form';
 import ComSearchArea from '../../components/common/ComSearchArea';
 import ComWorkframe from '../../components/common/ComWorkframe';
+import ComWorkTitleArea from '../../components/common/ComWorkTitleArea';
 
 const MENU_ID = 'tmma0012';
-
-const searchItems = [
-  // 모든 항목에 label, name 필수
-  {
-    label: '공통코드/명',
-    name: 'COMM_CDNM',
-    style: { width: '10rem' },
-    maxLength: 9,
-  },
+const codeOptions = [
+  { commCode: 'SYST_CODE', usexYsno: '1' },
+  { commCode: 'CDGB_CODE', usexYsno: '1' },
 ];
 
-const TMMA0012 = () => {
+const TMMA0012 = ({ getCombo, search }) => {
   const [searchParams, setSearchParams] = useState({
     commCdnm: '',
     systCode: '',
   });
+  const [comCombo, setComCombo] = useState({});
   const [rows, setRows] = useState([]);
+  const form = useForm();
 
-  const { tData } = useSelector(({ transaction }) => ({
-    tData: transaction,
-  }));
+  useEffect(() => {
+    getCombo(codeOptions).then((res) => {
+      setComCombo(res);
+      //setColumns(gridInit(COL, res, tableForm));
+    });
+  }, [getCombo]);
 
-  const dispatch = useDispatch();
-
-  const onSearch = () => {
-    dispatch(
-      search({
-        menuId: MENU_ID,
-        workId: 'search00',
-        params: searchParams,
-      }),
-    );
-  };
+  /* 조회 버튼 클릭 */
+  const handleSearch = useCallback(
+    (data) => {
+      search(MENU_ID, 'search00', data)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch(() => {
+          console.log('transaction error.');
+        });
+    },
+    [search],
+  );
 
   const onChange = (e) => {
     const { value, name } = e.target;
     setSearchParams({ ...searchParams, [name]: value });
   };
-
-  useEffect(() => {
-    if (tData.data && tData.menuId === MENU_ID && tData.workId === 'search00') {
-      setRows(tData.data);
-    } else {
-      setRows([]);
-    }
-  }, [tData]);
 
   const columns = [
     { field: 'commCode', headerName: '0020_공통코드' },
@@ -69,22 +61,34 @@ const TMMA0012 = () => {
     { field: 'remk100x', headerName: '0020_비고100' },
   ];
 
+  const searchItems = [
+    // 모든 항목에 label, name 필수
+    {
+      label: '공통코드/명',
+      name: 'COMM_CDNM',
+      style: { width: '10rem' },
+      maxLength: 9,
+    },
+    {
+      label: '시스템코드',
+      name: 'SYST_CODE',
+      type: 'select',
+      options: comCombo.SYST_CODE,
+      nullvalue: 'all', // all, select
+      style: { width: '10rem' },
+      //readOnly: true,
+      //defaultValue: '공통관리',
+    },
+  ];
+
   return (
     <ComWorkframe>
-      {/* <input
-        name="commCdnm"
-        placeholder="공통코드명"
-        onChange={onChange}
-        value={searchParams.commCdnm}
+      <ComWorkTitleArea id={MENU_ID} title="세부코드관리" search />
+      <ComSearchArea
+        onSubmit={handleSearch}
+        props={searchItems}
+        menuId={MENU_ID}
       />
-      <input
-        name="systCode"
-        placeholder="시스템코드"
-        onChange={onChange}
-        value={searchParams.systCode}
-      /> */}
-      <ComWorkTitleArea id={MENU_ID} title="세부코드관리" search={onSearch} />
-      <ComSearchArea props={searchItems} />
       <div style={{ height: 500 }}>
         <DataGrid columns={columns} rows={rows} />
       </div>

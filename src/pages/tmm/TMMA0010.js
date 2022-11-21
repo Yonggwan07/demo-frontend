@@ -1,16 +1,13 @@
-import { useCallback, useEffect, useState, memo, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { search, save, unloadData } from '../../modules/transaction';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import ComWorkTitleArea from '../../components/common/ComWorkTitleArea';
+import { useCallback, useEffect, useState, memo } from 'react';
+import { useForm } from 'react-hook-form';
+import Checkbox from '../../components/common/Checkbox';
+import ComCompArea from '../../components/common/ComCompArea';
 import ComSearchArea from '../../components/common/ComSearchArea';
 import ComWorkframe from '../../components/common/ComWorkframe';
-import ComCompArea from '../../components/common/ComCompArea';
-import { useForm } from 'react-hook-form';
-import Select from '../../components/common/Select';
-import Checkbox from '../../components/common/Checkbox';
-import { addCommonCode } from '../../modules/commonCode';
+import ComWorkTitleArea from '../../components/common/ComWorkTitleArea';
 import { gridInit } from '../../components/common/GridComponents';
+import Select from '../../components/common/Select';
 import { getFirstDateOfMonth, getToday } from '../../utils/dateUtil';
 
 const MENU_ID = 'tmma0010';
@@ -66,7 +63,8 @@ const COL = [
   { field: 'REMK_100X', headerName: '비고' },
 ];
 
-const TMMA0010 = () => {
+const TMMA0010 = ({ getCombo, search }) => {
+  const [comCombo, setComCombo] = useState({});
   const [rows, setRows] = useState([]); // grid row
   const [currentRowId, setCurrentRowId] = useState('');
   const [changedRows, setChangedRows] = useState([]);
@@ -75,32 +73,28 @@ const TMMA0010 = () => {
 
   const tableForm = useForm(); // 우측 테이블 form
 
-  const { tData, commCode } = useSelector(({ transaction, commonCode }) => ({
-    tData: transaction,
-    commCode: commonCode.storedCommonCode,
-  }));
-
-  const dispatch = useDispatch();
-
+  /* Page Init */
   useEffect(() => {
-    setColumns(gridInit(COL, commCode, tableForm));
-  }, [commCode, tableForm]);
+      getCombo(codeOptions).then((res) => {
+        setComCombo(res);
+        setColumns(gridInit(COL, res, tableForm));
+      });
+  }, [tableForm, getCombo]);
 
   /* 조회 버튼 클릭 */
-  const handleSearch = useCallback(
+  const search00 = useCallback(
     (data) => {
-      dispatch(
-        search({
-          menuId: MENU_ID,
-          workId: 'search00',
-          params: data,
-        }),
-      );
-      return () => {
-        dispatch(unloadData());
-      };
+      search(MENU_ID, 'search00', data)
+        .then((res) => {
+          setRows(res);
+          setOrigData(res);
+        })
+        .catch(() => {
+          setRows([]);
+          setOrigData([]);
+        });
     },
-    [dispatch],
+    [search],
   );
 
   /* 입력 버튼 클릭 */
@@ -109,9 +103,12 @@ const TMMA0010 = () => {
   }, []);
 
   /* 저장 버튼 클릭 */
+  /*
   const onSave = useCallback(() => {
     dispatch(save({ menuId: MENU_ID, workId: 'save00', data: changedRows }));
   }, [changedRows, dispatch]);
+  */
+  const onSave = () => {};
 
   const onChangeTableValue = (e) => {
     tableForm.setValue(e.target.name, e.target.value);
@@ -176,61 +173,6 @@ const TMMA0010 = () => {
     }
   };
 
-  /* 조회 데이터 처리 */
-  useEffect(() => {
-    if (tData.data && tData.menuId === MENU_ID && tData.workId === 'search00') {
-      setRows(tData.data);
-      setOrigData(tData.data);
-      dispatch(unloadData());
-    } else if (
-      tData.count > -1 &&
-      tData.menuId === MENU_ID &&
-      tData.workId === 'save00'
-    ) {
-      setOrigData(rows);
-      dispatch(unloadData());
-    }
-  }, [dispatch, tData, rows]);
-
-  /* 공통코드 조회 */
-  useEffect(() => {
-    let searchArr = [];
-
-    codeOptions.forEach((element) => {
-      let isExist = false;
-      if (commCode.hasOwnProperty(element.commCode)) {
-        isExist = true;
-      }
-
-      if (!isExist) {
-        searchArr.push(element);
-      }
-    });
-
-    if (searchArr.length > 0) {
-      dispatch(
-        search({
-          menuId: 'comCombo',
-          workId: 'getCombo',
-          params: searchArr,
-        }),
-      );
-    }
-  }, [commCode, dispatch]);
-
-  /* 조회된 공통코드 처리 */
-  useEffect(() => {
-    if (
-      tData.data &&
-      tData.menuId === 'comCombo' &&
-      tData.workId === 'getCombo'
-    ) {
-      // Add to stored Combo
-      dispatch(addCommonCode(tData.data));
-      dispatch(unloadData());
-    }
-  }, [dispatch, tData]);
-
   // 조회조건 설정
   const searchItems = [
     // 모든 항목에 label, name 필수
@@ -244,7 +186,7 @@ const TMMA0010 = () => {
       label: '시스템코드',
       name: 'SYST_CODE',
       type: 'select',
-      options: commCode.SYST_CODE,
+      options: comCombo.SYST_CODE,
       nullvalue: 'all', // all, select
       style: { width: '10rem' },
       //readOnly: true,
@@ -284,7 +226,11 @@ const TMMA0010 = () => {
         insert={onInsert}
         save={onSave}
       />
-      <ComSearchArea onSubmit={handleSearch} props={searchItems} />
+      <ComSearchArea
+        onSubmit={search00}
+        props={searchItems}
+        menuId={MENU_ID}
+      />
       <ComCompArea>
         <div className="gridWrapper">
           <DataGrid
@@ -360,7 +306,7 @@ const TMMA0010 = () => {
                         label="시스템구분"
                         name="SYST_CODE"
                         nullvalue="select"
-                        options={commCode.SYST_CODE}
+                        options={comCombo.SYST_CODE}
                         required={true}
                         form={tableForm}
                         onChange={onChangeTableValue}
@@ -372,7 +318,7 @@ const TMMA0010 = () => {
                         label="코드구분"
                         name="CDGB_CODE"
                         nullvalue="select"
-                        options={commCode.CDGB_CODE}
+                        options={comCombo.CDGB_CODE}
                         required={true}
                         form={tableForm}
                         onChange={onChangeTableValue}
@@ -433,7 +379,7 @@ const TMMA0010 = () => {
                           label={`보조${i + 1}필드입력형태코드`}
                           name={`RE${i + 1}T_CODE`}
                           nullvalue="select"
-                          options={commCode.REXT_CODE}
+                          options={comCombo.REXT_CODE}
                           form={tableForm}
                           onChange={onChangeTableValue}
                         />
@@ -456,7 +402,7 @@ const TMMA0010 = () => {
                         label="보조10필드입력형태코드"
                         name="R10T_CODE"
                         nullvalue="select"
-                        options={commCode.REXT_CODE}
+                        options={comCombo.REXT_CODE}
                         form={tableForm}
                         onChange={onChangeTableValue}
                       />

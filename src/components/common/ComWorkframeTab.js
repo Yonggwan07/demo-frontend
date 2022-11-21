@@ -1,15 +1,17 @@
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import { Suspense, useState, lazy, useCallback, useMemo, memo } from 'react';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
 import {
   Alert,
   Backdrop,
   CircularProgress,
-  Snackbar,
+  Snackbar
 } from '../../../node_modules/@mui/material/index';
+import { transaction } from '../../lib/api/transaction';
+import { jsonKeyUpperCase } from '../../utils/dataUtil';
 
-const TabPanel = memo(function TabPanel(props) {
+const TabPanel = function TabPanel(props) {
   const { children, value, index, menuId, ...other } = props;
   const Menu = useMemo(
     () =>
@@ -37,6 +39,47 @@ const TabPanel = memo(function TabPanel(props) {
     setSnackBarMessage('');
     setSnackBarOpen(false);
   }, []);
+
+  const getCombo = useCallback((codeOptions) => {
+    return new Promise((resolve, reject) => {
+      transaction({
+        menuId: 'comCombo',
+        workId: 'getCombo',
+        params: codeOptions,
+      }).then((res) => {
+        if (res.status === 200) {
+          resolve(res.data);
+        }
+      });
+    });
+  }, []);
+
+  const search = useCallback(
+    (menuId, workId, params) => {
+      return new Promise((resolve, reject) => {
+        handleBackdrop(true);
+        transaction({
+          menuId: menuId,
+          workId: workId,
+          params: params,
+        }).then((res) => {
+          if (res.status === 200) {
+            handleBackdrop(false);
+            handleSnackBar(`${res.data.length}건이 조회되었습니다.`);
+            resolve(jsonKeyUpperCase(res.data));
+          } else {
+            handleBackdrop(false);
+            handleSnackBar(`조회에 실패했습니다.`, 'error');
+            console.error(res);
+            return reject();
+          }
+        });
+      });
+    },
+    [handleSnackBar],
+  );
+
+  const save = useCallback(() => {}, []);
 
   return (
     <>
@@ -77,15 +120,12 @@ const TabPanel = memo(function TabPanel(props) {
           </Alert>
         </Snackbar>
         <Suspense>
-          <Menu
-            handleSnackBar={handleSnackBar}
-            handleBackdrop={handleBackdrop}
-          />
+          <Menu getCombo={getCombo} search={search} save={save} />
         </Suspense>
       </div>
     </>
   );
-});
+};
 
 function a11yProps(index) {
   return {
@@ -118,4 +158,4 @@ const ComWorkframeTab = ({ tabs, tabValue, setTabValue }) => {
   );
 };
 
-export default memo(ComWorkframeTab);
+export default ComWorkframeTab;

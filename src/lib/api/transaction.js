@@ -1,7 +1,6 @@
 import client from './client';
 
-export const search = ({ menuId, workId, params }) =>
-  client.post(`/api/${menuId}/${workId}`, params);
-
-export const save = ({ menuId, workId, data }) =>
-  client.post(`/api/${menuId}/${workId}`, data);
+export const transaction = ({ menuId, workId, params }) =>
+  client
+    .post(`/api/${menuId}/${workId}`, params)
+    .catch(({ response }) => response);
