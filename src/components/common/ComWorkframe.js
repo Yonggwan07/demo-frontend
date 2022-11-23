@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import styled from 'styled-components';
 
 const WorkframeBox = styled.div`
@@ -9,4 +10,4 @@ const WorkframeBox = styled.div`
 
 const ComWorkframe = ({ children }) => <WorkframeBox>{children}</WorkframeBox>;
 
-export default ComWorkframe;
+export default memo(ComWorkframe);

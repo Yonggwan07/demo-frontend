@@ -7,17 +7,20 @@ const Checkbox = (props) => {
   const watch = props.form.watch(name);
   const [checked, setChecked] = useState(false);
 
-  const onChange = useCallback((e) => {
-    e.target.name = props.name;
-    e.target.value = e.target.checked ? '1' : '0';
+  const onChange = useCallback(
+    (e) => {
+      e.target.name = props.name;
+      e.target.value = e.target.checked ? '1' : '0';
 
-    setChecked(e.target.checked);
-    propsSetValue(e.target.name, e.target.value);
+      setChecked(e.target.checked);
+      propsSetValue(e.target.name, e.target.value);
 
-    if (props.onChange !== undefined) {
-      props.onChange(e);
-    }
-  }, [props, propsSetValue]);
+      if (props.onChange !== undefined) {
+        props.onChange(e);
+      }
+    },
+    [props, propsSetValue],
+  );
 
   useEffect(() => {
     setChecked(watch === '1' ? true : false);
@@ -33,11 +36,10 @@ const Checkbox = (props) => {
   return (
     <>
       <input
+        {...props}
         type="checkbox"
-        className={props.className}
         onChange={onChange}
         title={props.label}
-        style={props.style}
         checked={checked}
         disabled={props.readOnly}
       />

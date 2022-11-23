@@ -21,16 +21,16 @@ const DateToDate = (props) => {
   const [max, setMax] = useState('');
 
   useEffect(() => {
-    if (props.valueTo && props.valueTo !== '') {
-      setMax(props.valueTo);
+    if (props.to && props.to !== '') {
+      setMax(props.to);
     }
-  }, [props.valueTo]);
+  }, [props.to]);
 
   useEffect(() => {
-    if (props.valueFrom && props.valueFrom !== '') {
-      setMin(props.valueFrom);
+    if (props.from && props.from !== '') {
+      setMin(props.from);
     }
-  }, [props.valueFrom]);
+  }, [props.from]);
 
   const onChange = (e) => {
     if (e.target.name.includes('_from')) {
@@ -44,30 +44,26 @@ const DateToDate = (props) => {
   return (
     <div>
       <input
+        {...props}
         {...props.form.register(props.name + '_from', {
           required: props.required,
         })}
-        className={props.className}
-        defaultValue={props.valueFrom}
-        required={props.required}
+        defaultValue={props.from}
         type={type}
         title={props.label + ' 시작' + word}
-        style={props.style}
-        onChange={(e) => onChange(e)}
+        onChange={onChange}
         max={max}
       />
       <span>~</span>
       <input
+        {...props}
         {...props.form.register(props.name + '_to', {
           required: props.required,
         })}
-        className={props.className}
-        defaultValue={props.valueTo}
-        required={props.required}
+        defaultValue={props.to}
         type={type}
         title={props.label + ' 종료' + word}
-        style={props.style}
-        onChange={(e) => onChange(e)}
+        onChange={onChange}
         min={min}
       />
     </div>

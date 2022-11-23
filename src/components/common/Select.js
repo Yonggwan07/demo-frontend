@@ -27,16 +27,19 @@ const Select = (props) => {
   const watch = props.form.watch(name);
   const [value, setValue] = useState('');
 
-  const onChange = useCallback((e) => {
-    e.target.name = name;
+  const onChange = useCallback(
+    (e) => {
+      e.target.name = name;
 
-    setValue(e.target.value);
-    propsSetValue(name, e.target.value);
+      setValue(e.target.value);
+      propsSetValue(name, e.target.value);
 
-    if (props.onChange !== undefined) {
-      props.onChange(e);
-    }
-  }, [name, props, propsSetValue]);
+      if (props.onChange !== undefined) {
+        props.onChange(e);
+      }
+    },
+    [name, props, propsSetValue],
+  );
 
   useEffect(() => {
     setValue(watch ? watch : '');
@@ -67,13 +70,11 @@ const Select = (props) => {
   return (
     <>
       <select
-        className={props.className}
-        style={props.style}
+        {...props}
         title={props.label}
         value={value}
         onChange={onChange}
         disabled={props.readOnly}
-        required={props.required}
       >
         {nullvalue && (
           <option key={'nullvalue'} value={''}>

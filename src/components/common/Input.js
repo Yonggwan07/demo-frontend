@@ -1,28 +1,15 @@
 import { PropTypes } from 'prop-types';
+import { memo } from 'react';
 
-const Input = ({
-  form,
-  name,
-  required,
-  className,
-  defaultValue,
-  label,
-  type,
-  style,
-  readOnly,
-}) => {
+const Input = (props) => {
   return (
     <>
       <input
-        {...form.register(name, { required: required })}
-        className={className}
-        defaultValue={defaultValue}
-        title={label}
-        type={type}
-        required={required}
+        {...props}
+        {...props.form.register(props.name, { required: props.required })}
+        title={props.label}
+        type={props.type}
         autoComplete="none"
-        style={style}
-        readOnly={readOnly}
       />
     </>
   );
@@ -33,4 +20,4 @@ Input.propTypes = {
   name: PropTypes.string.isRequired,
 };
 
-export default Input;
+export default memo(Input);

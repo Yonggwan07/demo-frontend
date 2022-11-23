@@ -1,17 +1,17 @@
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
-import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
+import { lazy, memo, Suspense, useCallback, useMemo, useState } from 'react';
 import {
   Alert,
   Backdrop,
   CircularProgress,
-  Snackbar
+  Snackbar,
 } from '../../../node_modules/@mui/material/index';
 import { transaction } from '../../lib/api/transaction';
 import { jsonKeyUpperCase } from '../../utils/dataUtil';
 
-const TabPanel = function TabPanel(props) {
+const TabPanel = memo(function TabPanel(props) {
   const { children, value, index, menuId, ...other } = props;
   const Menu = useMemo(
     () =>
@@ -21,19 +21,16 @@ const TabPanel = function TabPanel(props) {
     [menuId],
   );
 
+  const [openBackdrop, setOpenBackdrop] = useState(false);
   const [snackBarOpen, setSnackBarOpen] = useState(false);
   const [snackBarSeverity, setSnackBarSeverity] = useState('success');
   const [snackBarMessage, setSnackBarMessage] = useState('');
+
   const handleSnackBar = useCallback((message, severity = 'success') => {
     setSnackBarSeverity(severity);
     setSnackBarMessage(message);
     setSnackBarOpen(true);
   }, []);
-
-  const [openBackdrop, setOpenBackdrop] = useState(false);
-  const handleBackdrop = (isOpen) => {
-    setOpenBackdrop(isOpen);
-  };
 
   const handleClose = useCallback(() => {
     setSnackBarMessage('');
@@ -55,21 +52,25 @@ const TabPanel = function TabPanel(props) {
   }, []);
 
   const search = useCallback(
-    (menuId, workId, params) => {
+    (menuId, workId, params, useSnackbar = true) => {
       return new Promise((resolve, reject) => {
-        handleBackdrop(true);
+        setOpenBackdrop(true);
         transaction({
           menuId: menuId,
           workId: workId,
           params: params,
         }).then((res) => {
           if (res.status === 200) {
-            handleBackdrop(false);
-            handleSnackBar(`${res.data.length}건이 조회되었습니다.`);
+            setOpenBackdrop(false);
+            if (useSnackbar) {
+              handleSnackBar(`${res.data.length}건이 조회되었습니다.`);
+            }
             resolve(jsonKeyUpperCase(res.data));
           } else {
-            handleBackdrop(false);
-            handleSnackBar(`조회에 실패했습니다.`, 'error');
+            setOpenBackdrop(false);
+            if (useSnackbar) {
+              handleSnackBar(`조회에 실패했습니다.`, 'error');
+            }
             console.error(res);
             return reject();
           }
@@ -79,7 +80,30 @@ const TabPanel = function TabPanel(props) {
     [handleSnackBar],
   );
 
-  const save = useCallback(() => {}, []);
+  const save = useCallback(
+    (menuId, workId, data) => {
+      return new Promise((resolve, reject) => {
+        setOpenBackdrop(true);
+        transaction({
+          menuId: menuId,
+          workId: workId,
+          params: data,
+        }).then((res) => {
+          if (res.status === 200) {
+            setOpenBackdrop(false);
+            handleSnackBar(`${res.data}건이 처리되었습니다.`);
+            resolve(jsonKeyUpperCase(res.data));
+          } else {
+            setOpenBackdrop(false);
+            handleSnackBar(`저장에 실패했습니다.`, 'error');
+            console.error(res);
+            return reject();
+          }
+        });
+      });
+    },
+    [handleSnackBar],
+  );
 
   return (
     <>
@@ -125,7 +149,7 @@ const TabPanel = function TabPanel(props) {
       </div>
     </>
   );
-};
+});
 
 function a11yProps(index) {
   return {
