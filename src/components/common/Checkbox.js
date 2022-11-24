@@ -1,10 +1,10 @@
 import { PropTypes } from 'prop-types';
 import { memo, useEffect, useState, useCallback } from 'react';
 
-const Checkbox = (props) => {
+const Checkbox = ({form, ...props}) => {
   const { defaultValue, name } = props;
-  const { register, setValue: propsSetValue } = props.form;
-  const watch = props.form.watch(name);
+  const { register, setValue: propsSetValue } = form;
+  const watch = form.watch(name);
   const [checked, setChecked] = useState(false);
 
   const onChange = useCallback(

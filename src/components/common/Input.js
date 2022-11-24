@@ -1,14 +1,13 @@
 import { PropTypes } from 'prop-types';
 import { memo } from 'react';
 
-const Input = (props) => {
+const Input = ({ form: { register }, ...props }) => {
   return (
     <>
       <input
         {...props}
-        {...props.form.register(props.name, { required: props.required })}
+        {...register(props.name)}
         title={props.label}
-        type={props.type}
         autoComplete="none"
       />
     </>

@@ -14,23 +14,23 @@ const setType = ({ type }) => {
   }
 };
 
-const DateToDate = (props) => {
+const DateToDate = ({form, to, from, label, ...props}) => {
   const [type, word] = setType(props);
 
   const [min, setMin] = useState('');
   const [max, setMax] = useState('');
 
   useEffect(() => {
-    if (props.to && props.to !== '') {
-      setMax(props.to);
+    if (to && to !== '') {
+      setMax(to);
     }
-  }, [props.to]);
+  }, [to]);
 
   useEffect(() => {
-    if (props.from && props.from !== '') {
-      setMin(props.from);
+    if (from && from !== '') {
+      setMin(from);
     }
-  }, [props.from]);
+  }, [from]);
 
   const onChange = (e) => {
     if (e.target.name.includes('_from')) {
@@ -45,10 +45,8 @@ const DateToDate = (props) => {
     <div>
       <input
         {...props}
-        {...props.form.register(props.name + '_from', {
-          required: props.required,
-        })}
-        defaultValue={props.from}
+        {...form.register(props.name + '_from')}
+        defaultValue={from}
         type={type}
         title={props.label + ' 시작' + word}
         onChange={onChange}
@@ -57,10 +55,8 @@ const DateToDate = (props) => {
       <span>~</span>
       <input
         {...props}
-        {...props.form.register(props.name + '_to', {
-          required: props.required,
-        })}
-        defaultValue={props.to}
+        {...form.register(props.name + '_to')}
+        defaultValue={to}
         type={type}
         title={props.label + ' 종료' + word}
         onChange={onChange}

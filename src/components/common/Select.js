@@ -20,11 +20,11 @@ const setNullValue = (nullvalue) => {
   }
 };
 
-const Select = (props) => {
+const Select = ({form, ...props}) => {
   const nullvalue = setNullValue(props.nullvalue);
   const { options, name, defaultValue } = props;
-  const { register, setValue: propsSetValue } = props.form;
-  const watch = props.form.watch(name);
+  const { register, setValue: propsSetValue } = form;
+  const watch = form.watch(name);
   const [value, setValue] = useState('');
 
   const onChange = useCallback(
@@ -90,7 +90,7 @@ const Select = (props) => {
       </select>
       <input
         type={'hidden'}
-        {...register(props.name, { required: props.required })}
+        {...register(props.name)}
       />
     </>
   );
