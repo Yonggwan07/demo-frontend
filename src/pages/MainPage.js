@@ -4,6 +4,8 @@ import Button from '../components/common/Button';
 import { logout } from '../modules/user';
 import React, { useState, useCallback } from 'react';
 import ComWorkframeTab from '../components/common/ComWorkframeTab';
+import ComBackdrop from '../components/common/ComBackdrop';
+import ComSnackbar from '../components/common/ComSnackbar';
 
 const MainPage = () => {
   const [tabs, setTabs] = useState([]);
@@ -63,6 +65,8 @@ const MainPage = () => {
               </Button>
             </div>
           </div>
+          <ComBackdrop />
+          <ComSnackbar />
           <ComWorkframeTab
             tabs={tabs}
             tabValue={tabValue}

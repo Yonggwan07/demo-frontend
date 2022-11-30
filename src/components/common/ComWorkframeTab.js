@@ -1,13 +1,9 @@
 import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
-import { lazy, memo, Suspense, useCallback, useMemo, useState } from 'react';
-import {
-  Alert,
-  Backdrop,
-  CircularProgress,
-  Snackbar,
-} from '../../../node_modules/@mui/material/index';
+import { lazy, memo, Suspense, useCallback, useMemo } from 'react';
+import handleBackdrop from '../../lib/api/backdrop';
+import openSnackbar from '../../lib/api/snackbar';
 import { transaction } from '../../lib/api/transaction';
 import { jsonKeyUpperCase } from '../../utils/dataUtil';
 
@@ -20,22 +16,6 @@ const TabPanel = memo(function TabPanel(props) {
       ),
     [menuId],
   );
-
-  const [openBackdrop, setOpenBackdrop] = useState(false);
-  const [snackBarOpen, setSnackBarOpen] = useState(false);
-  const [snackBarSeverity, setSnackBarSeverity] = useState('success');
-  const [snackBarMessage, setSnackBarMessage] = useState('');
-
-  const handleSnackBar = useCallback((message, severity = 'success') => {
-    setSnackBarSeverity(severity);
-    setSnackBarMessage(message);
-    setSnackBarOpen(true);
-  }, []);
-
-  const handleClose = useCallback(() => {
-    setSnackBarMessage('');
-    setSnackBarOpen(false);
-  }, []);
 
   const getCombo = useCallback((codeOptions) => {
     return new Promise((resolve, reject) => {
@@ -54,22 +34,22 @@ const TabPanel = memo(function TabPanel(props) {
   const search = useCallback(
     (menuId, workId, params, useSnackbar = true) => {
       return new Promise((resolve, reject) => {
-        setOpenBackdrop(true);
+        handleBackdrop(true);
         transaction({
           menuId: menuId,
           workId: workId,
           params: params,
         }).then((res) => {
           if (res.status === 200) {
-            setOpenBackdrop(false);
+            handleBackdrop(false);
             if (useSnackbar) {
-              handleSnackBar(`${res.data.length}건이 조회되었습니다.`);
+              openSnackbar(`${res.data.length}건이 조회되었습니다.`);
             }
             resolve(jsonKeyUpperCase(res.data));
           } else {
-            setOpenBackdrop(false);
+            handleBackdrop(false);
             if (useSnackbar) {
-              handleSnackBar(`조회에 실패했습니다.`, 'error');
+              openSnackbar(`조회에 실패했습니다.`);
             }
             console.error(res);
             return reject();
@@ -77,32 +57,32 @@ const TabPanel = memo(function TabPanel(props) {
         });
       });
     },
-    [handleSnackBar],
+    [],
   );
 
   const save = useCallback(
     (menuId, workId, data) => {
       return new Promise((resolve, reject) => {
-        setOpenBackdrop(true);
+        handleBackdrop(true);
         transaction({
           menuId: menuId,
           workId: workId,
           params: data,
         }).then((res) => {
           if (res.status === 200) {
-            setOpenBackdrop(false);
-            handleSnackBar(`${res.data}건이 처리되었습니다.`);
+            handleBackdrop(false);
+            openSnackbar(`${res.data}건이 처리되었습니다.`);
             resolve(jsonKeyUpperCase(res.data));
           } else {
-            setOpenBackdrop(false);
-            handleSnackBar(`저장에 실패했습니다.`, 'error');
+            handleBackdrop(false);
+            openSnackbar(`저장에 실패했습니다.`, 'error');
             console.error(res);
             return reject();
           }
         });
       });
     },
-    [handleSnackBar],
+    [],
   );
 
   return (
@@ -122,27 +102,6 @@ const TabPanel = memo(function TabPanel(props) {
           padding: '1rem',
         }}
       >
-        <Backdrop
-          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={openBackdrop}
-        >
-          <CircularProgress coclor="inherit" />
-        </Backdrop>
-        <Snackbar
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          open={snackBarOpen}
-          autoHideDuration={1500}
-          onClose={handleClose}
-        >
-          <Alert
-            severity={snackBarSeverity}
-            sx={{ width: '100%' }}
-            elevation={6} // Shadow depth
-            variant="filled"
-          >
-            {snackBarMessage}
-          </Alert>
-        </Snackbar>
         <Suspense>
           <Menu getCombo={getCombo} search={search} save={save} />
         </Suspense>
