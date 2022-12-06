@@ -1,58 +1,82 @@
+import { Box, Grid } from '@mui/material';
+import ko from 'date-fns/locale/ko';
 import { PropTypes } from 'prop-types';
-import DateToDate from './DateToDate';
-import Input from './Input';
-import Select from './Select';
+import { memo, useCallback } from 'react';
+import { registerLocale } from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import { useForm } from 'react-hook-form';
-import Checkbox from './Checkbox';
-import { memo } from 'react';
+import ComCheckbox from './ComCheckbox';
+import ComDatePicker from './ComDatePicker';
+import ComDateRangePicker from './ComDateRangePicker';
+import ComInput from './ComInput';
+import ComSelect from './ComSelect';
+
+registerLocale('ko', ko);
 
 const ComSearchArea = ({ onSubmit, props, menuId }) => {
-  const searchForm = useForm();
+  const { control, handleSubmit } = useForm();
 
   /* 타입에 따른 컴포넌트 렌더링 */
-  const renderComp = (_props, form) => {
-    switch (_props.type) {
-      case undefined:
-      case 'text':
-      case 'date':
-        return <Input className="searchAreaComp" {..._props} form={form} />;
-      case 'checkbox':
-        return <Checkbox className="searchAreaComp" {..._props} form={form} />;
-      case 'select':
-        return <Select className="searchAreaComp" {..._props} form={form} />;
-      case 'dateToDate':
-      case 'monthToMonth':
-      case 'yearToYear':
-        return (
-          <DateToDate className="searchAreaComp" {..._props} form={form} />
-        );
-      default:
-        return 'ERROR!';
-    }
-  };
+  const renderComp = useCallback(
+    (_props) => {
+      switch (_props.type) {
+        case undefined:
+        case 'text':
+          return <ComInput control={control} props={_props} />;
+        case 'select':
+          return <ComSelect control={control} props={_props} />;
+        case 'checkbox':
+          return <ComCheckbox control={control} props={_props} />;
+        case 'date':
+          return <ComDatePicker control={control} props={_props} />;
+        case 'dateRange':
+          return <ComDateRangePicker control={control} props={_props} />;
+        case 'monthRange':
+          return (
+            <ComDateRangePicker control={control} props={_props} type={'month'} />
+          );
+        case 'yearRange':
+          return (
+            <ComDateRangePicker control={control} props={_props} type={'year'} />
+          );
+        default:
+          return 'ERROR!';
+      }
+    },
+    [control],
+  );
 
   return (
-    <>
+    <Box
+      sx={{
+        width: '100%',
+        bgcolor: 'white',
+        border: 1,
+        borderColor: '#d5dde0',
+        mb: 0.625,
+        p: 1.5,
+      }}
+    >
       {props && props.length > 0 && (
-        <form
-          id={`searchArea_${menuId}`}
-          className="searchAreaForm"
-          onSubmit={searchForm.handleSubmit(onSubmit)}
-        >
-          {Array.isArray(props) &&
-            props.map((prop) => (
-              <label
-                className="compLabel"
-                key={prop.name}
-                required={prop.required}
-              >
-                {prop.label}
-                {renderComp(prop, searchForm)}
-              </label>
-            ))}
+        <form id={`searchArea_${menuId}`} onSubmit={handleSubmit(onSubmit)}>
+          <Grid container spacing={1.5}>
+            {Array.isArray(props) &&
+              props.map((prop) => (
+                <Grid key={prop.name} item>
+                  <label
+                    className="compLabel"
+                    key={prop.name}
+                    required={prop.rules?.required}
+                  >
+                    {prop.label}
+                    {renderComp(prop)}
+                  </label>
+                </Grid>
+              ))}
+          </Grid>
         </form>
       )}
-    </>
+    </Box>
   );
 };
 

@@ -5,6 +5,7 @@ import { lazy, memo, Suspense, useCallback, useMemo } from 'react';
 import handleBackdrop from '../../lib/api/backdrop';
 import openSnackbar from '../../lib/api/snackbar';
 import { transaction } from '../../lib/api/transaction';
+import { constStr } from '../../utils/constStr';
 import { jsonKeyUpperCase } from '../../utils/dataUtil';
 
 const TabPanel = memo(function TabPanel(props) {
@@ -43,13 +44,13 @@ const TabPanel = memo(function TabPanel(props) {
           if (res.status === 200) {
             handleBackdrop(false);
             if (useSnackbar) {
-              openSnackbar(`${res.data.length}건이 조회되었습니다.`);
+              openSnackbar(constStr.postSearch(res.data.length));
             }
             resolve(jsonKeyUpperCase(res.data));
           } else {
             handleBackdrop(false);
             if (useSnackbar) {
-              openSnackbar(`조회에 실패했습니다.`);
+              openSnackbar(constStr.errorSearch);
             }
             console.error(res);
             return reject();
@@ -71,11 +72,11 @@ const TabPanel = memo(function TabPanel(props) {
         }).then((res) => {
           if (res.status === 200) {
             handleBackdrop(false);
-            openSnackbar(`${res.data}건이 처리되었습니다.`);
+            openSnackbar(constStr.postSave(res.data.length));
             resolve(jsonKeyUpperCase(res.data));
           } else {
             handleBackdrop(false);
-            openSnackbar(`저장에 실패했습니다.`, 'error');
+            openSnackbar(constStr.errorSave, 'error');
             console.error(res);
             return reject();
           }

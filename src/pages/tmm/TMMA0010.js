@@ -8,7 +8,6 @@ import ComWorkframe from '../../components/common/ComWorkframe';
 import ComWorkTitleArea from '../../components/common/ComWorkTitleArea';
 import Select from '../../components/common/Select';
 import useGrid from '../../hooks/useGrid';
-import { getFirstDateOfMonth, getToday } from '../../utils/dateUtil';
 
 const MENU_ID = 'tmma0010';
 const codeOptions = [
@@ -76,7 +75,11 @@ const TMMA0010 = ({ getCombo, search, save }) => {
     onGridRowClickHandler,
     onChangeFormValue,
     isInserted,
-  } = useGrid(tableForm);
+  } = useGrid(tableForm.setValue, tableForm.watch);
+
+  useEffect(() => {
+    console.log('render');
+  }, []);
 
   /* Page Init */
   useEffect(() => {
@@ -89,6 +92,7 @@ const TMMA0010 = ({ getCombo, search, save }) => {
   /* 조회 버튼 클릭 */
   const handleSearch = useCallback(
     (data) => {
+      console.log(data);
       search(MENU_ID, 'search00', data)
         .then((res) => {
           setGridData(res);
@@ -108,8 +112,9 @@ const TMMA0010 = ({ getCombo, search, save }) => {
 
   /* 저장 버튼 클릭 */
   const onSave = useCallback(() => {
-    save(MENU_ID, 'save00', changedRows);
-  }, [changedRows, save]);
+    console.log(changedRows.current);
+    //save(MENU_ID, 'save00', changedRows.current);
+  }, [changedRows]);
 
   // 조회조건 설정
   const searchItems = useMemo(
@@ -119,7 +124,11 @@ const TMMA0010 = ({ getCombo, search, save }) => {
         label: '공통코드/명',
         name: 'COMM_CDNM',
         style: { width: '10rem' },
-        maxLength: 9,
+        //rules: {
+        //  required: constStr.required,
+        //  maxLength: constStr.maxLength(9),
+        //  minLength: constStr.minLength(4),
+        //},
       },
       {
         label: '시스템코드',
@@ -128,32 +137,48 @@ const TMMA0010 = ({ getCombo, search, save }) => {
         options: comCombo.SYST_CODE,
         nullvalue: 'all', // all, select
         style: { width: '10rem' },
-        //readOnly: true,
-        //defaultValue: '공통관리',
+        // readOnly: true,
+        // disabled: true
+        // defaultValue: 'TMM',
+        // rules: {
+        //   required: constStr.required,
+        // },
       },
-      {
-        label: '조회일자',
-        name: 'dateTest',
-        type: 'dateToDate',
-        from: getFirstDateOfMonth(),
-        to: getToday(),
-        style: { width: '6.5rem', textAlign: 'center' },
-        required: true,
-      },
-      {
-        label: '여부',
-        name: 'chkTest',
-        type: 'checkbox',
-        //defaultValue: true,
-        //readOnly: true
-      },
-      {
-        label: '월',
-        name: 'dayTest',
-        type: 'yearToYear',
-        to: '2022',
-        style: { width: '5rem', textAlign: 'center' },
-      },
+      // {
+      //   label: '조회일자',
+      //   name: 'dateTest',
+      //   type: 'dateRange',
+      //   from: getFirstDateOfMonth(),
+      //   to: getToday(),
+      //   style: { width: '6rem', textAlign: 'center' },
+      //   rules: {
+      //     from: {
+      //       required: constStr.required,
+      //       minDate: '2022-12-01',
+      //     },
+      //     to: {
+      //       maxDate: '2022-12-20',
+      //     },
+      //   },
+      // },
+      // {
+      //   label: '여부',
+      //   name: 'chkTest',
+      //   type: 'checkbox',
+      //   defaultChecked: true,
+      //   disabled: true
+      // },
+      // {
+      //   label: '일자',
+      //   name: 'dateSingle',
+      //   type: 'date',
+      //   currentDate: getToday(),
+      //   style: { width: '6rem', textAlign: 'center' },
+      //   rules: {
+      //     required: constStr.required,
+      //     minDate: '2022-12-01',
+      //   },
+      // },
     ],
     [comCombo.SYST_CODE],
   );
