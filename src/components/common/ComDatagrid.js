@@ -1,6 +1,7 @@
 import {
   DataGrid,
   GridToolbarContainer,
+  GridToolbarColumnsButton,
   GridToolbarFilterButton,
   GridToolbarExport,
 } from '@mui/x-data-grid';
@@ -14,9 +15,10 @@ const ComDatagrid = ({ ...props }) => {
         components={{
           Toolbar: () => (
             <GridToolbarContainer>
+              <GridToolbarColumnsButton />
               <GridToolbarFilterButton />
               <GridToolbarExport />
-              <ComCommonButtons {...props.commonButtons}/>
+              <ComCommonButtons {...props.commonButtons} />
             </GridToolbarContainer>
           ),
         }}

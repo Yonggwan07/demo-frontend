@@ -3,9 +3,29 @@ import { format, parseISO } from 'date-fns';
 import ko from 'date-fns/locale/ko';
 import { useState } from 'react';
 import DatePicker from 'react-datepicker';
-import { Controller } from 'react-hook-form';
+import { useController } from 'react-hook-form';
+import { PropTypes } from 'prop-types';
 
 const ComDateRangePicker = ({ control, type, ...props }) => {
+  const {
+    field: fromField,
+    fieldState: { error: fromError },
+  } = useController({
+    name: `${props.name}_from`,
+    control,
+    defaultValue: props.from,
+    rules: props.rules?.from,
+  });
+  const {
+    field: toField,
+    fieldState: { error: toError },
+  } = useController({
+    name: `${props.name}_to`,
+    control,
+    defaultValue: props.to,
+    rules: props.rules?.to,
+  });
+
   const [startDate, setStartDate] = useState(
     props.from !== undefined ? parseISO(props.from) : '',
   );
@@ -50,44 +70,35 @@ const ComDateRangePicker = ({ control, type, ...props }) => {
 
   return (
     <div style={{ display: 'flex' }}>
-      <Controller
-        key={`${props.name}_from`}
-        name={`${props.name}_from`}
-        control={control}
-        rules={props.rules?.from}
-        defaultValue={props.from}
-        render={({ field, fieldState: { error } }) => (
-          <DatePicker
-            dateFormat={_type.dateFormat}
-            selectsStart
-            selected={startDate}
-            startDate={startDate}
-            endDate={endDate}
-            minDate={parseISO(props.rules?.from?.minDate)}
-            maxDate={parseISO(endDate)}
-            locale={ko}
-            showMonthYearPicker={_type.showMonthYearPicker}
-            showYearPicker={_type.showYearPicker}
-            onChange={(date, e) => handleStartChange(date, e, field)}
-            error={error}
-            title={error?.message ? error.message : ''}
-            customInput={
-              <Tooltip
-                open={error === undefined ? false : true}
-                arrow
-                disableFocusListener
-                disableHoverListener
-                disableTouchListener
-                title={error?.message ? error.message : ''}
-              >
-                <input
-                  style={props.style}
-                  mendatory={props.rules?.from?.required}
-                />
-              </Tooltip>
-            }
-          />
-        )}
+      <DatePicker
+        dateFormat={_type.dateFormat}
+        selectsStart
+        selected={startDate}
+        startDate={startDate}
+        endDate={endDate}
+        minDate={parseISO(props.rules?.from?.minDate)}
+        maxDate={parseISO(endDate)}
+        locale={ko}
+        showMonthYearPicker={_type.showMonthYearPicker}
+        showYearPicker={_type.showYearPicker}
+        onChange={(date, e) => handleStartChange(date, e, fromField)}
+        error={fromError}
+        title={fromError?.message ? fromError.message : ''}
+        customInput={
+          <Tooltip
+            open={fromError === undefined ? false : true}
+            arrow
+            disableFocusListener
+            disableHoverListener
+            disableTouchListener
+            title={fromError?.message ? fromError.message : ''}
+          >
+            <input
+              style={props.style}
+              mendatory={props.rules?.from?.required}
+            />
+          </Tooltip>
+        }
       />
       <Box
         sx={{
@@ -99,52 +110,41 @@ const ComDateRangePicker = ({ control, type, ...props }) => {
       >
         ~
       </Box>
-      <Controller
-        key={`${props.name}_to`}
-        name={`${props.name}_to`}
-        control={control}
-        rules={props.rules?.to}
-        defaultValue={props.to}
-        render={({ field, fieldState: { error } }) => (
-          <DatePicker
-            dateFormat={_type.dateFormat}
-            selectsEnd
-            selected={endDate}
-            startDate={startDate}
-            endDate={endDate}
-            minDate={parseISO(startDate)}
-            maxDate={parseISO(props.rules?.to?.maxDate)}
-            locale={ko}
-            showMonthYearPicker={_type.showMonthYearPicker}
-            showYearPicker={_type.showYearPicker}
-            onChange={(date, e) => handleEndChange(date, e, field)}
-            error={error}
-            title={error?.message ? error.message : ''}
-            customInput={
-              <Tooltip
-                open={error === undefined ? false : true}
-                arrow
-                disableFocusListener
-                disableHoverListener
-                disableTouchListener
-                title={error?.message ? error.message : ''}
-              >
-                <input
-                  style={props.style}
-                  mendatory={props.rules?.to?.required}
-                />
-              </Tooltip>
-            }
-          />
-        )}
+      <DatePicker
+        dateFormat={_type.dateFormat}
+        selectsEnd
+        selected={endDate}
+        startDate={startDate}
+        endDate={endDate}
+        minDate={parseISO(startDate)}
+        maxDate={parseISO(props.rules?.to?.maxDate)}
+        locale={ko}
+        showMonthYearPicker={_type.showMonthYearPicker}
+        showYearPicker={_type.showYearPicker}
+        onChange={(date, e) => handleEndChange(date, e, toField)}
+        error={toError}
+        title={toError?.message ? toError.message : ''}
+        customInput={
+          <Tooltip
+            open={toError === undefined ? false : true}
+            arrow
+            disableFocusListener
+            disableHoverListener
+            disableTouchListener
+            title={toError?.message ? toError.message : ''}
+          >
+            <input style={props.style} mendatory={props.rules?.to?.required} />
+          </Tooltip>
+        }
       />
     </div>
   );
 };
 
-// DateRangePicker.propTypes = {
-//   label: PropTypes.string.isRequired,
-//   name: PropTypes.string.isRequired,
-// };
+ComDateRangePicker.propTypes = {
+  name: PropTypes.string.isRequired,
+  control: PropTypes.object.isRequired,
+  rules: PropTypes.object,
+};
 
 export default ComDateRangePicker;
