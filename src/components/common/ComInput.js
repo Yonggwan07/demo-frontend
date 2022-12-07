@@ -1,7 +1,8 @@
 import Tooltip from '@mui/material/Tooltip';
 import { Controller } from 'react-hook-form';
+import { PropTypes } from 'prop-types';
 
-const ComInput = ({ control, props }) => {
+const ComInput = ({ control, ...props }) => {
   return (
     <Controller
       key={props.name}
@@ -21,6 +22,7 @@ const ComInput = ({ control, props }) => {
           <input
             {...field}
             {...props}
+            value={field.value ? field.value : ''}
             mendatory={props.rules?.required}
             error={error}
             autoComplete="false"
@@ -29,6 +31,12 @@ const ComInput = ({ control, props }) => {
       )}
     />
   );
+};
+
+ComInput.propTypes = {
+  name: PropTypes.string.isRequired,
+  control: PropTypes.object.isRequired,
+  rules: PropTypes.object,
 };
 
 export default ComInput;

@@ -1,7 +1,8 @@
 import Tooltip from '@mui/material/Tooltip';
 import { Controller } from 'react-hook-form';
+import { PropTypes } from 'prop-types';
 
-const ComSelect = ({ control, props }) => {
+const ComSelect = ({ control, ...props }) => {
   return (
     <Controller
       key={props.name}
@@ -47,6 +48,14 @@ const ComSelect = ({ control, props }) => {
       }
     />
   );
+};
+
+ComSelect.propTypes = {
+  name: PropTypes.string.isRequired,
+  control: PropTypes.object.isRequired,
+  options: PropTypes.array,
+  nullvalue: PropTypes.string,
+  rules: PropTypes.object,
 };
 
 export default ComSelect;

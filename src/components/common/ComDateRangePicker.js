@@ -5,7 +5,7 @@ import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import { Controller } from 'react-hook-form';
 
-const ComDateRangePicker = ({ control, props, type }) => {
+const ComDateRangePicker = ({ control, type, ...props }) => {
   const [startDate, setStartDate] = useState(
     props.from !== undefined ? parseISO(props.from) : '',
   );

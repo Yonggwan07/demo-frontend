@@ -5,7 +5,7 @@ import Tooltip from '@mui/material/Tooltip';
 import ko from 'date-fns/locale/ko';
 import DatePicker from 'react-datepicker';
 
-const ComDatePicker = ({ control, props }) => {
+const ComDatePicker = ({ control, ...props }) => {
   const [date, setDate] = useState(
     props.date !== undefined ? parseISO(props.date) : '',
   );

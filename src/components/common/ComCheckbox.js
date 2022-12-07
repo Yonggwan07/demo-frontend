@@ -1,6 +1,6 @@
 import { Controller } from 'react-hook-form';
 
-const ComCheckbox = ({ control, props }) => {
+const ComCheckbox = ({ control, ...props }) => {
   const handleChange = (isChecked, field) => {
     field.onChange(isChecked ? '1' : '0');
   };

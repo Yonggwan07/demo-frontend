@@ -22,22 +22,22 @@ const ComSearchArea = ({ onSubmit, props, menuId }) => {
       switch (_props.type) {
         case undefined:
         case 'text':
-          return <ComInput control={control} props={_props} />;
+          return <ComInput control={control} {..._props} />;
         case 'select':
-          return <ComSelect control={control} props={_props} />;
+          return <ComSelect control={control} {..._props} />;
         case 'checkbox':
-          return <ComCheckbox control={control} props={_props} />;
+          return <ComCheckbox control={control} {..._props} />;
         case 'date':
-          return <ComDatePicker control={control} props={_props} />;
+          return <ComDatePicker control={control} {..._props} />;
         case 'dateRange':
-          return <ComDateRangePicker control={control} props={_props} />;
+          return <ComDateRangePicker control={control} {..._props} />;
         case 'monthRange':
           return (
-            <ComDateRangePicker control={control} props={_props} type={'month'} />
+            <ComDateRangePicker control={control} type={'month'} {..._props} />
           );
         case 'yearRange':
           return (
-            <ComDateRangePicker control={control} props={_props} type={'year'} />
+            <ComDateRangePicker control={control} type={'year'} {..._props} />
           );
         default:
           return 'ERROR!';
