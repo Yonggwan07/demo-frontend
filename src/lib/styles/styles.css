@@ -126,11 +126,11 @@ textarea:read-only {
   flex-direction: column;
   height: 100%;
 }
-.verticalWrapper > div {
-  flex: 1;
-}
-.verticalWrapper > div + div {
+.verticalWrapper div + div {
   margin-top: 0.625rem;
+}
+.verticalWrapper > .commonButtons + div {
+  margin-top: 0;
 }
 
 .gridWrapper {
@@ -180,7 +180,8 @@ textarea:read-only {
   border-left: 1px solid #d5dde4;
 }
 .workTable > tbody > tr > td > input {
-  width: calc(100% - 0.375rem);
+  width: 100%;
+  height: 100%;
 }
 .workTable > tbody > tr > td > input[type='checkbox'] {
   width: 1rem;
@@ -189,7 +190,21 @@ textarea:read-only {
 }
 .workTable > tbody > tr > td > select {
   width: 100%;
+  height: 100%;
 }
 .workTable > tbody > tr > td > textarea {
-  width: calc(100% - 0.375rem);
+  width: 100%;
+  height: 100%;
+}
+
+div[disabled]
+{
+  pointer-events: none;
+  opacity: 0.4;
+}
+
+form[disabled]
+{
+  pointer-events: none;
+  opacity: 0.4;
 }

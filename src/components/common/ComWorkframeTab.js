@@ -32,82 +32,74 @@ const TabPanel = memo(function TabPanel(props) {
     });
   }, []);
 
-  const search = useCallback(
-    (menuId, workId, params, useSnackbar = true) => {
-      return new Promise((resolve, reject) => {
-        handleBackdrop(true);
-        transaction({
-          menuId: menuId,
-          workId: workId,
-          params: params,
-        }).then((res) => {
-          if (res.status === 200) {
-            handleBackdrop(false);
-            if (useSnackbar) {
-              openSnackbar(constStr.postSearch(res.data.length));
-            }
-            resolve(jsonKeyUpperCase(res.data));
-          } else {
-            handleBackdrop(false);
-            if (useSnackbar) {
-              openSnackbar(constStr.errorSearch);
-            }
-            console.error(res);
-            return reject();
+  const search = useCallback((menuId, workId, params, useSnackbar = true) => {
+    return new Promise((resolve, reject) => {
+      handleBackdrop(true);
+      transaction({
+        menuId: menuId,
+        workId: workId,
+        params: params,
+      }).then((res) => {
+        if (res.status === 200) {
+          handleBackdrop(false);
+          if (useSnackbar) {
+            openSnackbar(constStr.postSearch(res.data.length));
           }
-        });
+          resolve(jsonKeyUpperCase(res.data));
+        } else {
+          handleBackdrop(false);
+          if (useSnackbar) {
+            openSnackbar(constStr.errorSearch);
+          }
+          console.error(res);
+          return reject();
+        }
       });
-    },
-    [],
-  );
+    });
+  }, []);
 
-  const save = useCallback(
-    (menuId, workId, data) => {
-      return new Promise((resolve, reject) => {
-        handleBackdrop(true);
-        transaction({
-          menuId: menuId,
-          workId: workId,
-          params: data,
-        }).then((res) => {
-          if (res.status === 200) {
-            handleBackdrop(false);
-            openSnackbar(constStr.postSave(res.data.length));
-            resolve(jsonKeyUpperCase(res.data));
-          } else {
-            handleBackdrop(false);
-            openSnackbar(constStr.errorSave, 'error');
-            console.error(res);
-            return reject();
-          }
-        });
+  const save = useCallback((menuId, workId, data) => {
+    return new Promise((resolve, reject) => {
+      handleBackdrop(true);
+      transaction({
+        menuId: menuId,
+        workId: workId,
+        params: data,
+      }).then((res) => {
+        if (res.status === 200) {
+          handleBackdrop(false);
+          openSnackbar(constStr.postSave(res.data.length));
+          resolve(jsonKeyUpperCase(res.data));
+        } else {
+          handleBackdrop(false);
+          openSnackbar(constStr.errorSave, 'error');
+          console.error(res);
+          return reject();
+        }
       });
-    },
-    [],
-  );
+    });
+  }, []);
 
   return (
-    <>
-      <div
-        role="tabpanel"
-        hidden={value !== index}
-        id={`tabpanel-${index}`}
-        aria-labelledby={`tab-${index}`}
-        {...other}
-        style={{
-          position: 'absolute',
-          top: '101px',
-          width: 'calc(100% - 2rem)',
-          height: 'calc(100% - 133px)',
-          zIndex: value === index ? '1' : '9999',
-          padding: '1rem',
-        }}
-      >
-        <Suspense>
-          <Menu getCombo={getCombo} search={search} save={save} />
-        </Suspense>
-      </div>
-    </>
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`tabpanel-${index}`}
+      aria-labelledby={`tab-${index}`}
+      {...other}
+      style={{
+        position: 'absolute',
+        top: '101px',
+        width: '100%',
+        height: 'calc(100% - 3.25rem - 3rem - 1px)',
+        zIndex: value === index ? '1' : '9999',
+        padding: '1rem',
+      }}
+    >
+      <Suspense>
+        <Menu getCombo={getCombo} search={search} save={save} />
+      </Suspense>
+    </div>
   );
 });
 
