@@ -68,7 +68,7 @@ const TabPanel = memo(function TabPanel(props) {
       }).then((res) => {
         if (res.status === 200) {
           handleBackdrop(false);
-          openSnackbar(constStr.postSave(res.data.length));
+          openSnackbar(constStr.postSave(res.data));
           resolve(jsonKeyUpperCase(res.data));
         } else {
           handleBackdrop(false);
