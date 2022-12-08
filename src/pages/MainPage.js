@@ -6,6 +6,7 @@ import React, { useState, useCallback } from 'react';
 import ComWorkframeTab from '../components/common/ComWorkframeTab';
 import ComBackdrop from '../components/common/ComBackdrop';
 import ComSnackbar from '../components/common/ComSnackbar';
+import ComDialog from '../components/common/ComDialog';
 
 const MainPage = () => {
   const [tabs, setTabs] = useState([]);
@@ -67,6 +68,7 @@ const MainPage = () => {
           </div>
           <ComBackdrop />
           <ComSnackbar />
+          <ComDialog />
           <ComWorkframeTab
             tabs={tabs}
             tabValue={tabValue}
