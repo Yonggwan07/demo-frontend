@@ -28,7 +28,7 @@ const ComButtonsBox = styled.div`
   }
 `;
 
-const ComWorkTitleArea = ({ id, title, search, insert, save, remove }) => (
+const ComWorkTitleArea = ({ id, title, search }) => (
   <ComWorkContainer>
     <ComWorkTitle>
       <Title>{title}</Title>
@@ -40,13 +40,6 @@ const ComWorkTitleArea = ({ id, title, search, insert, save, remove }) => (
           조회
         </Button>
       )}
-      {insert && <Button onClick={insert}>신규</Button>}
-      {save && (
-        <Button type="submit" onClick={save}>
-          저장
-        </Button>
-      )}
-      {remove && <Button onClick={remove}>삭제</Button>}
     </ComButtonsBox>
   </ComWorkContainer>
 );

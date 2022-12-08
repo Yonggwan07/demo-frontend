@@ -1,6 +1,6 @@
-import { useCallback, useState, useEffect, memo } from 'react';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useCallback, useEffect, useState } from 'react';
 
 let handleBackdropFn;
 
@@ -29,4 +29,4 @@ export const handleBackdropExported = ( isOpen ) => {
   handleBackdropFn(isOpen);
 };
 
-export default memo(ComBackdrop);
+export default ComBackdrop;

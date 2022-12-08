@@ -11,7 +11,7 @@ const ComDatagrid = ({ ...props }) => {
   return (
     <div className="gridWrapper">
       <DataGrid
-        rows={props.rows === null ? [] : props.rows}
+        rows={props.rows}
         components={{
           Toolbar: () => (
             <GridToolbarContainer>
