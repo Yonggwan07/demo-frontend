@@ -3,6 +3,8 @@ export const constStr = {
   errorSearch: '조회에 실패했습니다.',
   postSave: (count) => `${count}건이 저장되었습니다.`,
   errorSave: '저장에 실패했습니다.',
+  postDelete: (count) => `${count}건이 삭제되었습니다.`,
+  errorDelete: '삭제에 실패했습니다.',
   required: '필수 입력',
   maxLength: (length) => ({
     value: length,
