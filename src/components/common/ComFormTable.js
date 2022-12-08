@@ -4,6 +4,7 @@ const ComFormTable = ({
   children,
   direction = 'v',
   disabled,
+  isDirty,
   onSubmit,
   commonButtons,
 }) => {
@@ -13,7 +14,7 @@ const ComFormTable = ({
       onSubmit={onSubmit}
       disabled={disabled}
     >
-      <ComCommonButtons {...commonButtons} />
+      <ComCommonButtons isDirty={isDirty} {...commonButtons} />
       {children}
     </form>
   );

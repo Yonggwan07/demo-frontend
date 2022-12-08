@@ -2,6 +2,7 @@ import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import { lazy, memo, Suspense, useCallback, useMemo } from 'react';
+import { GridRowState } from '../../hooks/useGrid';
 import handleBackdrop from '../../lib/api/backdrop';
 import openSnackbar from '../../lib/api/snackbar';
 import { transaction } from '../../lib/api/transaction';
@@ -27,6 +28,9 @@ const TabPanel = memo(function TabPanel(props) {
       }).then((res) => {
         if (res.status === 200) {
           resolve(res.data);
+        } else {
+          console.error(res);
+          return reject();
         }
       });
     });
@@ -49,7 +53,7 @@ const TabPanel = memo(function TabPanel(props) {
         } else {
           handleBackdrop(false);
           if (useSnackbar) {
-            openSnackbar(constStr.errorSearch);
+            openSnackbar(constStr.errorSearch, 'error');
           }
           console.error(res);
           return reject();
@@ -80,6 +84,29 @@ const TabPanel = memo(function TabPanel(props) {
     });
   }, []);
 
+  const remove = useCallback((menuId, workId, data) => {
+    return new Promise((resolve, reject) => {
+      handleBackdrop(true);
+      const _data = data.map((item) => (item.state = GridRowState.deleted));
+      transaction({
+        menuId: menuId,
+        workId: workId,
+        params: _data,
+      }).then((res) => {
+        if (res.status === 200) {
+          handleBackdrop(false);
+          openSnackbar(constStr.postDelete(res.data));
+          resolve(jsonKeyUpperCase(res.data));
+        } else {
+          handleBackdrop(false);
+          openSnackbar(constStr.errorDelete, 'error');
+          console.error(res);
+          return reject();
+        }
+      });
+    });
+  }, []);
+
   return (
     <div
       role="tabpanel"
@@ -97,7 +124,7 @@ const TabPanel = memo(function TabPanel(props) {
       }}
     >
       <Suspense>
-        <Menu getCombo={getCombo} search={search} save={save} />
+        <Menu getCombo={getCombo} search={search} save={save} remove={remove} />
       </Suspense>
     </div>
   );

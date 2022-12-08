@@ -11,8 +11,7 @@ const ComCommonButtons = ({
   insert,
   save,
   remove,
-  disabled,
-  form,
+  isDirty,
   ...props
 }) => {
   return (
@@ -27,6 +26,7 @@ const ComCommonButtons = ({
           variant="text"
           color="warning"
           startIcon={<CancelIcon />}
+          disabled={!isDirty}
           {...cancel}
         >
           취소
@@ -60,6 +60,7 @@ const ComCommonButtons = ({
           variant="text"
           color="info"
           startIcon={<SaveIcon />}
+          disabled={!isDirty}
           {...save}
         >
           저장
@@ -71,6 +72,7 @@ const ComCommonButtons = ({
           variant="text"
           color="error"
           startIcon={<DeleteIcon />}
+          disabled={isDirty}
           {...remove}
         >
           삭제
