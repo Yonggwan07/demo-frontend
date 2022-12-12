@@ -9,7 +9,7 @@ const ComInput = ({ control, ...props }) => {
   } = useController({
     name: props.name,
     control,
-    defaultValue: '',
+    defaultValue: props.initialvalue ? props.initialvalue : '',
     rules: props.rules,
   });
 
@@ -25,7 +25,6 @@ const ComInput = ({ control, ...props }) => {
       <input
         {...field}
         {...props}
-        value={field.value ? field.value : ''}
         mendatory={props.rules?.required}
         error={error}
         autoComplete="false"

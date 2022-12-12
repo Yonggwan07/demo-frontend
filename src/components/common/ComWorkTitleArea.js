@@ -1,4 +1,3 @@
-import Button from './Button';
 import styled from 'styled-components';
 import { PropTypes } from 'prop-types';
 import { memo } from 'react';
@@ -21,26 +20,12 @@ const Id = styled.label`
   color: #888888;
 `;
 
-const ComButtonsBox = styled.div`
-  margin-left: auto;
-  button + button {
-    margin-left: 0.2rem;
-  }
-`;
-
-const ComWorkTitleArea = ({ id, title, search }) => (
+const ComWorkTitleArea = ({ id, title }) => (
   <ComWorkContainer>
     <ComWorkTitle>
       <Title>{title}</Title>
       <Id>ID: {id.toUpperCase()}</Id>
     </ComWorkTitle>
-    <ComButtonsBox>
-      {search && (
-        <Button type="submit" form={`searchArea_${id}`}>
-          조회
-        </Button>
-      )}
-    </ComButtonsBox>
   </ComWorkContainer>
 );
 

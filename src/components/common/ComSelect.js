@@ -9,7 +9,7 @@ const ComSelect = ({ control, ...props }) => {
   } = useController({
     name: props.name,
     control,
-    defaultValue: !props.defaultValue ? '' : props.defaultValue,
+    defaultValue: props.initialvalue ? props.initialvalue : '',
     rules: props.rules,
   });
 
@@ -26,17 +26,22 @@ const ComSelect = ({ control, ...props }) => {
         <select
           {...field}
           {...props}
-          value={field.value === null ? '' : field.value}
+          onChange={(e) => {
+            field.onChange(e);
+            if (props.onChange) {
+              props.onChange(e);
+            }
+          }}
           mendatory={props.rules?.required}
           error={error}
         >
           {props.nullvalue === 'all' && (
-            <option key={'nullvalue'} value=''>
+            <option key={'nullvalue'} value="">
               - 전체 -
             </option>
           )}
           {props.nullvalue === 'select' && (
-            <option key={'nullvalue'} value=''>
+            <option key={'nullvalue'} value="">
               - 선택 -
             </option>
           )}

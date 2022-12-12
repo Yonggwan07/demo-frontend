@@ -9,7 +9,7 @@ const ComTextarea = ({ control, ...props }) => {
   } = useController({
     name: props.name,
     control,
-    defaultValue: '',
+    defaultValue: props.initialvalue ? props.initialvalue : '',
     rules: props.rules,
   });
 
