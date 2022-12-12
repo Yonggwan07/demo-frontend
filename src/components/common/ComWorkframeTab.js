@@ -49,6 +49,24 @@ const TabPanel = memo(function TabPanel(props) {
           if (useSnackbar) {
             openSnackbar(constStr.postSearch(res.data.length));
           }
+
+          // 값이 null인 항목 빈 문자열로 변경
+          if (res.data.length !== undefined) {
+            res.data.forEach((data) => {
+              Object.keys(data).forEach((key) => {
+                if (data[key] == null) {
+                  data[key] = '';
+                }
+              });
+            });
+          } else {
+            Object.keys(res.data).forEach((key) => {
+              if (res.data[key] == null) {
+                res.data[key] = '';
+              }
+            });
+          }
+
           resolve(jsonKeyUpperCase(res.data));
         } else {
           handleBackdrop(false);
