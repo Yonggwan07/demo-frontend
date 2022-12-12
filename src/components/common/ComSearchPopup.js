@@ -8,14 +8,14 @@ import Tooltip from '@mui/material/Tooltip';
 import { DataGrid } from '@mui/x-data-grid';
 import { PropTypes } from 'prop-types';
 import { useState } from 'react';
-import { useController } from 'react-hook-form';
+import { useController, useWatch } from 'react-hook-form';
 import ComSearchArea from './ComSearchArea';
 
 const OBJECT_REG = /<([^>]+?)\/>/g;
 const FIELD_REX = /[^\s]+/g;
 const PROP_REX = `\\s*=\\s*"(.+?)"`;
 
-const ComSearchPopup = ({ control, options, search, ...props }) => {
+const ComSearchPopup = ({ control, popupid, search, ...props }) => {
   const {
     field: codeField,
     fieldState: { error },
@@ -31,6 +31,11 @@ const ComSearchPopup = ({ control, options, search, ...props }) => {
     control,
     defaultValue: '',
     rules: props.rules,
+  });
+
+  const disabled = useWatch({
+    control,
+    name: `${props.code.substr(0, 4)}_CODE`,
   });
 
   const [open, setOpen] = useState(false);
@@ -64,9 +69,7 @@ const ComSearchPopup = ({ control, options, search, ...props }) => {
           'px'
         : '';
 
-      newSearchItems.initialvalue = options.params[newSearchItems.name]
-        ? options.params[newSearchItems.name]
-        : '';
+      newSearchItems.initialvalue = nameField.value;
 
       setSearchItems([...searchItems, newSearchItems]);
     }
@@ -108,6 +111,23 @@ const ComSearchPopup = ({ control, options, search, ...props }) => {
     }));
   };
 
+  const handleClose = () => {
+    setSearchItems([]);
+    setGrid((prevState) => ({
+      ...prevState,
+      rows: [],
+      columns: [],
+      columnVisibilityModel: null,
+    }));
+    setOpen(false);
+  };
+
+  const handleRowDoubleClick = ({ row }) => {
+    codeField.onChange(row.COMM_CODE);
+    nameField.onChange(row.COMM_CDNM);
+    handleClose();
+  };
+
   const handleSearch = (data) => {
     console.log(data);
     search(
@@ -140,36 +160,19 @@ const ComSearchPopup = ({ control, options, search, ...props }) => {
     search(
       'comCommonPopup',
       'getCommonPopupInfo',
-      { POPP_CODE: options.id },
+      { POPP_CODE: popupid },
       false,
     ).then((res) => {
       setTitle(res.POPP_NAME);
       parseSearchItems(res.SECN_SYNX);
       parseColumns(res.SERS_GRDC);
-      handleSearch(options.params);
+      handleSearch({ COMM_CDNM: nameField.value });
     });
-  };
-
-  const handleClose = () => {
-    setSearchItems([]);
-    setGrid((prevState) => ({
-      ...prevState,
-      rows: [],
-      columns: [],
-      columnVisibilityModel: null,
-    }));
-    setOpen(false);
-  };
-
-  const handleRowDoubleClick = ({ row }) => {
-    codeField.onChange(row.COMM_CODE);
-    nameField.onChange(row.COMM_CDNM);
-    handleClose();
   };
 
   return (
     <div
-      disabled={props.disabled}
+      disabled={disabled !== '01'}
       style={{ display: 'flex', alignItems: 'center', height: '100%' }}
     >
       <Dialog fullWidth maxWidth="md" onClose={handleClose} open={open}>
@@ -247,7 +250,7 @@ ComSearchPopup.propTypes = {
   control: PropTypes.object.isRequired,
   code: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  options: PropTypes.object.isRequired,
+  popupid: PropTypes.string.isRequired,
   search: PropTypes.func.isRequired,
 };
 
