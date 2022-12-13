@@ -1,22 +1,28 @@
-import LoginPage from './LoginPage';
-import { useSelector, useDispatch } from 'react-redux';
-//import Button from '../components/common/Button';
-import { logout } from '../modules/user';
-import React, { useState, useCallback } from 'react';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import ComWorkframeTab from '../components/common/ComWorkframeTab';
+import IconButton from '@mui/material/IconButton';
+import { useTheme } from '@mui/material/styles';
+import { useCallback, useContext, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import ComBackdrop from '../components/common/ComBackdrop';
-import ComSnackbar from '../components/common/ComSnackbar';
 import ComDialog from '../components/common/ComDialog';
+import ComSnackbar from '../components/common/ComSnackbar';
+import ComWorkframeTab from '../components/common/ComWorkframeTab';
+import { logout } from '../modules/user';
+import LoginPage from './LoginPage';
 
-const MainPage = () => {
+const MainPage = ({ColorModeContext }) => {
   const [tabs, setTabs] = useState([]);
   const [tabValue, setTabValue] = useState(0);
   const { user } = useSelector(({ userInfo }) => ({
     user: userInfo.userInfo,
   }));
+
+  const theme = useTheme();
+  const colorMode = useContext(ColorModeContext);
 
   const dispatch = useDispatch();
   const onLogout = useCallback(() => {
@@ -47,6 +53,17 @@ const MainPage = () => {
         <Box>
           <Box>
             This is mainpage. <b>ID: {user.userIdxx}</b>
+            <IconButton
+              sx={{ ml: 1 }}
+              onClick={colorMode.toggleColorMode}
+              color="inherit"
+            >
+              {theme.palette.mode === 'dark' ? (
+                <Brightness7Icon />
+              ) : (
+                <Brightness4Icon />
+              )}
+            </IconButton>
             <Button type="submit" variant="outlined" onClick={onLogout}>
               Logout
             </Button>
