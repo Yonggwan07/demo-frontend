@@ -20,10 +20,10 @@ input:hover {
   border-color: #5585e5;
   background: #f1f8ff;
 }
-input[mendatory] {
+input[required] {
   background: #ffe9d6;
 }
-input[mendatory]:hover {
+input[required]:hover {
   border-color: #ef684a;
 }
 input:read-only {
@@ -40,10 +40,10 @@ select:hover {
   border-color: #5585e5;
   background: #f1f8ff;
 }
-select[mendatory] {
+select[required] {
   background: #ffe9d6;
 }
-select[mendatory]:hover {
+select[required]:hover {
   border-color: #ef684a;
 }
 select[readOnly] {
