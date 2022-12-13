@@ -2,12 +2,12 @@ import Box from '@mui/material/Box';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import { lazy, memo, Suspense, useCallback, useMemo } from 'react';
-import { GridRowState } from '../../hooks/useGrid';
 import handleBackdrop from '../../lib/api/backdrop';
 import openSnackbar from '../../lib/api/snackbar';
 import { transaction } from '../../lib/api/transaction';
 import { constStr } from '../../utils/constStr';
 import { jsonKeyUpperCase, nullToEmptyString } from '../../utils/dataUtil';
+import { GridRowState } from '../../utils/gridUtil';
 
 const TabPanel = memo(function TabPanel(props) {
   const { children, value, index, menuId, ...other } = props;
