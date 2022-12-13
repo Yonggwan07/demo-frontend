@@ -40,3 +40,11 @@ export const jsonKeyUpperCase = (obj) => {
     );
   }
 };
+
+export const nullToEmptyString = (obj) => {
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] == null) {
+      obj[key] = '';
+    }
+  });
+};

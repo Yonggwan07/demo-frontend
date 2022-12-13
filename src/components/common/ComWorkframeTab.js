@@ -7,7 +7,7 @@ import handleBackdrop from '../../lib/api/backdrop';
 import openSnackbar from '../../lib/api/snackbar';
 import { transaction } from '../../lib/api/transaction';
 import { constStr } from '../../utils/constStr';
-import { jsonKeyUpperCase } from '../../utils/dataUtil';
+import { jsonKeyUpperCase, nullToEmptyString } from '../../utils/dataUtil';
 
 const TabPanel = memo(function TabPanel(props) {
   const { children, value, index, menuId, ...other } = props;
@@ -53,18 +53,10 @@ const TabPanel = memo(function TabPanel(props) {
           // 값이 null인 항목 빈 문자열로 변경
           if (res.data.length !== undefined) {
             res.data.forEach((data) => {
-              Object.keys(data).forEach((key) => {
-                if (data[key] == null) {
-                  data[key] = '';
-                }
-              });
+              nullToEmptyString(data);
             });
           } else {
-            Object.keys(res.data).forEach((key) => {
-              if (res.data[key] == null) {
-                res.data[key] = '';
-              }
-            });
+            nullToEmptyString(res.data);
           }
 
           resolve(jsonKeyUpperCase(res.data));
