@@ -1,5 +1,4 @@
-import { Box, Grid, Button } from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
+import { Typography, Grid, Button, Paper } from '@mui/material';
 import ko from 'date-fns/locale/ko';
 import { PropTypes } from 'prop-types';
 import { memo, useCallback } from 'react';
@@ -56,49 +55,46 @@ const ComSearchArea = ({ onSubmit, searchItems }) => {
   );
 
   return (
-    <Box
+    <Paper
       sx={{
         width: '100%',
-        bgcolor: 'white',
-        border: 1,
-        borderColor: '#d5dde0',
         mb: 0.625,
         p: 1.5,
       }}
+      elevation={6}
     >
       {searchItems && searchItems.length > 0 && (
         <form
           onSubmit={handleSubmit(onSubmit)}
-          style={{ display: 'flex', argin: '0.75rem' }}
+          style={{ display: 'flex' }}
           noValidate
         >
           <Grid container spacing={1.5}>
             {Array.isArray(searchItems) &&
               searchItems.map((searchItem) => (
                 <Grid key={searchItem.name} item>
-                  <label
+                  <Typography
                     className="compLabel"
                     key={searchItem.name}
-                    required={searchItem.rules?.required}
+                    required={searchItem.required}
                   >
                     {searchItem.label}
                     {renderComp(searchItem)}
-                  </label>
+                  </Typography>
                 </Grid>
               ))}
           </Grid>
           <Button
             type="submit"
             size="small"
-            variant="text"
-            startIcon={<SearchIcon />}
-            style={{ marginLeft: 'auto' }}
+            variant="contained"
+            sx={{ ml: 'auto' }}
           >
             조회
           </Button>
         </form>
       )}
-    </Box>
+    </Paper>
   );
 };
 

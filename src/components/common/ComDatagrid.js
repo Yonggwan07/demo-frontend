@@ -10,22 +10,20 @@ import ComCommonButtons from './ComCommonButtons';
 
 const ComDatagrid = ({ ...props }) => {
   return (
-    <div className="gridWrapper">
-      <DataGrid
-        {...props}
-        components={{
-          Toolbar: () => (
-            <GridToolbarContainer>
-              <GridToolbarColumnsButton />
-              <GridToolbarFilterButton />
-              <GridToolbarExport />
-              <ComCommonButtons {...props.commonButtons} />
-            </GridToolbarContainer>
-          ),
-        }}
-        experimentalFeatures={{ newEditingApi: true }}
-      />
-    </div>
+    <DataGrid
+      {...props}
+      components={{
+        Toolbar: () => (
+          <GridToolbarContainer>
+            <GridToolbarColumnsButton />
+            <GridToolbarFilterButton />
+            <GridToolbarExport />
+            <ComCommonButtons {...props.commonButtons} />
+          </GridToolbarContainer>
+        ),
+      }}
+      experimentalFeatures={{ newEditingApi: true }}
+    />
   );
 };
 

@@ -1,8 +1,11 @@
 import LoginPage from './LoginPage';
 import { useSelector, useDispatch } from 'react-redux';
-import Button from '../components/common/Button';
+//import Button from '../components/common/Button';
 import { logout } from '../modules/user';
 import React, { useState, useCallback } from 'react';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
 import ComWorkframeTab from '../components/common/ComWorkframeTab';
 import ComBackdrop from '../components/common/ComBackdrop';
 import ComSnackbar from '../components/common/ComSnackbar';
@@ -39,15 +42,15 @@ const MainPage = () => {
   );
 
   return (
-    <>
+    <Box>
       {user ? (
-        <div className="mainFrame">
-          <div className="header">
+        <Box>
+          <Box>
             This is mainpage. <b>ID: {user.userIdxx}</b>
-            <Button type="submit" onClick={onLogout}>
+            <Button type="submit" variant="outlined" onClick={onLogout}>
               Logout
             </Button>
-            <div>
+            <ButtonGroup variant="contained">
               <Button
                 type="button"
                 name="currMenu"
@@ -64,8 +67,8 @@ const MainPage = () => {
               >
                 세부코드관리
               </Button>
-            </div>
-          </div>
+            </ButtonGroup>
+          </Box>
           <ComBackdrop />
           <ComSnackbar />
           <ComDialog />
@@ -74,11 +77,11 @@ const MainPage = () => {
             tabValue={tabValue}
             setTabValue={setTabValue}
           />
-        </div>
+        </Box>
       ) : (
         <LoginPage />
       )}
-    </>
+    </Box>
   );
 };
 

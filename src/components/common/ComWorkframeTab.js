@@ -118,25 +118,24 @@ const TabPanel = memo(function TabPanel(props) {
   }, []);
 
   return (
-    <div
+    <Box
       role="tabpanel"
       hidden={value !== index}
       id={`tabpanel-${index}`}
       aria-labelledby={`tab-${index}`}
       {...other}
-      style={{
+      sx={{
         position: 'absolute',
-        top: '101px',
         width: '100%',
         height: 'calc(100% - 3.25rem - 3rem - 1px)',
         zIndex: value === index ? '1' : '9999',
-        padding: '1rem',
+        padding: '0 1rem',
       }}
     >
       <Suspense>
         <Menu getCombo={getCombo} search={search} save={save} remove={remove} />
       </Suspense>
-    </div>
+    </Box>
   );
 });
 
@@ -156,7 +155,7 @@ const ComWorkframeTab = ({ tabs, tabValue, setTabValue }) => {
   );
 
   return (
-    <div style={{ height: 'calc(100% - 3.25rem)' }}>
+    <>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={tabValue} onChange={handleChange}>
           {tabs.map(({ index, label, menuId }) => (
@@ -167,7 +166,7 @@ const ComWorkframeTab = ({ tabs, tabValue, setTabValue }) => {
       {tabs.map(({ index, menuId }) => (
         <TabPanel key={menuId} value={tabValue} index={index} menuId={menuId} />
       ))}
-    </div>
+    </>
   );
 };
 

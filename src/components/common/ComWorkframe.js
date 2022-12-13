@@ -1,13 +1,10 @@
 import { memo } from 'react';
-import styled from 'styled-components';
+import Box from '@mui/material/Box';
 
-const WorkframeBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  /* margin: 1rem; */
-  height: 100%; // header height
-`;
-
-const ComWorkframe = ({ children }) => <WorkframeBox>{children}</WorkframeBox>;
+const ComWorkframe = ({ children }) => (
+  <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+    {children}
+  </Box>
+);
 
 export default memo(ComWorkframe);

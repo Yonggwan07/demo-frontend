@@ -1,10 +1,11 @@
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import ComCompArea from '../../components/common/ComCompArea';
+import ComDatagrid from '../../components/common/ComDatagrid';
 import ComSearchArea from '../../components/common/ComSearchArea';
 import ComWorkframe from '../../components/common/ComWorkframe';
 import ComWorkTitleArea from '../../components/common/ComWorkTitleArea';
-import useGrid from '../../hooks/useGrid';
+import { gridInit } from '../../utils/gridUtil';
 
 const MENU_ID = 'tmma0012';
 const codeOptions = [
@@ -50,50 +51,40 @@ const dColumnInfo = [
 
 const TMMA0012 = ({ getCombo, search }) => {
   const [comCombo, setComCombo] = useState({});
-  const {
-    rows: mRows,
-    columns: mColumns,
-    init: mInit,
-    setRowData: mSetRowData,
-    onGridRowClickHandler: mOnGridRowClickHandler,
-  } = useGrid();
-  const {
-    rows: dRows,
-    columns: dColumns,
-    init: dInit,
-    setRowData: dSetRowData,
-  } = useGrid();
+  const [masterRows, setMasterRows] = useState([]);
+  const [masterColumns, setMasterColumns] = useState([]);
+  const [detailRows, setDetailRows] = useState([]);
+  const [detailColumns, setDetailColumns] = useState([]);
 
   useEffect(() => {
     getCombo(codeOptions).then((res) => {
       setComCombo(res);
-      mInit(mColumnInfo);
-      dInit(dColumnInfo);
+      setMasterColumns(gridInit(mColumnInfo, res));
+      setDetailColumns(gridInit(dColumnInfo, res));
     });
-  }, [dInit, getCombo, mInit]);
+  }, [getCombo]);
 
   /* 조회 버튼 클릭 */
   const handleSearch = useCallback(
     (data) => {
       search(MENU_ID, 'search00', data)
         .then((res) => {
-          mSetRowData(res);
+          setMasterRows(res);
         })
         .catch(() => {
           console.log('transaction error.');
         });
     },
-    [search, mSetRowData],
+    [search, setMasterRows],
   );
 
   const handleRowClick = useCallback(
     (e) => {
-      mOnGridRowClickHandler(e);
       search(MENU_ID, 'search01', e.row, false).then((res) => {
-        dSetRowData(res);
+        setDetailRows(res);
       });
     },
-    [dSetRowData, mOnGridRowClickHandler, search],
+    [search],
   );
 
   const searchItems = useMemo(
@@ -121,20 +112,16 @@ const TMMA0012 = ({ getCombo, search }) => {
 
   return (
     <ComWorkframe>
-      <ComWorkTitleArea id={MENU_ID} title="세부코드관리" search />
+      <ComWorkTitleArea id={MENU_ID} title="세부코드관리" />
       <ComSearchArea
         onSubmit={handleSearch}
-        props={searchItems}
-        menuId={MENU_ID}
+        searchItems={searchItems}
       />
       <ComCompArea>
         <div className="gridWrapper" style={{ flex: 0.3 }}>
-          <DataGrid
-            columns={mColumns}
-            rows={mRows}
-            components={{
-              Toolbar: GridToolbar,
-            }}
+          <ComDatagrid
+            columns={masterColumns}
+            rows={masterRows}
             onRowClick={handleRowClick}
             initialState={{
               columns: {
@@ -155,12 +142,9 @@ const TMMA0012 = ({ getCombo, search }) => {
           />
         </div>
         <div className="gridWrapper">
-          <DataGrid
-            columns={dColumns}
-            rows={dRows}
-            components={{
-              Toolbar: GridToolbar,
-            }}
+          <ComDatagrid
+            columns={detailColumns}
+            rows={detailRows}
             initialState={{
               columns: {
                 columnVisibilityModel: {

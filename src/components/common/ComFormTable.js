@@ -14,7 +14,7 @@ const ComFormTable = ({
 
   return (
     <form
-      className={direction === 'v' ? 'verticalWrapper' : 'horizontalWrapper'}
+      className={direction === 'v' ? 'wrapperVertical' : 'wrapperHorizontal'}
       onSubmit={onSubmit}
       disabled={!id ? true : disabled ? disabled : false}
       noValidate

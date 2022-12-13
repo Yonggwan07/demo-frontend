@@ -1,13 +1,26 @@
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow
+} from '@mui/material';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import Checkbox from '../../components/common/Checkbox';
+import { useForm, useWatch } from 'react-hook-form';
+import ComCheckbox from '../../components/common/ComCheckbox';
 import ComCompArea from '../../components/common/ComCompArea';
+import ComDatagrid from '../../components/common/ComDatagrid';
+import ComFormTable from '../../components/common/ComFormTable';
+import ComInput from '../../components/common/ComInput';
 import ComSearchArea from '../../components/common/ComSearchArea';
+import ComSearchPopup from '../../components/common/ComSearchPopup';
+import ComSelect from '../../components/common/ComSelect';
 import ComWorkframe from '../../components/common/ComWorkframe';
 import ComWorkTitleArea from '../../components/common/ComWorkTitleArea';
-import Select from '../../components/common/Select';
-import useGrid from '../../hooks/useGrid';
+import ComWrapperVertical from '../../components/common/ComWrapperVertical';
+import handleDialog from '../../lib/api/dialog';
+import { gridInit, GridRowState } from '../../utils/gridUtil';
 
 const MENU_ID = 'tmma0010';
 const codeOptions = [
@@ -62,20 +75,27 @@ const columnInfo = [
   { field: 'REMK_100X', headerName: '비고' },
 ];
 
-const TMMA0010 = ({ getCombo, search, save }) => {
+const ConditionalSearchPopup = ({ ...props }) => {
+  const codeValue = useWatch({
+    control: props.control,
+    name: `${props.code.substr(0, 3)}T_CODE`,
+  });
+
+  return (
+    <ComSearchPopup
+      {...props}
+      disabled={codeValue !== '01'}
+      required={codeValue === '01'}
+    />
+  );
+};
+
+const TMMA0010 = ({ getCombo, search, save, remove }) => {
   const [comCombo, setComCombo] = useState({});
-  const tableForm = useForm(); // 우측 테이블 form
-  const {
-    rows,
-    changedRows,
-    columns,
-    init,
-    setGridData,
-    addNewRow,
-    onGridRowClickHandler,
-    onChangeFormValue,
-    isInserted,
-  } = useGrid(tableForm.setValue, tableForm.watch);
+  const { handleSubmit, reset, getValues, control } = useForm(); // 우측 테이블 form
+  const [rows, setRows] = useState([]);
+  const [columns, setColumns] = useState([]);
+  const [selectionModel, setSelectionModel] = useState([]);
 
   useEffect(() => {
     console.log('render');
@@ -85,9 +105,9 @@ const TMMA0010 = ({ getCombo, search, save }) => {
   useEffect(() => {
     getCombo(codeOptions).then((res) => {
       setComCombo(res);
-      init(columnInfo, res);
+      setColumns(gridInit(columnInfo, res));
     });
-  }, [getCombo, init]);
+  }, [getCombo]);
 
   /* 조회 버튼 클릭 */
   const handleSearch = useCallback(
@@ -95,26 +115,47 @@ const TMMA0010 = ({ getCombo, search, save }) => {
       console.log(data);
       search(MENU_ID, 'search00', data)
         .then((res) => {
-          setGridData(res);
+          setRows(res);
+          setSelectionModel(['1']);
+          reset(res[0]);
+          console.log(res[0]);
         })
         .catch(() => {
-          setGridData([]);
+          setRows([]);
         });
     },
-    [search, setGridData],
+    [reset, search, setRows],
   );
 
   /* 입력 버튼 클릭 */
-  const onInsert = useCallback(() => {
-    console.log('Insert');
-    addNewRow();
-  }, [addNewRow]);
+  const onInsert = () => {
+    const newRow = {
+      id: parseInt(rows[rows.length - 1].id) + 1,
+      state: GridRowState.inserted,
+    };
+    setRows([...rows, newRow]);
+  };
 
   /* 저장 버튼 클릭 */
-  const onSave = useCallback(() => {
-    console.log(changedRows.current);
-    //save(MENU_ID, 'save00', changedRows.current);
-  }, [changedRows]);
+  const onSave = (data) => {
+    console.log('--- Save ---');
+    console.log(data);
+    // save(MENU_ID, 'save00', [data]).then(() => {
+    //   setGridData(rows.map((row) => (row.id === data.id ? data : row)));
+    //   reset({}, { keepValues: true });
+    // });
+  };
+
+  /* 삭제 버튼 클릭 */
+  const onRemove = () => {
+    const data = getValues();
+    console.log('--- Remove ---');
+    console.log(data);
+    //remove(MENU_ID, 'save00', [data]).then(() => {
+    //  setGridData(rows.filter((row) => row.id !== data.id));
+    //  reset({}, { keepValues: true });
+    //});
+  };
 
   // 조회조건 설정
   const searchItems = useMemo(
@@ -124,11 +165,10 @@ const TMMA0010 = ({ getCombo, search, save }) => {
         label: '공통코드/명',
         name: 'COMM_CDNM',
         style: { width: '10rem' },
-        //rules: {
-        //  required: constStr.required,
-        //  maxLength: constStr.maxLength(9),
-        //  minLength: constStr.minLength(4),
-        //},
+        //initialvalue: 'ACCT'
+        //required: true,
+        //maxLength: 9,
+        //minLength: 4
       },
       {
         label: '시스템코드',
@@ -139,7 +179,7 @@ const TMMA0010 = ({ getCombo, search, save }) => {
         style: { width: '10rem' },
         // readOnly: true,
         // disabled: true
-        // defaultValue: 'TMM',
+        // initialvalue: 'TMM',
         // rules: {
         //   required: constStr.required,
         // },
@@ -148,8 +188,8 @@ const TMMA0010 = ({ getCombo, search, save }) => {
       //   label: '조회일자',
       //   name: 'dateTest',
       //   type: 'dateRange',
-      //   from: getFirstDateOfMonth(),
-      //   to: getToday(),
+      //   from: '2022-12-01',
+      //   to: '2022-12-10',
       //   style: { width: '6rem', textAlign: 'center' },
       //   rules: {
       //     from: {
@@ -166,13 +206,13 @@ const TMMA0010 = ({ getCombo, search, save }) => {
       //   name: 'chkTest',
       //   type: 'checkbox',
       //   defaultChecked: true,
-      //   disabled: true
+      //   disabled: true,
       // },
       // {
       //   label: '일자',
       //   name: 'dateSingle',
       //   type: 'date',
-      //   currentDate: getToday(),
+      //   currentDate: '2022-12-10',
       //   style: { width: '6rem', textAlign: 'center' },
       //   rules: {
       //     required: constStr.required,
@@ -185,219 +225,214 @@ const TMMA0010 = ({ getCombo, search, save }) => {
 
   return (
     <ComWorkframe>
-      <ComWorkTitleArea
-        id={MENU_ID}
-        title="공통코드관리"
-        search
-        insert={onInsert}
-        save={onSave}
-      />
-      <ComSearchArea
-        onSubmit={handleSearch}
-        props={searchItems}
-        menuId={MENU_ID}
-      />
+      <ComWorkTitleArea id={MENU_ID} title="공통코드관리" />
+      <ComSearchArea onSubmit={handleSearch} searchItems={searchItems} />
       <ComCompArea>
-        <div className="gridWrapper">
-          <DataGrid
-            columns={columns}
-            rows={rows == null ? [] : rows}
-            components={{
-              Toolbar: GridToolbar,
-            }}
-            onRowClick={onGridRowClickHandler}
-            //editMode="row"
-            experimentalFeatures={{ newEditingApi: true }}
-            initialState={{
-              columns: {
-                columnVisibilityModel: {
-                  CDGB_CODE: false,
-                  COCD_LNTH: false,
-                  ISET_YSNO: false,
-                  RE1F_DESC: false,
-                  RE1T_CODE: false,
-                  RE2F_DESC: false,
-                  RE2T_CODE: false,
-                  RE3F_DESC: false,
-                  RE3T_CODE: false,
-                  RE4F_DESC: false,
-                  RE4T_CODE: false,
-                  RE5F_DESC: false,
-                  RE5T_CODE: false,
-                  RE6F_DESC: false,
-                  RE6T_CODE: false,
-                  RE7F_DESC: false,
-                  RE7T_CODE: false,
-                  RE8F_DESC: false,
-                  RE8T_CODE: false,
-                  RE9F_DESC: false,
-                  RE9T_CODE: false,
-                  R10F_DESC: false,
-                  R10T_CODE: false,
-                  REMK_100X: false,
+        <ComDatagrid
+          rows={rows}
+          columns={columns}
+          commonButtons={{ insert: { onClick: onInsert } }}
+          disableMultipleSelection
+          initialState={{
+            columns: {
+              columnVisibilityModel: {
+                CDGB_CODE: false,
+                COCD_LNTH: false,
+                ISET_YSNO: false,
+                RE1F_DESC: false,
+                RE1T_CODE: false,
+                RE2F_DESC: false,
+                RE2T_CODE: false,
+                RE3F_DESC: false,
+                RE3T_CODE: false,
+                RE4F_DESC: false,
+                RE4T_CODE: false,
+                RE5F_DESC: false,
+                RE5T_CODE: false,
+                RE6F_DESC: false,
+                RE6T_CODE: false,
+                RE7F_DESC: false,
+                RE7T_CODE: false,
+                RE8F_DESC: false,
+                RE8T_CODE: false,
+                RE9F_DESC: false,
+                RE9T_CODE: false,
+                R10F_DESC: false,
+                R10T_CODE: false,
+                REMK_100X: false,
+              },
+            },
+          }}
+          onCellKeyDown={(params, e) => {
+            if (e.keyCode === 38 || e.keyCode === 40) {
+              const newId = (
+                parseInt(params.id) + (e.keyCode === 38 ? -1 : 1)
+              ).toString();
+              setSelectionModel([newId]);
+              reset(rows.find((row) => row.id === newId));
+            }
+          }}
+          onSelectionModelChange={(ids) => {
+            setSelectionModel(ids);
+            reset(rows.find((row) => row.id === ids[0]));
+          }}
+          selectionModel={selectionModel}
+        />
+        <ComWrapperVertical>
+          <ComFormTable
+            onSubmit={handleSubmit(onSave)}
+            control={control}
+            commonButtons={{
+              cancel: {
+                onClick: () => {
+                  reset();
                 },
               },
+              save: { type: 'submit' },
+              remove: {
+                onClick: () =>
+                  handleDialog(
+                    'remove',
+                    `공통코드: ${getValues(
+                      'COMM_CODE',
+                    )} 항목을 삭제하시겠습니까?`,
+                    () => onRemove,
+                  ),
+              },
             }}
-          />
-        </div>
-        <ComCompArea direction="v">
-          <div style={{ flex: 0 }}>
-            <form onSubmit={tableForm.handleSubmit()}>
-              <table className="workTable">
-                <colgroup>
-                  <col style={{ minWidth: '8.125rem' }} />
-                  <col style={{ width: '40%' }} />
-                  <col style={{ minWidth: '8.125rem' }} />
-                  <col style={{ width: '60%' }} />
-                </colgroup>
-                <tbody>
-                  <tr>
-                    <th>공통코드</th>
-                    <td>
-                      <input
-                        {...tableForm.register('COMM_CODE')}
-                        readOnly={!isInserted()}
-                        onChange={onChangeFormValue}
-                      />
-                    </td>
-                    <th>공통코드명</th>
-                    <td>
-                      <input
-                        {...tableForm.register('COMM_CDNM')}
+          >
+            <TableContainer>
+              <Table size="small">
+                <TableBody>
+                  <TableRow>
+                    <TableCell variant="head">공통코드</TableCell>
+                    <TableCell>
+                      <ComInput
+                        control={control}
+                        name="COMM_CODE"
+                        readOnly={getValues('state') !== GridRowState.inserted}
                         required
-                        onChange={onChangeFormValue}
                       />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>시스템구분</th>
-                    <td>
-                      <Select
-                        label="시스템구분"
+                    </TableCell>
+                    <TableCell variant="head">공통코드명</TableCell>
+                    <TableCell>
+                      <ComInput control={control} name="COMM_CDNM" required />
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell variant="head">시스템구분</TableCell>
+                    <TableCell>
+                      <ComSelect
+                        control={control}
                         name="SYST_CODE"
-                        nullvalue="select"
                         options={comCombo.SYST_CODE}
-                        required={true}
-                        form={tableForm}
-                        onChange={onChangeFormValue}
-                      />
-                    </td>
-                    <th>코드구분</th>
-                    <td>
-                      <Select
-                        label="코드구분"
-                        name="CDGB_CODE"
                         nullvalue="select"
+                        required
+                      />
+                    </TableCell>
+                    <TableCell variant="head">코드구분</TableCell>
+                    <TableCell>
+                      <ComSelect
+                        control={control}
+                        name="CDGB_CODE"
                         options={comCombo.CDGB_CODE}
-                        required={true}
-                        form={tableForm}
-                        onChange={onChangeFormValue}
+                        nullvalue="select"
+                        required
                       />
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>세부코드길이</th>
-                    <td>
-                      <input
-                        {...tableForm.register('COCD_LNTH')}
-                        onChange={onChangeFormValue}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell variant="head">세부코드길이</TableCell>
+                    <TableCell>
+                      <ComInput
+                        control={control}
+                        name="COCD_LNTH"
+                        type="number"
                       />
-                    </td>
-                    <th>초기세팅여부</th>
-                    <td>
-                      <Checkbox
-                        label="초기세팅여부"
-                        name="ISET_YSNO"
-                        form={tableForm}
-                        onChange={onChangeFormValue}
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </form>
-          </div>
-          <div>
-            <form style={{ height: '100%' }}>
-              <table className="workTable" style={{ height: '100%' }}>
-                <colgroup>
-                  <col style={{ minWidth: '8.125rem' }} />
-                  <col style={{ width: '40%' }} />
-                  <col style={{ minWidth: '8.125rem' }} />
-                  <col style={{ width: '60%' }} />
-                </colgroup>
-                <thead>
-                  <tr>
-                    <th>구분</th>
-                    <th>제목</th>
-                    <th>입력형태</th>
-                    <th>공통코드</th>
-                  </tr>
-                </thead>
-                <tbody>
+                    </TableCell>
+                    <TableCell variant="head">초기세팅여부</TableCell>
+                    <TableCell>
+                      <ComCheckbox control={control} name="ISET_YSNO" />
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TableContainer sx={{ flex: 1 }}>
+              <Table size="small" sx={{ height: '100%' }}>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>구분</TableCell>
+                    <TableCell sx={{ width: '25%' }}>제목</TableCell>
+                    <TableCell sx={{ width: '20%' }}>입력형태</TableCell>
+                    <TableCell sx={{ width: '45%' }}>공통코드</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
                   {[...Array(9).keys()].map((i) => (
-                    <tr key={i}>
-                      <th>{'항목' + (i + 1)}</th>
-                      <td>
-                        <input
-                          {...tableForm.register(`RE${i + 1}F_DESC`)}
-                          onChange={onChangeFormValue}
-                        />
-                      </td>
-                      <td>
-                        <Select
-                          label={`보조${i + 1}필드입력형태코드`}
+                    <TableRow key={i}>
+                      <TableCell variant="head">{'항목' + (i + 1)}</TableCell>
+                      <TableCell>
+                        <ComInput control={control} name={`RE${i + 1}F_DESC`} />
+                      </TableCell>
+                      <TableCell>
+                        <ComSelect
+                          control={control}
                           name={`RE${i + 1}T_CODE`}
                           nullvalue="select"
                           options={comCombo.REXT_CODE}
-                          form={tableForm}
-                          onChange={onChangeFormValue}
                         />
-                      </td>
-                      <td>
-                        <input readOnly />
-                      </td>
-                    </tr>
+                      </TableCell>
+                      <TableCell>
+                        <ConditionalSearchPopup
+                          control={control}
+                          code={`RE${i + 1}F_CMCD`}
+                          name={`RE${i + 1}F_CMNM`}
+                          popupid="TMM1003"
+                          search={search}
+                        />
+                      </TableCell>
+                    </TableRow>
                   ))}
-                  <tr>
-                    <th>항목10</th>
-                    <td>
-                      <input
-                        {...tableForm.register('R10F_DESC')}
-                        onChange={onChangeFormValue}
-                      />
-                    </td>
-                    <td>
-                      <Select
-                        label="보조10필드입력형태코드"
+                  <TableRow>
+                    <TableCell variant="head">항목10</TableCell>
+                    <TableCell>
+                      <ComInput control={control} name="R10F_DESC" />
+                    </TableCell>
+                    <TableCell>
+                      <ComSelect
+                        control={control}
                         name="R10T_CODE"
                         nullvalue="select"
                         options={comCombo.REXT_CODE}
-                        form={tableForm}
-                        onChange={onChangeFormValue}
                       />
-                    </td>
-                    <td>
-                      <input readOnly />
-                    </td>
-                  </tr>
-                  <tr style={{ height: '100%' }}>
-                    <th>비고</th>
-                    <td colSpan={3}>
-                      <textarea
-                        {...tableForm.register('REMK_100X')}
-                        style={{
-                          height: 'calc(100% - 0.375rem)',
-                        }}
-                        onChange={onChangeFormValue}
+                    </TableCell>
+                    <TableCell>
+                      <ConditionalSearchPopup
+                        control={control}
+                        code="R10F_CMCD"
+                        name="R10F_CMNM"
+                        popupid="TMM1003"
+                        search={search}
                       />
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </form>
-          </div>
-        </ComCompArea>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow sx={{ height: '100%' }}>
+                    <TableCell variant="head">비고</TableCell>
+                    <TableCell colSpan={3}>
+                      <ComInput
+                        control={control}
+                        name="REMK_100X"
+                        multiline
+                        rows={6}
+                      />
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </ComFormTable>
+        </ComWrapperVertical>
       </ComCompArea>
     </ComWorkframe>
   );
