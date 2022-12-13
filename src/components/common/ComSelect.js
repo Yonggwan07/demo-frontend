@@ -1,3 +1,4 @@
+import { MenuItem, Select } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
 import { PropTypes } from 'prop-types';
 import { memo } from 'react';
@@ -27,9 +28,21 @@ const ComSelect = ({ control, ...props }) => {
         disableTouchListener
         title={error?.message ? error.message : ''}
       >
-        <select
+        <Select
           {...field}
           {...props}
+          label=""
+          sx={{
+            height: '1.5rem',
+            '& .MuiSelect-select': {
+              height: '1.5rem',
+              fontSize: '0.875rem',
+            },
+            '& .MuiOutlinedInput-input': {
+              height: '1.5rem',
+              padding: '0 14px',
+            },
+          }}
           onChange={(e) => {
             field.onChange(e);
             if (props.onChange) {
@@ -39,22 +52,22 @@ const ComSelect = ({ control, ...props }) => {
           error={error}
         >
           {props.nullvalue === 'all' && (
-            <option key={'nullvalue'} value="">
+            <MenuItem key={'nullvalue'} value="">
               - 전체 -
-            </option>
+            </MenuItem>
           )}
           {props.nullvalue === 'select' && (
-            <option key={'nullvalue'} value="">
+            <MenuItem key={'nullvalue'} value="">
               - 선택 -
-            </option>
+            </MenuItem>
           )}
           {props.options &&
             props.options.map((option) => (
-              <option key={option.id} value={option.comdCode}>
+              <MenuItem key={option.id} value={option.comdCode}>
                 {option.comdCdnm}
-              </option>
+              </MenuItem>
             ))}
-        </select>
+        </Select>
       </Tooltip>
     )
   );

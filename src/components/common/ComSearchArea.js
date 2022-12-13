@@ -1,4 +1,4 @@
-import { Typography, Grid, Button, Paper } from '@mui/material';
+import { Grid, Button, Paper } from '@mui/material';
 import ko from 'date-fns/locale/ko';
 import { PropTypes } from 'prop-types';
 import { memo, useCallback } from 'react';
@@ -73,14 +73,14 @@ const ComSearchArea = ({ onSubmit, searchItems }) => {
             {Array.isArray(searchItems) &&
               searchItems.map((searchItem) => (
                 <Grid key={searchItem.name} item>
-                  <Typography
+                  <div
                     className="compLabel"
                     key={searchItem.name}
                     required={searchItem.required}
                   >
                     {searchItem.label}
                     {renderComp(searchItem)}
-                  </Typography>
+                  </div>
                 </Grid>
               ))}
           </Grid>

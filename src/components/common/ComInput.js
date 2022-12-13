@@ -1,3 +1,4 @@
+import { TextField } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
 import { PropTypes } from 'prop-types';
 import { memo } from 'react';
@@ -29,9 +30,34 @@ const ComInput = ({ control, ...props }) => {
       disableTouchListener
       title={error?.message ? error.message : ''}
     >
-      <input
+      <TextField
         {...field}
         {...props}
+        label=""
+        sx={
+          !props.multiline
+            ? {
+                height: '1.5rem',
+                '& .MuiInputBase-root': {
+                  height: '1.5rem',
+                  fontSize: '0.875rem',
+                },
+                '& .MuiOutlinedInput-input': {
+                  height: '1.5rem',
+                  padding: '0 14px',
+                },
+              }
+            : {
+                height: '100%',
+                '& .MuiInputBase-root': {
+                  height: '100%',
+                  fontSize: '0.875rem',
+                },
+                '& .MuiOutlinedInput-input': {
+                  height: '100%',
+                },
+              }
+        }
         error={error}
         autoComplete="false"
       />

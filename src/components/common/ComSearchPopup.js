@@ -1,4 +1,5 @@
 import SearchIcon from '@mui/icons-material/Search';
+import { TextField } from '@mui/material';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -199,10 +200,22 @@ const ComSearchPopup = ({ control, popupid, search, ...props }) => {
         disableTouchListener
         title={error?.message ? error.message : ''}
       >
-        <input
+        <TextField
           {...codeField}
           {...props}
-          style={{ height: '100%', flex: '0 1 auto' }}
+          //style={{ height: '100%', flex: '0 1 auto' }}
+          sx={{
+            flex: 1,
+            height: '1.5rem',
+            '& .MuiInputBase-root': {
+              height: '1.5rem',
+              fontSize: '0.875rem',
+            },
+            '& .MuiOutlinedInput-input': {
+              height: '1.5rem',
+              padding: '0 14px',
+            },
+          }}
           error={error}
           readOnly
           autoComplete="false"
@@ -222,7 +235,7 @@ const ComSearchPopup = ({ control, popupid, search, ...props }) => {
       >
         <SearchIcon />
       </Button>
-      <input
+      <TextField
         {...nameField}
         {...props}
         onChange={(e) => {
@@ -231,7 +244,19 @@ const ComSearchPopup = ({ control, popupid, search, ...props }) => {
             codeField.onChange(e.target.value);
           }
         }}
-        style={{ height: '100%', flex: '3 1 auto' }}
+        //style={{ height: '100%', flex: '3 1 auto' }}
+        sx={{
+          flex: 2,
+          height: '1.5rem',
+          '& .MuiInputBase-root': {
+            height: '1.5rem',
+            fontSize: '0.875rem',
+          },
+          '& .MuiOutlinedInput-input': {
+            height: '1.5rem',
+            padding: '0 14px',
+          },
+        }}
         error={error}
         autoComplete="false"
       />
