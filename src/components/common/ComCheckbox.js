@@ -1,5 +1,6 @@
 import { useController } from 'react-hook-form';
 import { PropTypes } from 'prop-types';
+import { memo } from 'react';
 
 const ComCheckbox = ({ control, ...props }) => {
   const {
@@ -33,4 +34,4 @@ ComCheckbox.propTypes = {
   rules: PropTypes.object,
 };
 
-export default ComCheckbox;
+export default memo(ComCheckbox);

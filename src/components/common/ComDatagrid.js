@@ -5,13 +5,14 @@ import {
   GridToolbarFilterButton,
   GridToolbarExport,
 } from '@mui/x-data-grid';
+import { memo } from 'react';
 import ComCommonButtons from './ComCommonButtons';
 
 const ComDatagrid = ({ ...props }) => {
   return (
     <div className="gridWrapper">
       <DataGrid
-        rows={props.rows}
+        {...props}
         components={{
           Toolbar: () => (
             <GridToolbarContainer>
@@ -23,10 +24,9 @@ const ComDatagrid = ({ ...props }) => {
           ),
         }}
         experimentalFeatures={{ newEditingApi: true }}
-        {...props}
       />
     </div>
   );
 };
 
-export default ComDatagrid;
+export default memo(ComDatagrid);

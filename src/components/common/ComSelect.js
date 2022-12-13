@@ -1,6 +1,8 @@
 import Tooltip from '@mui/material/Tooltip';
 import { PropTypes } from 'prop-types';
+import { memo } from 'react';
 import { useController } from 'react-hook-form';
+import { constStr } from '../../utils/constStr';
 
 const ComSelect = ({ control, ...props }) => {
   const {
@@ -10,7 +12,9 @@ const ComSelect = ({ control, ...props }) => {
     name: props.name,
     control,
     defaultValue: props.initialvalue ? props.initialvalue : '',
-    rules: props.rules,
+    rules: {
+      required: props.required ? constStr.required : false,
+    },
   });
 
   return (
@@ -32,7 +36,6 @@ const ComSelect = ({ control, ...props }) => {
               props.onChange(e);
             }
           }}
-          mendatory={props.rules?.required}
           error={error}
         >
           {props.nullvalue === 'all' && (
@@ -65,4 +68,4 @@ ComSelect.propTypes = {
   rules: PropTypes.object,
 };
 
-export default ComSelect;
+export default memo(ComSelect);

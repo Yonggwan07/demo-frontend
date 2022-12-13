@@ -7,8 +7,9 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Tooltip from '@mui/material/Tooltip';
 import { DataGrid } from '@mui/x-data-grid';
 import { PropTypes } from 'prop-types';
-import { useState } from 'react';
-import { useController, useWatch } from 'react-hook-form';
+import { memo, useState } from 'react';
+import { useController } from 'react-hook-form';
+import { constStr } from '../../utils/constStr';
 import ComSearchArea from './ComSearchArea';
 
 const OBJECT_REG = /<([^>]+?)\/>/g;
@@ -23,19 +24,13 @@ const ComSearchPopup = ({ control, popupid, search, ...props }) => {
     name: props.code,
     control,
     defaultValue: '',
-    rules: props.rules,
+    rules: { required: props.required ? constStr.required : false },
   });
 
   const { field: nameField } = useController({
     name: props.name,
     control,
     defaultValue: '',
-    rules: props.rules,
-  });
-
-  const disabled = useWatch({
-    control,
-    name: `${props.code.substr(0, 4)}_CODE`,
   });
 
   const [open, setOpen] = useState(false);
@@ -172,7 +167,7 @@ const ComSearchPopup = ({ control, popupid, search, ...props }) => {
 
   return (
     <div
-      disabled={disabled !== '01'}
+      disabled={props.disabled ? props.disabled : false}
       style={{ display: 'flex', alignItems: 'center', height: '100%' }}
     >
       <Dialog fullWidth maxWidth="md" onClose={handleClose} open={open}>
@@ -208,7 +203,6 @@ const ComSearchPopup = ({ control, popupid, search, ...props }) => {
           {...codeField}
           {...props}
           style={{ height: '100%', flex: '0 1 auto' }}
-          mendatory={props.rules?.required}
           error={error}
           readOnly
           autoComplete="false"
@@ -238,7 +232,6 @@ const ComSearchPopup = ({ control, popupid, search, ...props }) => {
           }
         }}
         style={{ height: '100%', flex: '3 1 auto' }}
-        mendatory={props.rules?.required}
         error={error}
         autoComplete="false"
       />
@@ -254,4 +247,4 @@ ComSearchPopup.propTypes = {
   search: PropTypes.func.isRequired,
 };
 
-export default ComSearchPopup;
+export default memo(ComSearchPopup);

@@ -70,6 +70,7 @@ const ComSearchArea = ({ onSubmit, searchItems }) => {
         <form
           onSubmit={handleSubmit(onSubmit)}
           style={{ display: 'flex', argin: '0.75rem' }}
+          noValidate
         >
           <Grid container spacing={1.5}>
             {Array.isArray(searchItems) &&
