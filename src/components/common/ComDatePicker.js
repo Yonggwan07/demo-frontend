@@ -36,7 +36,7 @@ const ComDatePicker = ({ control, ...props }) => {
         maxDate={parseISO(props.rules?.maxDate)}
         locale={ko}
         onChange={(date, e) => handleChange(date, e, field)}
-        error={error}
+        error={error ?  true : false}
         title={error?.message ? error.message : ''}
         customInput={
           <Tooltip

@@ -49,7 +49,12 @@ const ComSelect = ({ control, ...props }) => {
               props.onChange(e);
             }
           }}
-          error={error}
+          error={error ?  true : false}
+          MenuProps={{
+            sx: {
+              maxHeight: '15rem',
+            },
+          }}
         >
           {props.nullvalue === 'all' && (
             <MenuItem key={'nullvalue'} value="">

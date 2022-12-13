@@ -58,7 +58,7 @@ const ComInput = ({ control, ...props }) => {
                 },
               }
         }
-        error={error}
+        error={error ?  true : false}
         autoComplete="false"
       />
     </Tooltip>

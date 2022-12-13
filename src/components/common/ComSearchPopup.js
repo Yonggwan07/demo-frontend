@@ -216,7 +216,7 @@ const ComSearchPopup = ({ control, popupid, search, ...props }) => {
               padding: '0 14px',
             },
           }}
-          error={error}
+          error={error ?  true : false}
           readOnly
           autoComplete="false"
         />
@@ -257,7 +257,7 @@ const ComSearchPopup = ({ control, popupid, search, ...props }) => {
             padding: '0 14px',
           },
         }}
-        error={error}
+        error={error ?  true : false}
         autoComplete="false"
       />
     </div>

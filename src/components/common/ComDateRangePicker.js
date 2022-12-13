@@ -82,7 +82,7 @@ const ComDateRangePicker = ({ control, type, ...props }) => {
         showMonthYearPicker={_type.showMonthYearPicker}
         showYearPicker={_type.showYearPicker}
         onChange={(date, e) => handleStartChange(date, e, fromField)}
-        error={fromError}
+        error={fromError ?  true : false}
         title={fromError?.message ? fromError.message : ''}
         customInput={
           <Tooltip
@@ -122,7 +122,7 @@ const ComDateRangePicker = ({ control, type, ...props }) => {
         showMonthYearPicker={_type.showMonthYearPicker}
         showYearPicker={_type.showYearPicker}
         onChange={(date, e) => handleEndChange(date, e, toField)}
-        error={toError}
+        error={toError ?  true : false}
         title={toError?.message ? toError.message : ''}
         customInput={
           <Tooltip
