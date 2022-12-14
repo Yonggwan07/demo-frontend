@@ -53,6 +53,7 @@ const ComSelect = ({ control, defaultValue, ...props }) => {
           {...field}
           {...props}
           label=""
+          displayEmpty
           onChange={(e) => {
             field.onChange(e);
             if (props.onChange) {
