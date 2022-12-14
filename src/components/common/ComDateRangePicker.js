@@ -1,10 +1,27 @@
-import { Box, Tooltip } from '@mui/material';
+import { Box, Tooltip, TextField } from '@mui/material';
 import { format, parseISO } from 'date-fns';
 import ko from 'date-fns/locale/ko';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import { useController } from 'react-hook-form';
 import { PropTypes } from 'prop-types';
+import { styled } from '@mui/material/styles';
+import { constStr } from '../../utils/constStr';
+
+const StyledTextField = styled(TextField)({
+  height: '1.5rem',
+  '& .MuiInputBase-root': {
+    height: '1.5rem',
+    fontSize: '0.875rem',
+  },
+  '& .MuiOutlinedInput-input': {
+    height: '1.5rem',
+    padding: '0 14px',
+  },
+  '& input:required + fieldset': {
+    borderColor: 'orange',
+  },
+});
 
 const ComDateRangePicker = ({ control, type, ...props }) => {
   const {
@@ -14,7 +31,7 @@ const ComDateRangePicker = ({ control, type, ...props }) => {
     name: `${props.name}_from`,
     control,
     defaultValue: props.from,
-    rules: props.rules?.from,
+    rules: { required: props.required?.from ? constStr.required : false },
   });
   const {
     field: toField,
@@ -23,38 +40,39 @@ const ComDateRangePicker = ({ control, type, ...props }) => {
     name: `${props.name}_to`,
     control,
     defaultValue: props.to,
-    rules: props.rules?.to,
+    rules: { required: props.required?.to ? constStr.required : false },
   });
 
   const [startDate, setStartDate] = useState(
     props.from !== undefined ? parseISO(props.from) : '',
   );
-  const [endDate, setEndDate] = useState(
-    props.to !== undefined ? parseISO(props.to) : '',
-  );
+  const [endDate, setEndDate] = useState(props.to !== undefined ? parseISO(props.to) : '');
 
-  const [_type] = useState(() => {
+  const _type = useMemo(() => {
     switch (type) {
-      case 'month':
+      case 'monthRange':
         return {
           dateFormat: 'yyyy-MM',
           showMonthYearPicker: true,
           showYearPicker: false,
+          defaultWidth: { width: '5rem' },
         };
-      case 'year':
+      case 'yearRange':
         return {
           dateFormat: 'yyyy',
           showMonthYearPicker: false,
           showYearPicker: true,
+          defaultWidth: { width: '3.8rem' },
         };
       default:
         return {
           dateFormat: 'yyyy-MM-dd',
           showMonthYearPicker: false,
           showYearPicker: false,
+          defaultWidth: { width: '6.3rem' },
         };
     }
-  });
+  }, [type]);
 
   const handleStartChange = (date, e, field) => {
     e.preventDefault();
@@ -76,13 +94,12 @@ const ComDateRangePicker = ({ control, type, ...props }) => {
         selected={startDate}
         startDate={startDate}
         endDate={endDate}
-        minDate={parseISO(props.rules?.from?.minDate)}
+        minDate={parseISO(props.minDate)}
         maxDate={parseISO(endDate)}
         locale={ko}
         showMonthYearPicker={_type.showMonthYearPicker}
         showYearPicker={_type.showYearPicker}
         onChange={(date, e) => handleStartChange(date, e, fromField)}
-        error={fromError ?  true : false}
         title={fromError?.message ? fromError.message : ''}
         customInput={
           <Tooltip
@@ -93,9 +110,11 @@ const ComDateRangePicker = ({ control, type, ...props }) => {
             disableTouchListener
             title={fromError?.message ? fromError.message : ''}
           >
-            <input
+            <StyledTextField
+              sx={_type.defaultWidth}
               style={props.style}
-              mendatory={props.rules?.from?.required}
+              error={fromError ? true : false}
+              required={props.required?.from}
             />
           </Tooltip>
         }
@@ -117,12 +136,11 @@ const ComDateRangePicker = ({ control, type, ...props }) => {
         startDate={startDate}
         endDate={endDate}
         minDate={parseISO(startDate)}
-        maxDate={parseISO(props.rules?.to?.maxDate)}
+        maxDate={parseISO(props.maxDate)}
         locale={ko}
         showMonthYearPicker={_type.showMonthYearPicker}
         showYearPicker={_type.showYearPicker}
         onChange={(date, e) => handleEndChange(date, e, toField)}
-        error={toError ?  true : false}
         title={toError?.message ? toError.message : ''}
         customInput={
           <Tooltip
@@ -133,7 +151,12 @@ const ComDateRangePicker = ({ control, type, ...props }) => {
             disableTouchListener
             title={toError?.message ? toError.message : ''}
           >
-            <input style={props.style} mendatory={props.rules?.to?.required} />
+            <StyledTextField
+              sx={_type.defaultWidth}
+              style={props.style}
+              error={toError ? true : false}
+              required={props.required?.to}
+            />
           </Tooltip>
         }
       />

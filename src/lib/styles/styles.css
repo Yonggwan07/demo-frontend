@@ -4,14 +4,7 @@
   font-size: 0.75rem;
   font-weight: bold;
   line-height: 1.5rem;
-  -webkit-user-select: none;
-  user-select: none;
   margin-right: 1.5rem;
-}
-.compLabel[required]:before {
-  content: '*';
-  color: red;
-  padding-right: 0.125rem;
 }
 .compLabel > *:first-child {
   margin-left: 0.5rem;

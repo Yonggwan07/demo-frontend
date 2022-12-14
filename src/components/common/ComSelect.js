@@ -1,18 +1,33 @@
-import { MenuItem, Select } from '@mui/material';
+import { MenuItem, Select, styled } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
 import { PropTypes } from 'prop-types';
 import { memo } from 'react';
 import { useController } from 'react-hook-form';
 import { constStr } from '../../utils/constStr';
 
-const ComSelect = ({ control, ...props }) => {
+const StyledSelect = styled(Select)({
+  height: '1.5rem',
+  '& .MuiSelect-select': {
+    height: '1.5rem',
+    fontSize: '0.875rem',
+  },
+  '& .MuiOutlinedInput-input': {
+    height: '1.5rem',
+    padding: '0 14px',
+  },
+  '&[required] > fieldset': {
+    borderColor: 'orange',
+  },
+});
+
+const ComSelect = ({ control, defaultValue, ...props }) => {
   const {
     field,
     fieldState: { error },
   } = useController({
     name: props.name,
     control,
-    defaultValue: props.initialvalue ? props.initialvalue : '',
+    defaultValue: defaultValue ? defaultValue : '',
     rules: {
       required: props.required ? constStr.required : false,
     },
@@ -28,28 +43,17 @@ const ComSelect = ({ control, ...props }) => {
         disableTouchListener
         title={error?.message ? error.message : ''}
       >
-        <Select
+        <StyledSelect
           {...field}
           {...props}
           label=""
-          sx={{
-            height: '1.5rem',
-            '& .MuiSelect-select': {
-              height: '1.5rem',
-              fontSize: '0.875rem',
-            },
-            '& .MuiOutlinedInput-input': {
-              height: '1.5rem',
-              padding: '0 14px',
-            },
-          }}
           onChange={(e) => {
             field.onChange(e);
             if (props.onChange) {
               props.onChange(e);
             }
           }}
-          error={error ?  true : false}
+          error={error ? true : false}
           MenuProps={{
             sx: {
               maxHeight: '15rem',
@@ -72,7 +76,7 @@ const ComSelect = ({ control, ...props }) => {
                 {option.comdCdnm}
               </MenuItem>
             ))}
-        </Select>
+        </StyledSelect>
       </Tooltip>
     )
   );

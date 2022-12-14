@@ -4,15 +4,22 @@ import { PropTypes } from 'prop-types';
 import { memo } from 'react';
 import { useController } from 'react-hook-form';
 import { constStr } from '../../utils/constStr';
+import { styled } from '@mui/material/styles';
 
-const ComInput = ({ control, ...props }) => {
+const StyledTextField = styled(TextField)({
+  '& input:required + fieldset': {
+      borderColor: 'orange',
+  },
+});
+
+const ComInput = ({ control, defaultValue, ...props }) => {
   const {
     field,
     fieldState: { error },
   } = useController({
     name: props.name,
     control,
-    defaultValue: props.initialvalue ? props.initialvalue : '',
+    defaultValue: defaultValue ? defaultValue : '',
     rules: {
       required: props.required ? constStr.required : false,
       maxLength: props.maxLength ? constStr.maxLength(props.maxLength) : false,
@@ -30,7 +37,7 @@ const ComInput = ({ control, ...props }) => {
       disableTouchListener
       title={error?.message ? error.message : ''}
     >
-      <TextField
+      <StyledTextField
         {...field}
         {...props}
         label=""
@@ -58,7 +65,7 @@ const ComInput = ({ control, ...props }) => {
                 },
               }
         }
-        error={error ?  true : false}
+        error={error ? true : false}
         autoComplete="false"
       />
     </Tooltip>

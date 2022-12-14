@@ -2,15 +2,11 @@ import { useController } from 'react-hook-form';
 import { PropTypes } from 'prop-types';
 import { memo } from 'react';
 
-const ComCheckbox = ({ control, ...props }) => {
-  const {
-    field,
-    //fieldState: { error },
-  } = useController({
+const ComCheckbox = ({ control, defaultValue, ...props }) => {
+  const { field } = useController({
     name: props.name,
     control,
-    defaultValue: props.defaultChecked ? '1' : '0',
-    rules: props.rules,
+    defaultValue: defaultValue ? '1' : '0',
   });
 
   const handleChange = (isChecked, field) => {

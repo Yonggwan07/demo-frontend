@@ -1,12 +1,29 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { format, parseISO } from 'date-fns';
 import { useController } from 'react-hook-form';
-import Tooltip from '@mui/material/Tooltip';
 import ko from 'date-fns/locale/ko';
 import DatePicker from 'react-datepicker';
 import { PropTypes } from 'prop-types';
+import { Tooltip, TextField } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { constStr } from '../../utils/constStr';
 
-const ComDatePicker = ({ control, ...props }) => {
+const StyledTextField = styled(TextField)({
+  height: '1.5rem',
+  '& .MuiInputBase-root': {
+    height: '1.5rem',
+    fontSize: '0.875rem',
+  },
+  '& .MuiOutlinedInput-input': {
+    height: '1.5rem',
+    padding: '0 14px',
+  },
+  '& input:required + fieldset': {
+    borderColor: 'orange',
+  },
+});
+
+const ComDatePicker = ({ control, type, ...props }) => {
   const {
     field,
     fieldState: { error },
@@ -14,12 +31,38 @@ const ComDatePicker = ({ control, ...props }) => {
     name: props.name,
     control,
     defaultValue: props.date,
-    rules: props.rules,
+    rules:  { required: props.required ? constStr.required : false },
   });
 
   const [date, setDate] = useState(
     props.date !== undefined ? parseISO(props.date) : '',
   );
+
+  const _type = useMemo(() => {
+    switch (type) {
+      case 'monthRange':
+        return {
+          dateFormat: 'yyyy-MM',
+          showMonthYearPicker: true,
+          showYearPicker: false,
+          defaultWidth: { width: '5rem' },
+        };
+      case 'yearRange':
+        return {
+          dateFormat: 'yyyy',
+          showMonthYearPicker: false,
+          showYearPicker: true,
+          defaultWidth: { width: '3.8rem' },
+        };
+      default:
+        return {
+          dateFormat: 'yyyy-MM-dd',
+          showMonthYearPicker: false,
+          showYearPicker: false,
+          defaultWidth: { width: '6.3rem' },
+        };
+    }
+  }, [type]);
 
   const handleChange = (date, e, field) => {
     e.preventDefault();
@@ -30,13 +73,15 @@ const ComDatePicker = ({ control, ...props }) => {
   return (
     <div style={{ display: 'flex' }}>
       <DatePicker
-        dateFormat="yyyy-MM-dd"
+        dateFormat={_type.dateFormat}
         selected={date}
-        minDate={parseISO(props.rules?.minDate)}
-        maxDate={parseISO(props.rules?.maxDate)}
+        minDate={parseISO(props.minDate)}
+        maxDate={parseISO(props.maxDate)}
         locale={ko}
+        showMonthYearPicker={_type.showMonthYearPicker}
+        showYearPicker={_type.showYearPicker}
         onChange={(date, e) => handleChange(date, e, field)}
-        error={error ?  true : false}
+        error={error ? true : false}
         title={error?.message ? error.message : ''}
         customInput={
           <Tooltip
@@ -47,10 +92,11 @@ const ComDatePicker = ({ control, ...props }) => {
             disableTouchListener
             title={error?.message ? error.message : ''}
           >
-            <input
+            <StyledTextField
+              sx={_type.defaultWidth}
               style={props.style}
-              mendatory={props.rules?.required}
-              autoComplete="false"
+              error={error ? true : false}
+              required={props.required}
             />
           </Tooltip>
         }

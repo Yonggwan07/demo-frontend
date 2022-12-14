@@ -28,25 +28,13 @@ const ComSearchArea = ({ onSubmit, searchItems }) => {
         case 'checkbox':
           return <ComCheckbox control={control} {...searchItem} />;
         case 'date':
+        case 'month':
+        case 'year':
           return <ComDatePicker control={control} {...searchItem} />;
         case 'dateRange':
-          return <ComDateRangePicker control={control} {...searchItem} />;
         case 'monthRange':
-          return (
-            <ComDateRangePicker
-              control={control}
-              type={'month'}
-              {...searchItem}
-            />
-          );
         case 'yearRange':
-          return (
-            <ComDateRangePicker
-              control={control}
-              type={'year'}
-              {...searchItem}
-            />
-          );
+          return <ComDateRangePicker control={control} {...searchItem} />;
         default:
           return 'ERROR!';
       }
@@ -76,7 +64,6 @@ const ComSearchArea = ({ onSubmit, searchItems }) => {
                   <div
                     className="compLabel"
                     key={searchItem.name}
-                    required={searchItem.required}
                   >
                     {searchItem.label}
                     {renderComp(searchItem)}
