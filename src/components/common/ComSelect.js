@@ -20,6 +20,12 @@ const StyledSelect = styled(Select)({
   },
 });
 
+const StyledMemuItem = styled(MenuItem)({
+  fontSize: '0.875rem',
+  justifyContent: 'center',
+  padding: '3px 8px',
+});
+
 const ComSelect = ({ control, defaultValue, ...props }) => {
   const {
     field,
@@ -61,20 +67,20 @@ const ComSelect = ({ control, defaultValue, ...props }) => {
           }}
         >
           {props.nullvalue === 'all' && (
-            <MenuItem key={'nullvalue'} value="">
+            <StyledMemuItem key={'nullvalue'} value="">
               - 전체 -
-            </MenuItem>
+            </StyledMemuItem>
           )}
           {props.nullvalue === 'select' && (
-            <MenuItem key={'nullvalue'} value="">
+            <StyledMemuItem key={'nullvalue'} value="">
               - 선택 -
-            </MenuItem>
+            </StyledMemuItem>
           )}
           {props.options &&
             props.options.map((option) => (
-              <MenuItem key={option.id} value={option.comdCode}>
+              <StyledMemuItem key={option.id} value={option.comdCode}>
                 {option.comdCdnm}
-              </MenuItem>
+              </StyledMemuItem>
             ))}
         </StyledSelect>
       </Tooltip>
