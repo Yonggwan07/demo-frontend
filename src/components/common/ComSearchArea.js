@@ -75,7 +75,7 @@ const ComSearchArea = ({ onSubmit, searchItems }) => {
             type="submit"
             size="small"
             variant="contained"
-            sx={{ ml: 'auto' }}
+            sx={{ ml: 'auto', lineHeight: 0 }}
           >
             조회
           </Button>
