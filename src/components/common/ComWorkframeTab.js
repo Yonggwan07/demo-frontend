@@ -46,9 +46,11 @@ const TabPanel = memo(function TabPanel(props) {
       }).then((res) => {
         if (res.status === 200) {
           handleBackdrop(false);
-          if (useSnackbar) {
-            openSnackbar(constStr.postSearch(res.data.length));
-          }
+          openSnackbar(
+            constStr.postSearch(res.data.length),
+            'success',
+            useSnackbar,
+          );
 
           // 값이 null인 항목 빈 문자열로 변경
           if (res.data.length !== undefined) {
@@ -62,9 +64,7 @@ const TabPanel = memo(function TabPanel(props) {
           resolve(jsonKeyUpperCase(res.data));
         } else {
           handleBackdrop(false);
-          if (useSnackbar) {
-            openSnackbar(constStr.errorSearch, 'error');
-          }
+          openSnackbar(constStr.errorSearch, 'error', useSnackbar);
           console.error(res);
           return reject();
         }
@@ -72,7 +72,7 @@ const TabPanel = memo(function TabPanel(props) {
     });
   }, []);
 
-  const save = useCallback((menuId, workId, data) => {
+  const save = useCallback((menuId, workId, data, useSnackbar = true) => {
     return new Promise((resolve, reject) => {
       handleBackdrop(true);
       transaction({
@@ -82,11 +82,11 @@ const TabPanel = memo(function TabPanel(props) {
       }).then((res) => {
         if (res.status === 200) {
           handleBackdrop(false);
-          openSnackbar(constStr.postSave(res.data));
+          openSnackbar(constStr.postSave(res.data), 'success', useSnackbar);
           resolve(jsonKeyUpperCase(res.data));
         } else {
           handleBackdrop(false);
-          openSnackbar(constStr.errorSave, 'error');
+          openSnackbar(constStr.errorSave, 'error', useSnackbar);
           console.error(res);
           return reject();
         }
