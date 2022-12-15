@@ -4,7 +4,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
 } from '@mui/material';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
@@ -20,9 +20,10 @@ import ComWorkframe from '../../components/common/ComWorkframe';
 import ComWorkTitleArea from '../../components/common/ComWorkTitleArea';
 import ComWrapperVertical from '../../components/common/ComWrapperVertical';
 import handleDialog from '../../lib/api/dialog';
+import { constStr } from '../../utils/constStr';
 import { gridInit, GridRowState } from '../../utils/gridUtil';
 
-const MENU_ID = 'tmma0010';
+const MENU_ID = 'tmma0011';
 const codeOptions = [
   { commCode: 'SYST_CODE', usexYsno: '1' },
   { commCode: 'CDGB_CODE', usexYsno: '1' },
@@ -75,6 +76,24 @@ const columnInfo = [
   { field: 'REMK_100X', headerName: '비고' },
 ];
 
+const ConditionalCommCodeField = ({ ...props }) => {
+  const state = useWatch({
+    control: props.control,
+    name: 'state',
+  });
+
+  return (
+    <ComInput
+      control={props.control}
+      name="COMM_CODE"
+      InputProps={{
+        readOnly: state !== GridRowState.inserted,
+      }}
+      required
+    />
+  );
+};
+
 const ConditionalSearchPopup = ({ ...props }) => {
   const codeValue = useWatch({
     control: props.control,
@@ -90,7 +109,7 @@ const ConditionalSearchPopup = ({ ...props }) => {
   );
 };
 
-const TMMA0010 = ({ getCombo, search, save, remove }) => {
+const TMMA0011 = ({ getCombo, search, save, remove }) => {
   const [comCombo, setComCombo] = useState({});
   const { handleSubmit, reset, getValues, control } = useForm(); // 우측 테이블 form
   const [rows, setRows] = useState([]);
@@ -116,24 +135,24 @@ const TMMA0010 = ({ getCombo, search, save, remove }) => {
       search(MENU_ID, 'search00', data)
         .then((res) => {
           setRows(res);
-          setSelectionModel(['1']);
-          reset(res[0]);
-          console.log(res[0]);
+          setSelectionModel('1');
         })
         .catch(() => {
           setRows([]);
         });
     },
-    [reset, search, setRows],
+    [search, setRows],
   );
 
   /* 입력 버튼 클릭 */
   const onInsert = () => {
+    const newId = (parseInt(rows[rows.length - 1].id) + 1).toString();
     const newRow = {
-      id: parseInt(rows[rows.length - 1].id) + 1,
+      id: newId,
       state: GridRowState.inserted,
     };
-    setRows([...rows, newRow]);
+    setRows((prev) => [...prev, newRow]);
+    setSelectionModel(newId);
   };
 
   /* 저장 버튼 클릭 */
@@ -157,6 +176,11 @@ const TMMA0010 = ({ getCombo, search, save, remove }) => {
     //});
   };
 
+  /* Datagrid selectionModel 변경 시 form reset */
+  useEffect(() => {
+    reset(rows.find((row) => row.id === selectionModel));
+  }, [reset, rows, selectionModel]);
+
   // 조회조건 설정
   const searchItems = useMemo(
     () => [
@@ -165,7 +189,7 @@ const TMMA0010 = ({ getCombo, search, save, remove }) => {
         label: '공통코드/명',
         name: 'COMM_CDNM',
         style: { width: '10rem' },
-        //initialvalue: 'ACCT'
+        //defaultValue: 'ACCT',
         //required: true,
         //maxLength: 9,
         //minLength: 4
@@ -179,10 +203,8 @@ const TMMA0010 = ({ getCombo, search, save, remove }) => {
         style: { width: '10rem' },
         // readOnly: true,
         // disabled: true
-        // initialvalue: 'TMM',
-        // rules: {
-        //   required: constStr.required,
-        // },
+        //defaultValue: 'TMM',
+        //required: true,
       },
       // {
       //   label: '조회일자',
@@ -190,34 +212,28 @@ const TMMA0010 = ({ getCombo, search, save, remove }) => {
       //   type: 'dateRange',
       //   from: '2022-12-01',
       //   to: '2022-12-10',
-      //   style: { width: '6rem', textAlign: 'center' },
-      //   rules: {
-      //     from: {
-      //       required: constStr.required,
-      //       minDate: '2022-12-01',
-      //     },
-      //     to: {
-      //       maxDate: '2022-12-20',
-      //     },
-      //   },
+      //   //style: { width: '10rem' },
+      //   //required: {
+      //   //  from: true,
+      //   //  to: true,
+      //   //},
+      //   //minDate: '2022-12-01',
+      //   //maxDate: '2022-12-20',
       // },
       // {
       //   label: '여부',
       //   name: 'chkTest',
       //   type: 'checkbox',
-      //   defaultChecked: true,
-      //   disabled: true,
+      //   defaultValue: true,
+      //   //disabled: true,
       // },
       // {
       //   label: '일자',
       //   name: 'dateSingle',
       //   type: 'date',
       //   currentDate: '2022-12-10',
-      //   style: { width: '6rem', textAlign: 'center' },
-      //   rules: {
-      //     required: constStr.required,
-      //     minDate: '2022-12-01',
-      //   },
+      //   required: true,
+      //   minDate: '2022-12-01',
       // },
     ],
     [comCombo.SYST_CODE],
@@ -268,13 +284,11 @@ const TMMA0010 = ({ getCombo, search, save, remove }) => {
               const newId = (
                 parseInt(params.id) + (e.keyCode === 38 ? -1 : 1)
               ).toString();
-              setSelectionModel([newId]);
-              reset(rows.find((row) => row.id === newId));
+              setSelectionModel(newId);
             }
           }}
           onSelectionModelChange={(ids) => {
-            setSelectionModel(ids);
-            reset(rows.find((row) => row.id === ids[0]));
+            setSelectionModel(ids[0]);
           }}
           selectionModel={selectionModel}
         />
@@ -307,10 +321,9 @@ const TMMA0010 = ({ getCombo, search, save, remove }) => {
                   <TableRow>
                     <TableCell variant="head">공통코드</TableCell>
                     <TableCell>
-                      <ComInput
+                      <ConditionalCommCodeField
                         control={control}
                         name="COMM_CODE"
-                        readOnly={getValues('state') !== GridRowState.inserted}
                         required
                       />
                     </TableCell>
@@ -438,4 +451,4 @@ const TMMA0010 = ({ getCombo, search, save, remove }) => {
   );
 };
 
-export default memo(TMMA0010);
+export default memo(TMMA0011);
