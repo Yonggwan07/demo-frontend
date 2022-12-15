@@ -14,7 +14,9 @@ const TabPanel = memo(function TabPanel(props) {
   const Menu = useMemo(
     () =>
       lazy(() =>
-        import(`../../pages/${menuId.substring(0, 3).toLowerCase()}/${menuId}`),
+        import(
+          `../../pages/${menuId.substring(0, 3).toLowerCase()}/${menuId}`
+        ).catch(() => ({ default: () => <div>Not found</div> })),
       ),
     [menuId],
   );
