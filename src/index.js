@@ -9,6 +9,8 @@ import { configureStore } from '@reduxjs/toolkit';
 import rootReducer, { rootSaga } from './modules/index';
 import createSagaMiddleware from 'redux-saga';
 import { check, tempSetUser } from './modules/user';
+import { PersistGate } from 'redux-persist/integration/react';
+import persistStore from 'redux-persist/es/persistStore';
 
 const sagaMiddleware = createSagaMiddleware();
 const store = configureStore({
@@ -16,6 +18,8 @@ const store = configureStore({
   middleware: [sagaMiddleware],
   devTools: process.env.NODE_ENV !== 'production',
 });
+
+const persistor = persistStore(store);
 
 function loadUser() {
   try {
@@ -36,9 +40,11 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <PersistGate persistor={persistor}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </PersistGate>
     </Provider>
   </React.StrictMode>,
 );
