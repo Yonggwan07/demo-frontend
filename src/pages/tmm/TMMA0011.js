@@ -20,10 +20,8 @@ import ComWorkframe from '../../components/common/ComWorkframe';
 import ComWorkTitleArea from '../../components/common/ComWorkTitleArea';
 import ComWrapperVertical from '../../components/common/ComWrapperVertical';
 import handleDialog from '../../lib/api/dialog';
-import { constStr } from '../../utils/constStr';
 import { gridInit, GridRowState } from '../../utils/gridUtil';
 
-const MENU_ID = 'tmma0011';
 const codeOptions = [
   { commCode: 'SYST_CODE', usexYsno: '1' },
   { commCode: 'CDGB_CODE', usexYsno: '1' },
@@ -109,7 +107,7 @@ const ConditionalSearchPopup = ({ ...props }) => {
   );
 };
 
-const TMMA0011 = ({ getCombo, search, save, remove }) => {
+const TMMA0011 = ({ menuInfo, getCombo, search, save, remove }) => {
   const [comCombo, setComCombo] = useState({});
   const { handleSubmit, reset, getValues, control } = useForm(); // 우측 테이블 form
   const [rows, setRows] = useState([]);
@@ -132,7 +130,7 @@ const TMMA0011 = ({ getCombo, search, save, remove }) => {
   const handleSearch = useCallback(
     (data) => {
       console.log(data);
-      search(MENU_ID, 'search00', data)
+      search(menuInfo.id, 'search00', data)
         .then((res) => {
           setRows(res);
           setSelectionModel('1');
@@ -141,7 +139,7 @@ const TMMA0011 = ({ getCombo, search, save, remove }) => {
           setRows([]);
         });
     },
-    [search, setRows],
+    [menuInfo.id, search],
   );
 
   /* 입력 버튼 클릭 */
@@ -159,10 +157,10 @@ const TMMA0011 = ({ getCombo, search, save, remove }) => {
   const onSave = (data) => {
     console.log('--- Save ---');
     console.log(data);
-    // save(MENU_ID, 'save00', [data]).then(() => {
-    //   setGridData(rows.map((row) => (row.id === data.id ? data : row)));
-    //   reset({}, { keepValues: true });
-    // });
+    save(menuInfo.id, 'save00', [data]).then(() => {
+      setRows(rows.map((row) => (row.id === data.id ? data : row)));
+      reset({}, { keepValues: true });
+    });
   };
 
   /* 삭제 버튼 클릭 */
@@ -170,10 +168,10 @@ const TMMA0011 = ({ getCombo, search, save, remove }) => {
     const data = getValues();
     console.log('--- Remove ---');
     console.log(data);
-    //remove(MENU_ID, 'save00', [data]).then(() => {
-    //  setGridData(rows.filter((row) => row.id !== data.id));
-    //  reset({}, { keepValues: true });
-    //});
+    remove(menuInfo.id, 'save00', [data]).then(() => {
+      setRows(rows.filter((row) => row.id !== data.id));
+      reset({}, { keepValues: true });
+    });
   };
 
   /* Datagrid selectionModel 변경 시 form reset */
@@ -241,12 +239,14 @@ const TMMA0011 = ({ getCombo, search, save, remove }) => {
 
   return (
     <ComWorkframe>
-      <ComWorkTitleArea id={MENU_ID} title="공통코드관리" />
+      <ComWorkTitleArea menuInfo={menuInfo} />
       <ComSearchArea onSubmit={handleSearch} searchItems={searchItems} />
       <ComCompArea>
         <ComDatagrid
           rows={rows}
           columns={columns}
+          selectionModel={selectionModel}
+          setSelectionModel={setSelectionModel}
           commonButtons={{ insert: { onClick: onInsert } }}
           disableMultipleSelection
           initialState={{
@@ -279,18 +279,6 @@ const TMMA0011 = ({ getCombo, search, save, remove }) => {
               },
             },
           }}
-          onCellKeyDown={(params, e) => {
-            if (e.keyCode === 38 || e.keyCode === 40) {
-              const newId = (
-                parseInt(params.id) + (e.keyCode === 38 ? -1 : 1)
-              ).toString();
-              setSelectionModel(newId);
-            }
-          }}
-          onSelectionModelChange={(ids) => {
-            setSelectionModel(ids[0]);
-          }}
-          selectionModel={selectionModel}
         />
         <ComWrapperVertical>
           <ComFormTable

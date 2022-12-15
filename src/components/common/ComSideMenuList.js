@@ -9,6 +9,7 @@ import {
   ListItemText,
   Typography,
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -17,12 +18,13 @@ const ComSideMenuList = ({ tabs, setTabs, setTabValue, open, setOpen }) => {
     menuList: menuList.menuList,
   }));
 
+  const theme = useTheme();
+  const [menuOpen, setMenuOpen] = useState({});
+
   const handleClose = () => {
     setOpen(false);
   };
 
-  // List
-  const [menuOpen, setMenuOpen] = useState({});
   const handleCollapsableMenuClick = useCallback(
     (menuIdxx) => {
       setMenuOpen({ ...menuOpen, [menuIdxx]: !menuOpen[menuIdxx] });
@@ -32,10 +34,21 @@ const ComSideMenuList = ({ tabs, setTabs, setTabValue, open, setOpen }) => {
   const handleWorkMenuClick = useCallback(
     (progIdxx, menuName) => {
       if (tabs.find((tab) => tab.menuId === progIdxx) === undefined) {
+        // 상위 메뉴 검색
+        const level3 = menuList.find(
+          (level3) =>
+            level3.menuIdxx ===
+            menuList.find((level4) => level4.progIdxx === progIdxx).upmeIdxx,
+        );
+        const level2 = menuList.find(
+          (level2) => level2.menuIdxx === level3.upmeIdxx,
+        );
+
         setTabs((tabs) =>
           tabs.concat({
             menuId: progIdxx,
             label: menuName,
+            upperMenus: [level2.menuName, level3.menuName],
           }),
         );
         setTabValue(progIdxx);
@@ -44,7 +57,7 @@ const ComSideMenuList = ({ tabs, setTabs, setTabValue, open, setOpen }) => {
       }
       setOpen(false);
     },
-    [setOpen, setTabValue, setTabs, tabs],
+    [menuList, setOpen, setTabValue, setTabs, tabs],
   );
 
   useEffect(() => {
@@ -76,7 +89,10 @@ const ComSideMenuList = ({ tabs, setTabs, setTabValue, open, setOpen }) => {
                 >
                   <ListItemText
                     primary={menuItemLevel2.menuName}
-                    primaryTypographyProps={{ variant: 'h5' }}
+                    primaryTypographyProps={{
+                      variant: 'h5',
+                      sx: { color: theme.palette.primary[theme.palette.mode] },
+                    }}
                   />
                   {menuOpen[menuItemLevel2.menuIdxx] ? (
                     <ExpandLess />
@@ -108,7 +124,13 @@ const ComSideMenuList = ({ tabs, setTabs, setTabValue, open, setOpen }) => {
                           >
                             <ListItemText
                               primary={menuItemLevel3.menuName}
-                              primaryTypographyProps={{ variant: 'h6' }}
+                              primaryTypographyProps={{
+                                variant: 'h6',
+                                sx: {
+                                  color:
+                                    theme.palette.secondary[theme.palette.mode],
+                                },
+                              }}
                             />
                             {menuOpen[menuItemLevel3.menuIdxx] ? (
                               <ExpandLess />

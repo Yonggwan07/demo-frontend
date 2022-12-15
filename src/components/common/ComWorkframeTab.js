@@ -9,15 +9,17 @@ import { jsonKeyUpperCase, nullToEmptyString } from '../../utils/dataUtil';
 import { GridRowState } from '../../utils/gridUtil';
 
 const TabPanel = memo(function TabPanel(props) {
-  const { children, value, menuId, ...other } = props;
+  const { children, value, menuInfo, ...other } = props;
   const Menu = useMemo(
     () =>
       lazy(() =>
         import(
-          `../../pages/${menuId.substring(0, 3).toLowerCase()}/${menuId}`
+          `../../pages/${menuInfo.id.substring(0, 3).toLowerCase()}/${
+            menuInfo.id
+          }`
         ).catch(() => ({ default: () => <div>Not found</div> })),
       ),
-    [menuId],
+    [menuInfo.id],
   );
 
   const getCombo = useCallback((codeOptions) => {
@@ -121,14 +123,20 @@ const TabPanel = memo(function TabPanel(props) {
   return (
     <Box
       role="tabpanel"
-      hidden={value !== menuId}
-      id={`tabpanel-${menuId}`}
-      aria-labelledby={`tab-${menuId}`}
+      hidden={value !== menuInfo.id}
+      id={`tabpanel-${menuInfo.id}`}
+      aria-labelledby={`tab-${menuInfo.id}`}
       {...other}
       sx={{ height: 'calc(100% - 49px)', padding: '0 1rem 1rem 1rem' }}
     >
       <Suspense>
-        <Menu getCombo={getCombo} search={search} save={save} remove={remove} />
+        <Menu
+          menuInfo={menuInfo}
+          getCombo={getCombo}
+          search={search}
+          save={save}
+          remove={remove}
+        />
       </Suspense>
     </Box>
   );
@@ -173,8 +181,13 @@ const ComWorkframeTab = ({ tabs, setTabs, tabValue, setTabValue }) => {
   return (
     <Box sx={{ height: 'calc(100% - 2.5rem)' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={tabValue} onChange={handleChange}>
-          {tabs.map(({ label, menuId }) => (
+        <Tabs
+          value={tabValue}
+          onChange={handleChange}
+          variant="scrollable"
+          scrollButtons="auto"
+        >
+          {tabs.map(({ menuId, label }) => (
             <Tab
               key={menuId}
               value={menuId}
@@ -191,8 +204,12 @@ const ComWorkframeTab = ({ tabs, setTabs, tabValue, setTabValue }) => {
           ))}
         </Tabs>
       </Box>
-      {tabs.map(({ menuId }) => (
-        <TabPanel key={menuId} value={tabValue} menuId={menuId} />
+      {tabs.map(({ menuId, label, upperMenus }) => (
+        <TabPanel
+          key={menuId}
+          value={tabValue}
+          menuInfo={{ id: menuId, name: label, upperMenus }}
+        />
       ))}
     </Box>
   );

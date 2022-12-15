@@ -1,4 +1,3 @@
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import ComCompArea from '../../components/common/ComCompArea';
 import ComDatagrid from '../../components/common/ComDatagrid';
@@ -7,7 +6,6 @@ import ComWorkframe from '../../components/common/ComWorkframe';
 import ComWorkTitleArea from '../../components/common/ComWorkTitleArea';
 import { gridInit } from '../../utils/gridUtil';
 
-const MENU_ID = 'tmma0012';
 const codeOptions = [
   { commCode: 'SYST_CODE', usexYsno: '1' },
   { commCode: 'CDGB_CODE', usexYsno: '1' },
@@ -49,7 +47,7 @@ const dColumnInfo = [
   { field: 'OERP_CODE', headerName: '(구)ERP코드' },
 ];
 
-const TMMA0012 = ({ getCombo, search }) => {
+const TMMA0012 = ({ menuInfo, getCombo, search }) => {
   const [comCombo, setComCombo] = useState({});
   const [masterRows, setMasterRows] = useState([]);
   const [masterColumns, setMasterColumns] = useState([]);
@@ -67,7 +65,7 @@ const TMMA0012 = ({ getCombo, search }) => {
   /* 조회 버튼 클릭 */
   const handleSearch = useCallback(
     (data) => {
-      search(MENU_ID, 'search00', data)
+      search(menuInfo.id, 'search00', data)
         .then((res) => {
           setMasterRows(res);
         })
@@ -75,16 +73,16 @@ const TMMA0012 = ({ getCombo, search }) => {
           console.log('transaction error.');
         });
     },
-    [search, setMasterRows],
+    [menuInfo.id, search],
   );
 
   const handleRowClick = useCallback(
     (e) => {
-      search(MENU_ID, 'search01', e.row, false).then((res) => {
+      search(menuInfo.id, 'search01', e.row, false).then((res) => {
         setDetailRows(res);
       });
     },
-    [search],
+    [menuInfo.id, search],
   );
 
   const searchItems = useMemo(
@@ -112,58 +110,53 @@ const TMMA0012 = ({ getCombo, search }) => {
 
   return (
     <ComWorkframe>
-      <ComWorkTitleArea id={MENU_ID} title="세부코드관리" />
-      <ComSearchArea
-        onSubmit={handleSearch}
-        searchItems={searchItems}
-      />
+      <ComWorkTitleArea menuInfo={menuInfo} />
+      <ComSearchArea onSubmit={handleSearch} searchItems={searchItems} />
       <ComCompArea>
-        <div className="gridWrapper" style={{ flex: 0.3 }}>
-          <ComDatagrid
-            columns={masterColumns}
-            rows={masterRows}
-            onRowClick={handleRowClick}
-            initialState={{
-              columns: {
-                columnVisibilityModel: {
-                  SYST_CODE: false,
-                  CDGB_CODE: false,
-                  COCD_LNTH: false,
-                  RE1F_DESC: false,
-                  RE2F_DESC: false,
-                  RE3F_DESC: false,
-                  RE4F_DESC: false,
-                  RE5F_DESC: false,
-                  RE6F_DESC: false,
-                  REMK_100X: false,
-                },
+        <div style={{ flex: 0.3 }}>
+        <ComDatagrid
+          columns={masterColumns}
+          rows={masterRows}
+          onRowClick={handleRowClick}
+          initialState={{
+            columns: {
+              columnVisibilityModel: {
+                SYST_CODE: false,
+                CDGB_CODE: false,
+                COCD_LNTH: false,
+                RE1F_DESC: false,
+                RE2F_DESC: false,
+                RE3F_DESC: false,
+                RE4F_DESC: false,
+                RE5F_DESC: false,
+                RE6F_DESC: false,
+                REMK_100X: false,
               },
-            }}
-          />
+            },
+          }}
+        />
         </div>
-        <div className="gridWrapper">
-          <ComDatagrid
-            columns={detailColumns}
-            rows={detailRows}
-            initialState={{
-              columns: {
-                columnVisibilityModel: {
-                  COMM_CODE: false,
-                  REF1_FILD: false,
-                  REF2_FILD: false,
-                  REF3_FILD: false,
-                  REF4_FILD: false,
-                  REF5_FILD: false,
-                  REF6_FILD: false,
-                  REF7_FILD: false,
-                  REF8_FILD: false,
-                  REF9_FILD: false,
-                  RE10_FILD: false,
-                },
+        <ComDatagrid
+          columns={detailColumns}
+          rows={detailRows}
+          initialState={{
+            columns: {
+              columnVisibilityModel: {
+                COMM_CODE: false,
+                REF1_FILD: false,
+                REF2_FILD: false,
+                REF3_FILD: false,
+                REF4_FILD: false,
+                REF5_FILD: false,
+                REF6_FILD: false,
+                REF7_FILD: false,
+                REF8_FILD: false,
+                REF9_FILD: false,
+                RE10_FILD: false,
               },
-            }}
-          />
-        </div>
+            },
+          }}
+        />
       </ComCompArea>
     </ComWorkframe>
   );
