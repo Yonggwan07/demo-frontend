@@ -1,6 +1,5 @@
-import Box from '@mui/material/Box';
-import Tab from '@mui/material/Tab';
-import Tabs from '@mui/material/Tabs';
+import { Box, Tabs, Tab } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 import { lazy, memo, Suspense, useCallback, useMemo } from 'react';
 import handleBackdrop from '../../lib/api/backdrop';
 import openSnackbar from '../../lib/api/snackbar';
@@ -10,7 +9,7 @@ import { jsonKeyUpperCase, nullToEmptyString } from '../../utils/dataUtil';
 import { GridRowState } from '../../utils/gridUtil';
 
 const TabPanel = memo(function TabPanel(props) {
-  const { children, value, index, menuId, ...other } = props;
+  const { children, value, menuId, ...other } = props;
   const Menu = useMemo(
     () =>
       lazy(() =>
@@ -122,17 +121,11 @@ const TabPanel = memo(function TabPanel(props) {
   return (
     <Box
       role="tabpanel"
-      hidden={value !== index}
-      id={`tabpanel-${index}`}
-      aria-labelledby={`tab-${index}`}
+      hidden={value !== menuId}
+      id={`tabpanel-${menuId}`}
+      aria-labelledby={`tab-${menuId}`}
       {...other}
-      sx={{
-        position: 'absolute',
-        width: '100%',
-        height: 'calc(100% - 3.25rem - 3rem - 1px)',
-        zIndex: value === index ? '1' : '9999',
-        padding: '0 1rem',
-      }}
+      sx={{ height: 'calc(100% - 49px)', padding: '0 1rem 1rem 1rem' }}
     >
       <Suspense>
         <Menu getCombo={getCombo} search={search} save={save} remove={remove} />
@@ -141,34 +134,67 @@ const TabPanel = memo(function TabPanel(props) {
   );
 });
 
-function a11yProps(index) {
+function a11yProps(menuId) {
   return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
+    id: `simple-tab-${menuId}`,
+    'aria-controls': `simple-tabpanel-${menuId}`,
   };
 }
 
-const ComWorkframeTab = ({ tabs, tabValue, setTabValue }) => {
+const ComWorkframeTab = ({ tabs, setTabs, tabValue, setTabValue }) => {
+  /* 탭 선택 변경 시 */
   const handleChange = useCallback(
-    (_e, newValue) => {
-      setTabValue(newValue);
+    (e, newValue) => {
+      if (e.target.tagName === 'BUTTON') {
+        setTabValue(newValue);
+      }
     },
     [setTabValue],
   );
 
+  /* 탭 닫기 버튼 클릭 시 */
+  const handleTabClose = useCallback(
+    (menuId) => {
+      // 탭 삭제 전 인접한 탭 선택
+      const deletedIndex = tabs.findIndex((tab) => tab.menuId === menuId);
+      if (typeof tabs[deletedIndex + 1] !== 'undefined') {
+        setTabValue(tabs[deletedIndex + 1].menuId);
+      } else if (typeof tabs[deletedIndex - 1] !== 'undefined') {
+        setTabValue(tabs[deletedIndex - 1].menuId);
+      } else {
+        setTabValue('');
+      }
+
+      setTabs(tabs.filter((tab) => tab.menuId !== menuId));
+    },
+    [setTabValue, setTabs, tabs],
+  );
+
   return (
-    <>
+    <Box sx={{ height: 'calc(100% - 2.5rem)' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={tabValue} onChange={handleChange}>
-          {tabs.map(({ index, label, menuId }) => (
-            <Tab key={menuId} label={label} {...a11yProps(index)} />
+          {tabs.map(({ label, menuId }) => (
+            <Tab
+              key={menuId}
+              value={menuId}
+              label={label}
+              {...a11yProps(menuId)}
+              icon={
+                <div onClick={() => handleTabClose(menuId)}>
+                  <CloseIcon />
+                </div>
+              }
+              iconPosition="end"
+              sx={{ minHeight: 0 }}
+            />
           ))}
         </Tabs>
       </Box>
-      {tabs.map(({ index, menuId }) => (
-        <TabPanel key={menuId} value={tabValue} index={index} menuId={menuId} />
+      {tabs.map(({ menuId }) => (
+        <TabPanel key={menuId} value={tabValue} menuId={menuId} />
       ))}
-    </>
+    </Box>
   );
 };
 

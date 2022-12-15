@@ -7,17 +7,20 @@ import AuthForm from '../../components/auth/AuthForm';
 import { changeField, initializeForm, signin } from '../../modules/auth';
 import { useNavigate } from 'react-router-dom';
 import { check } from '../../modules/user';
+import { getMenuList } from '../../modules/menuList';
 
 const LoginForm = () => {
   const [error, setError] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { form, _auth, _authError, user } = useSelector(({ auth, userInfo }) => ({
-    form: auth.login,
-    _auth: auth.auth,
-    _authError: auth.authError,
-    user: userInfo.userInfo,
-  }));
+  const { form, _auth, _authError, user } = useSelector(
+    ({ auth, userInfo }) => ({
+      form: auth.login,
+      _auth: auth.auth,
+      _authError: auth.authError,
+      user: userInfo.userInfo,
+    }),
+  );
 
   const onChange = (e) => {
     const { value, name } = e.target;
@@ -62,6 +65,8 @@ const LoginForm = () => {
       } catch (e) {
         console.log('localStorage is not working!');
       }
+
+      dispatch(getMenuList());
       navigate('/main');
     }
   }, [_auth, _authError, dispatch, navigate]);

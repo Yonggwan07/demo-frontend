@@ -6,3 +6,5 @@ export const signin = ({ id, pw, scnbYsno }) =>
 export const check = () => client.get('/api/auth/check');
 
 export const logout = () => client.post('/api/auth/logout');
+
+export const getMenuList = () => client.get('/api/auth/getMenuList');
