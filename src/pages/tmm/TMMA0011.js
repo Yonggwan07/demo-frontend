@@ -174,11 +174,6 @@ const TMMA0011 = ({ menuInfo, getCombo, search, save, remove }) => {
     });
   };
 
-  /* Datagrid selectionModel 변경 시 form reset */
-  useEffect(() => {
-    reset(rows.find((row) => row.id === selectionModel));
-  }, [reset, rows, selectionModel]);
-
   // 조회조건 설정
   const searchItems = useMemo(
     () => [
@@ -245,6 +240,7 @@ const TMMA0011 = ({ menuInfo, getCombo, search, save, remove }) => {
         <ComDatagrid
           rows={rows}
           columns={columns}
+          reset={reset}
           selectionModel={selectionModel}
           setSelectionModel={setSelectionModel}
           commonButtons={{ insert: { onClick: onInsert } }}
