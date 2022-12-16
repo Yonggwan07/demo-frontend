@@ -125,7 +125,6 @@ const ComSearchPopup = ({ control, popupid, search, ...props }) => {
   };
 
   const handleSearch = (data) => {
-    console.log(data);
     search(
       'comCommonPopup',
       'getCommonPopupData',
