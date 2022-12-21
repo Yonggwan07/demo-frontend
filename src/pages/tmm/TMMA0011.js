@@ -409,7 +409,7 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
                         control={control}
                         name="REMK_100X"
                         multiline
-                        rows={6}
+                        rows={5}
                       />
                     </TableCell>
                   </TableRow>
