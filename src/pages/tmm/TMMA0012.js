@@ -4,7 +4,7 @@ import ComDatagrid from '../../components/common/ComDatagrid';
 import ComSearchArea from '../../components/common/ComSearchArea';
 import ComWorkframe from '../../components/common/ComWorkframe';
 import ComWorkTitleArea from '../../components/common/ComWorkTitleArea';
-import { gridInit } from '../../utils/gridUtil';
+import useCombo from '../../hooks/useCombo';
 
 const codeOptions = [
   { commCode: 'SYST_CODE', usexYsno: '1' },
@@ -47,20 +47,8 @@ const dColumnInfo = [
   { field: 'OERP_CODE', headerName: '(구)ERP코드' },
 ];
 
-const TMMA0012 = ({ menuInfo, getCombo, search }) => {
-  const [comCombo, setComCombo] = useState({});
-  const [masterRows, setMasterRows] = useState([]);
-  const [masterColumns, setMasterColumns] = useState([]);
-  const [detailRows, setDetailRows] = useState([]);
-  const [detailColumns, setDetailColumns] = useState([]);
-
-  useEffect(() => {
-    getCombo(codeOptions).then((res) => {
-      setComCombo(res);
-      setMasterColumns(gridInit(mColumnInfo, res));
-      setDetailColumns(gridInit(dColumnInfo, res));
-    });
-  }, [getCombo]);
+const TMMA0012 = ({ menuInfo, search }) => {
+  const { comCombo } = useCombo(codeOptions);
 
   /* 조회 버튼 클릭 */
   const handleSearch = useCallback(
@@ -114,27 +102,27 @@ const TMMA0012 = ({ menuInfo, getCombo, search }) => {
       <ComSearchArea onSubmit={handleSearch} searchItems={searchItems} />
       <ComCompArea>
         <div style={{ flex: 0.3 }}>
-        <ComDatagrid
-          columns={masterColumns}
-          rows={masterRows}
-          onRowClick={handleRowClick}
-          initialState={{
-            columns: {
-              columnVisibilityModel: {
-                SYST_CODE: false,
-                CDGB_CODE: false,
-                COCD_LNTH: false,
-                RE1F_DESC: false,
-                RE2F_DESC: false,
-                RE3F_DESC: false,
-                RE4F_DESC: false,
-                RE5F_DESC: false,
-                RE6F_DESC: false,
-                REMK_100X: false,
+          <ComDatagrid
+            columns={masterColumns}
+            rows={masterRows}
+            onRowClick={handleRowClick}
+            initialState={{
+              columns: {
+                columnVisibilityModel: {
+                  SYST_CODE: false,
+                  CDGB_CODE: false,
+                  COCD_LNTH: false,
+                  RE1F_DESC: false,
+                  RE2F_DESC: false,
+                  RE3F_DESC: false,
+                  RE4F_DESC: false,
+                  RE5F_DESC: false,
+                  RE6F_DESC: false,
+                  REMK_100X: false,
+                },
               },
-            },
-          }}
-        />
+            }}
+          />
         </div>
         <ComDatagrid
           columns={detailColumns}

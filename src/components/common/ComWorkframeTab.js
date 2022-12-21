@@ -22,23 +22,6 @@ const TabPanel = memo(function TabPanel(props) {
     [menuInfo.id],
   );
 
-  const getCombo = useCallback((codeOptions) => {
-    return new Promise((resolve, reject) => {
-      transaction({
-        menuId: 'comCombo',
-        workId: 'getCombo',
-        params: codeOptions,
-      }).then((res) => {
-        if (res.status === 200) {
-          resolve(res.data);
-        } else {
-          console.error(res);
-          return reject();
-        }
-      });
-    });
-  }, []);
-
   const search = useCallback((menuId, workId, params, useSnackbar = true) => {
     return new Promise((resolve, reject) => {
       handleBackdrop(true);
@@ -132,7 +115,6 @@ const TabPanel = memo(function TabPanel(props) {
       <Suspense>
         <Menu
           menuInfo={menuInfo}
-          getCombo={getCombo}
           search={search}
           save={save}
           remove={remove}

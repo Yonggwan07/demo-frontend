@@ -4,7 +4,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow,
+  TableRow
 } from '@mui/material';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
@@ -19,8 +19,9 @@ import ComSelect from '../../components/common/ComSelect';
 import ComWorkframe from '../../components/common/ComWorkframe';
 import ComWorkTitleArea from '../../components/common/ComWorkTitleArea';
 import ComWrapperVertical from '../../components/common/ComWrapperVertical';
+import useCombo from '../../hooks/useCombo';
 import handleDialog from '../../lib/api/dialog';
-import { gridInit, GridRowState } from '../../utils/gridUtil';
+import { GridRowState } from '../../utils/gridUtil';
 
 const codeOptions = [
   { commCode: 'SYST_CODE', usexYsno: '1' },
@@ -107,8 +108,8 @@ const ConditionalSearchPopup = ({ ...props }) => {
   );
 };
 
-const TMMA0011 = ({ menuInfo, getCombo, search, save, remove }) => {
-  const [comCombo, setComCombo] = useState({});
+const TMMA0011 = ({ menuInfo, search, save, remove }) => {
+  const { comCombo } = useCombo(codeOptions);
   const { handleSubmit, reset, getValues, control } = useForm(); // 우측 테이블 form
   const [rows, setRows] = useState([]);
   const [columns, setColumns] = useState([]);
@@ -117,14 +118,6 @@ const TMMA0011 = ({ menuInfo, getCombo, search, save, remove }) => {
   useEffect(() => {
     console.log('render');
   }, []);
-
-  /* Page Init */
-  useEffect(() => {
-    getCombo(codeOptions).then((res) => {
-      setComCombo(res);
-      setColumns(gridInit(columnInfo, res));
-    });
-  }, [getCombo]);
 
   /* 조회 버튼 클릭 */
   const handleSearch = useCallback(
