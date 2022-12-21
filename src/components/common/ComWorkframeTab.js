@@ -9,17 +9,19 @@ import { jsonKeyUpperCase, nullToEmptyString } from '../../utils/dataUtil';
 import { GridRowState } from '../../utils/gridUtil';
 
 const TabPanel = memo(function TabPanel(props) {
-  const { children, value, menuInfo, ...other } = props;
+  const { children, value, menuId, label, upperMenus, ...other } = props;
+  const menuInfo = useMemo(
+    () => ({ id: menuId, name: label, upperMenus }),
+    [label, menuId, upperMenus],
+  );
   const Menu = useMemo(
     () =>
       lazy(() =>
         import(
-          `../../pages/${menuInfo.id.substring(0, 3).toLowerCase()}/${
-            menuInfo.id
-          }`
+          `../../pages/${menuId.substring(0, 3).toLowerCase()}/${menuId}`
         ).catch(() => ({ default: () => <div>Not found</div> })),
       ),
-    [menuInfo.id],
+    [menuId],
   );
 
   const search = useCallback((menuId, workId, params, useSnackbar = true) => {
@@ -106,9 +108,9 @@ const TabPanel = memo(function TabPanel(props) {
   return (
     <Box
       role="tabpanel"
-      hidden={value !== menuInfo.id}
-      id={`tabpanel-${menuInfo.id}`}
-      aria-labelledby={`tab-${menuInfo.id}`}
+      hidden={value !== menuId}
+      id={`tabpanel-${menuId}`}
+      aria-labelledby={`tab-${menuId}`}
       {...other}
       sx={{ height: 'calc(100% - 49px)', padding: '0 1rem 1rem 1rem' }}
     >
@@ -190,7 +192,9 @@ const ComWorkframeTab = ({ tabs, setTabs, tabValue, setTabValue }) => {
         <TabPanel
           key={menuId}
           value={tabValue}
-          menuInfo={{ id: menuId, name: label, upperMenus }}
+          menuId={menuId}
+          label={label}
+          upperMenus={upperMenus}
         />
       ))}
     </Box>
