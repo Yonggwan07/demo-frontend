@@ -1,10 +1,11 @@
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import ComCompArea from '../../components/common/ComCompArea';
 import ComDatagrid from '../../components/common/ComDatagrid';
 import ComSearchArea from '../../components/common/ComSearchArea';
 import ComWorkframe from '../../components/common/ComWorkframe';
 import ComWorkTitleArea from '../../components/common/ComWorkTitleArea';
 import useCombo from '../../hooks/useCombo';
+import useDatagrid from '../../hooks/useDatagrid';
 
 const codeOptions = [
   { commCode: 'SYST_CODE', usexYsno: '1' },
@@ -49,6 +50,17 @@ const dColumnInfo = [
 
 const TMMA0012 = ({ menuInfo, search }) => {
   const { comCombo } = useCombo(codeOptions);
+  const {
+    rows: masterRows,
+    columns: masterColumns,
+    setRows: setMasterRows,
+  } = useDatagrid(mColumnInfo, comCombo);
+
+  const {
+    rows: detailRows,
+    columns: detailColumns,
+    setRows: setDetailRows,
+  } = useDatagrid(dColumnInfo, comCombo);
 
   /* 조회 버튼 클릭 */
   const handleSearch = useCallback(
@@ -61,7 +73,7 @@ const TMMA0012 = ({ menuInfo, search }) => {
           console.log('transaction error.');
         });
     },
-    [menuInfo.id, search],
+    [menuInfo.id, search, setMasterRows],
   );
 
   const handleRowClick = useCallback(
@@ -70,7 +82,7 @@ const TMMA0012 = ({ menuInfo, search }) => {
         setDetailRows(res);
       });
     },
-    [menuInfo.id, search],
+    [menuInfo.id, search, setDetailRows],
   );
 
   const searchItems = useMemo(
@@ -102,27 +114,27 @@ const TMMA0012 = ({ menuInfo, search }) => {
       <ComSearchArea onSubmit={handleSearch} searchItems={searchItems} />
       <ComCompArea>
         <div style={{ flex: 0.3 }}>
-          <ComDatagrid
-            columns={masterColumns}
-            rows={masterRows}
-            onRowClick={handleRowClick}
-            initialState={{
-              columns: {
-                columnVisibilityModel: {
-                  SYST_CODE: false,
-                  CDGB_CODE: false,
-                  COCD_LNTH: false,
-                  RE1F_DESC: false,
-                  RE2F_DESC: false,
-                  RE3F_DESC: false,
-                  RE4F_DESC: false,
-                  RE5F_DESC: false,
-                  RE6F_DESC: false,
-                  REMK_100X: false,
-                },
+        <ComDatagrid
+          columns={masterColumns}
+          rows={masterRows}
+          onRowClick={handleRowClick}
+          initialState={{
+            columns: {
+              columnVisibilityModel: {
+                SYST_CODE: false,
+                CDGB_CODE: false,
+                COCD_LNTH: false,
+                RE1F_DESC: false,
+                RE2F_DESC: false,
+                RE3F_DESC: false,
+                RE4F_DESC: false,
+                RE5F_DESC: false,
+                RE6F_DESC: false,
+                REMK_100X: false,
               },
-            }}
-          />
+            },
+          }}
+        />
         </div>
         <ComDatagrid
           columns={detailColumns}

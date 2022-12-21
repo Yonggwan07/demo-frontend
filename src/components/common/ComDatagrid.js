@@ -1,17 +1,20 @@
 import {
-  DataGrid, GridToolbarColumnsButton, GridToolbarContainer, GridToolbarExport, GridToolbarFilterButton
+  DataGrid,
+  GridToolbarColumnsButton,
+  GridToolbarContainer,
+  GridToolbarExport,
+  GridToolbarFilterButton,
 } from '@mui/x-data-grid';
-import { memo, useCallback, useEffect } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import ComCommonButtons from './ComCommonButtons';
 
 const ComDatagrid = ({
   rows,
   columns,
   reset,
-  selectionModel,
-  setSelectionModel,
   ...props
 }) => {
+  const [selectionModel, setSelectionModel] = useState([]);
   const handleCellKeyDown = useCallback(
     (params, e) => {
       if (e.keyCode === 38 || e.keyCode === 40) {
@@ -38,19 +41,24 @@ const ComDatagrid = ({
     }
   }, [reset, rows, selectionModel]);
 
+  const gridToolBar = useCallback(
+    () => (
+      <GridToolbarContainer>
+        <GridToolbarColumnsButton />
+        <GridToolbarFilterButton />
+        <GridToolbarExport />
+        <ComCommonButtons {...props.commonButtons} />
+      </GridToolbarContainer>
+    ),
+    [props.commonButtons],
+  );
+
   return (
     <DataGrid
       rows={rows}
       columns={columns}
       components={{
-        Toolbar: () => (
-          <GridToolbarContainer>
-            <GridToolbarColumnsButton />
-            <GridToolbarFilterButton />
-            <GridToolbarExport />
-            <ComCommonButtons {...props.commonButtons} />
-          </GridToolbarContainer>
-        ),
+        Toolbar: gridToolBar,
       }}
       experimentalFeatures={{ newEditingApi: true }}
       onCellKeyDown={handleCellKeyDown}

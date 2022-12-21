@@ -1,14 +1,7 @@
 import { useGridApiContext } from '@mui/x-data-grid';
-import { useCallback, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-export const GridRowState = {
-  normal: 'n',
-  inserted: 'i',
-  modified: 'm',
-  deleted: 'd',
-};
-
-const useDatagrid = () => {
+const useDatagrid = (columnInfo, commCodes) => {
   const [rows, setRows] = useState([]);
   const [columns, setColumns] = useState([]);
 
@@ -44,37 +37,37 @@ const useDatagrid = () => {
     );
   };
 
-  const gridInit = useCallback((columnInfo, commCodes) => {
-    for (const key in columnInfo) {
-      if (columnInfo[key].compType === 'select') {
-        columnInfo[key].renderCell = (params) => {
-          return (
-            <SelectInputCell
-              {...params}
-              options={commCodes[columnInfo[key].field]}
-            />
-          );
-        };
-        columnInfo[key].renderEditCell = (params) => {
-          return (
-            <SelectEditInputCell
-              {...params}
-              options={commCodes[columnInfo[key].field]}
-              //setValue={setValue}
-            />
-          );
-        };
+  useEffect(() => {
+    if (Object.keys(commCodes).length > 0) {
+      for (const key in columnInfo) {
+        if (columnInfo[key].compType === 'select') {
+          columnInfo[key].renderCell = (params) => {
+            return (
+              <SelectInputCell
+                {...params}
+                options={commCodes[columnInfo[key].field]}
+              />
+            );
+          };
+          columnInfo[key].renderEditCell = (params) => {
+            return (
+              <SelectEditInputCell
+                {...params}
+                options={commCodes[columnInfo[key].field]}
+              />
+            );
+          };
+        }
       }
+      setColumns(columnInfo);
     }
-    setColumns(columnInfo);
-  }, []);
+  }, [columnInfo, commCodes]);
 
   return {
     rows,
     columns,
     setRows,
     setColumns,
-    gridInit,
   };
 };
 

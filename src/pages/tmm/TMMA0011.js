@@ -4,9 +4,9 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
 } from '@mui/material';
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import ComCheckbox from '../../components/common/ComCheckbox';
 import ComCompArea from '../../components/common/ComCompArea';
@@ -20,8 +20,9 @@ import ComWorkframe from '../../components/common/ComWorkframe';
 import ComWorkTitleArea from '../../components/common/ComWorkTitleArea';
 import ComWrapperVertical from '../../components/common/ComWrapperVertical';
 import useCombo from '../../hooks/useCombo';
+import useDatagrid from '../../hooks/useDatagrid';
 import handleDialog from '../../lib/api/dialog';
-import { GridRowState } from '../../utils/gridUtil';
+import { GridRowState } from '../../utils/gridRowState';
 
 const codeOptions = [
   { commCode: 'SYST_CODE', usexYsno: '1' },
@@ -110,10 +111,8 @@ const ConditionalSearchPopup = ({ ...props }) => {
 
 const TMMA0011 = ({ menuInfo, search, save, remove }) => {
   const { comCombo } = useCombo(codeOptions);
+  const { rows, columns, setRows } = useDatagrid(columnInfo, comCombo);
   const { handleSubmit, reset, getValues, control } = useForm(); // 우측 테이블 form
-  const [rows, setRows] = useState([]);
-  const [columns, setColumns] = useState([]);
-  const [selectionModel, setSelectionModel] = useState([]);
 
   useEffect(() => {
     console.log('render');
@@ -126,13 +125,12 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
       search(menuInfo.id, 'search00', data)
         .then((res) => {
           setRows(res);
-          setSelectionModel('1');
         })
         .catch(() => {
           setRows([]);
         });
     },
-    [menuInfo.id, search],
+    [menuInfo.id, search, setRows],
   );
 
   /* 입력 버튼 클릭 */
@@ -143,7 +141,6 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
       state: GridRowState.inserted,
     };
     setRows((prev) => [...prev, newRow]);
-    setSelectionModel(newId);
   };
 
   /* 저장 버튼 클릭 */
@@ -234,8 +231,6 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
           rows={rows}
           columns={columns}
           reset={reset}
-          selectionModel={selectionModel}
-          setSelectionModel={setSelectionModel}
           commonButtons={{ insert: { onClick: onInsert } }}
           disableMultipleSelection
           initialState={{
