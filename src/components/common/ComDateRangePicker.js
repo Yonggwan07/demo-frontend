@@ -95,7 +95,7 @@ const ComDateRangePicker = ({ control, type, ...props }) => {
         startDate={startDate}
         endDate={endDate}
         minDate={parseISO(props.minDate)}
-        maxDate={parseISO(endDate)}
+        maxDate={endDate}
         locale={ko}
         showMonthYearPicker={_type.showMonthYearPicker}
         showYearPicker={_type.showYearPicker}
@@ -135,7 +135,7 @@ const ComDateRangePicker = ({ control, type, ...props }) => {
         selected={endDate}
         startDate={startDate}
         endDate={endDate}
-        minDate={parseISO(startDate)}
+        minDate={startDate}
         maxDate={parseISO(props.maxDate)}
         locale={ko}
         showMonthYearPicker={_type.showMonthYearPicker}
