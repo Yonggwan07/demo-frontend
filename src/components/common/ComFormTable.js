@@ -12,11 +12,19 @@ const ComFormTable = ({
   const { isDirty } = useFormState({ control });
   const id = useWatch({ control, name: 'id' });
 
+  const getDisabled = (id, disabled) => {
+    if (!id) {
+      return true;
+    } else {
+      return disabled ? disabled : false;
+    }
+  };
+
   return (
     <form
       className={direction === 'v' ? 'wrapperVertical' : 'wrapperHorizontal'}
       onSubmit={onSubmit}
-      disabled={!id ? true : disabled ? disabled : false}
+      disabled={getDisabled(id, disabled)}
       noValidate
     >
       <ComCommonButtons isDirty={isDirty} {...commonButtons} />

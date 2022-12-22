@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { format, parseISO } from 'date-fns';
 import { useController } from 'react-hook-form';
 import ko from 'date-fns/locale/ko';
@@ -31,7 +31,7 @@ const ComDatePicker = ({ control, type, ...props }) => {
     name: props.name,
     control,
     defaultValue: props.date,
-    rules:  { required: props.required ? constStr.required : false },
+    rules: { required: props.required ? constStr.required : false },
   });
 
   const [date, setDate] = useState(
@@ -64,11 +64,11 @@ const ComDatePicker = ({ control, type, ...props }) => {
     }
   }, [type]);
 
-  const handleChange = (date, e, field) => {
+  const handleChange = useCallback((date, e) => {
     e.preventDefault();
     setDate(date === null ? '' : date);
     field.onChange(date === null ? '' : format(date, 'yyyy-MM-dd'));
-  };
+  }, [field]);
 
   return (
     <div style={{ display: 'flex' }}>
@@ -80,7 +80,7 @@ const ComDatePicker = ({ control, type, ...props }) => {
         locale={ko}
         showMonthYearPicker={_type.showMonthYearPicker}
         showYearPicker={_type.showYearPicker}
-        onChange={(date, e) => handleChange(date, e, field)}
+        onChange={handleChange}
         error={error ? true : false}
         title={error?.message ? error.message : ''}
         customInput={

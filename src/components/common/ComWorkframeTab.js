@@ -8,6 +8,10 @@ import { constStr } from '../../utils/constStr';
 import { jsonKeyUpperCase, nullToEmptyString } from '../../utils/dataUtil';
 import { GridRowState } from '../../utils/gridRowState';
 
+const NotFound = () => {
+  return <div>Not found</div>;
+};
+
 const TabPanel = memo(function TabPanel(props) {
   const { children, value, menuId, label, upperMenus, ...other } = props;
   const menuInfo = useMemo(
@@ -19,7 +23,7 @@ const TabPanel = memo(function TabPanel(props) {
       lazy(() =>
         import(
           `../../pages/${menuId.substring(0, 3).toLowerCase()}/${menuId}`
-        ).catch(() => ({ default: () => <div>Not found</div> })),
+        ).catch(() => ({ default: NotFound })),
       ),
     [menuId],
   );
@@ -115,12 +119,7 @@ const TabPanel = memo(function TabPanel(props) {
       sx={{ height: 'calc(100% - 49px)', padding: '0 1rem 1rem 1rem' }}
     >
       <Suspense>
-        <Menu
-          menuInfo={menuInfo}
-          search={search}
-          save={save}
-          remove={remove}
-        />
+        <Menu menuInfo={menuInfo} search={search} save={save} remove={remove} />
       </Suspense>
     </Box>
   );

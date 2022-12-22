@@ -1,7 +1,7 @@
 import { Box, Tooltip, TextField } from '@mui/material';
 import { format, parseISO } from 'date-fns';
 import ko from 'date-fns/locale/ko';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import { useController } from 'react-hook-form';
 import { PropTypes } from 'prop-types';
@@ -46,7 +46,9 @@ const ComDateRangePicker = ({ control, type, ...props }) => {
   const [startDate, setStartDate] = useState(
     props.from !== undefined ? parseISO(props.from) : '',
   );
-  const [endDate, setEndDate] = useState(props.to !== undefined ? parseISO(props.to) : '');
+  const [endDate, setEndDate] = useState(
+    props.to !== undefined ? parseISO(props.to) : '',
+  );
 
   const _type = useMemo(() => {
     switch (type) {
@@ -74,17 +76,23 @@ const ComDateRangePicker = ({ control, type, ...props }) => {
     }
   }, [type]);
 
-  const handleStartChange = (date, e, field) => {
-    e.preventDefault();
-    setStartDate(date === null ? '' : date);
-    field.onChange(date === null ? '' : format(date, _type.dateFormat));
-  };
+  const handleStartChange = useCallback(
+    (date, e) => {
+      e.preventDefault();
+      setStartDate(date === null ? '' : date);
+      fromField.onChange(date === null ? '' : format(date, _type.dateFormat));
+    },
+    [_type.dateFormat, fromField],
+  );
 
-  const handleEndChange = (date, e, field) => {
-    e.preventDefault();
-    setEndDate(date === null ? '' : date);
-    field.onChange(date === null ? '' : format(date, _type.dateFormat));
-  };
+  const handleEndChange = useCallback(
+    (date, e) => {
+      e.preventDefault();
+      setEndDate(date === null ? '' : date);
+      toField.onChange(date === null ? '' : format(date, _type.dateFormat));
+    },
+    [_type.dateFormat, toField],
+  );
 
   return (
     <div style={{ display: 'flex' }}>
@@ -99,7 +107,7 @@ const ComDateRangePicker = ({ control, type, ...props }) => {
         locale={ko}
         showMonthYearPicker={_type.showMonthYearPicker}
         showYearPicker={_type.showYearPicker}
-        onChange={(date, e) => handleStartChange(date, e, fromField)}
+        onChange={handleStartChange}
         title={fromError?.message ? fromError.message : ''}
         customInput={
           <Tooltip
@@ -140,7 +148,7 @@ const ComDateRangePicker = ({ control, type, ...props }) => {
         locale={ko}
         showMonthYearPicker={_type.showMonthYearPicker}
         showYearPicker={_type.showYearPicker}
-        onChange={(date, e) => handleEndChange(date, e, toField)}
+        onChange={handleEndChange}
         title={toError?.message ? toError.message : ''}
         customInput={
           <Tooltip

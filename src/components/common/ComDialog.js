@@ -25,12 +25,14 @@ const ComDialog = () => {
   const handleConfirm = useCallback(() => {
     confirmFn();
     setOpen(false);
-  }, [confirmFn])
+  }, [confirmFn]);
 
   useEffect(() => {
     handleDialogFn = handleDialog;
   }, [handleDialog]);
 
+  const handleClose = useCallback(() => setOpen(false), []);
+  
   return (
     <Dialog open={open}>
       <DialogTitle>
@@ -40,7 +42,7 @@ const ComDialog = () => {
         <DialogContentText>{message}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => setOpen(false)} autoFocus>
+        <Button onClick={handleClose} autoFocus>
           취소
         </Button>
         <Button onClick={handleConfirm} color="error">

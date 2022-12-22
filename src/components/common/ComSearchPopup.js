@@ -8,7 +8,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Tooltip from '@mui/material/Tooltip';
 import { DataGrid } from '@mui/x-data-grid';
 import { PropTypes } from 'prop-types';
-import { memo, useState } from 'react';
+import { memo, useCallback, useState } from 'react';
 import { useController } from 'react-hook-form';
 import { constStr } from '../../utils/constStr';
 import ComSearchArea from './ComSearchArea';
@@ -43,7 +43,7 @@ const ComSearchPopup = ({ control, popupid, search, ...props }) => {
     columnVisibilityModel: null,
   });
 
-  const parseSearchItems = (strData) => {
+  const parseSearchItems = useCallback((strData) => {
     let matches;
     while ((matches = OBJECT_REG.exec(strData)) !== null) {
       const newSearchItems = {};
@@ -69,7 +69,7 @@ const ComSearchPopup = ({ control, popupid, search, ...props }) => {
 
       setSearchItems([...searchItems, newSearchItems]);
     }
-  };
+  }, [nameField.value, searchItems]);
 
   const parseColumns = (strData) => {
     let matches;
@@ -107,7 +107,7 @@ const ComSearchPopup = ({ control, popupid, search, ...props }) => {
     }));
   };
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setSearchItems([]);
     setGrid((prevState) => ({
       ...prevState,
@@ -116,42 +116,48 @@ const ComSearchPopup = ({ control, popupid, search, ...props }) => {
       columnVisibilityModel: null,
     }));
     setOpen(false);
-  };
+  }, []);
 
-  const handleRowDoubleClick = ({ row }) => {
-    codeField.onChange(row.COMM_CODE);
-    nameField.onChange(row.COMM_CDNM);
-    handleClose();
-  };
+  const handleRowDoubleClick = useCallback(
+    ({ row }) => {
+      codeField.onChange(row.COMM_CODE);
+      nameField.onChange(row.COMM_CDNM);
+      handleClose();
+    },
+    [codeField, handleClose, nameField],
+  );
 
-  const handleSearch = (data) => {
-    search(
-      'comCommonPopup',
-      'getCommonPopupData',
-      Object.assign(
-        {
-          POPP_XDAX: 'COMPOPUP.TMM1003',
-        },
-        data,
-      ),
-      false,
-    ).then((res) => {
-      res = res.map(({ ID, ...rest }) => ({ id: ID, ...rest }));
-      if (res.length === 1) {
-        handleRowDoubleClick({
-          row: {
-            COMM_CODE: res[0].COMM_CODE,
-            COMM_CDNM: res[0].COMM_CDNM,
+  const handleSearch = useCallback(
+    (data) => {
+      search(
+        'comCommonPopup',
+        'getCommonPopupData',
+        Object.assign(
+          {
+            POPP_XDAX: 'COMPOPUP.TMM1003',
           },
-        });
-      } else {
-        setGrid((prevState) => ({ ...prevState, rows: res }));
-        setOpen(true);
-      }
-    });
-  };
+          data,
+        ),
+        false,
+      ).then((res) => {
+        res = res.map(({ ID, ...rest }) => ({ id: ID, ...rest }));
+        if (res.length === 1) {
+          handleRowDoubleClick({
+            row: {
+              COMM_CODE: res[0].COMM_CODE,
+              COMM_CDNM: res[0].COMM_CDNM,
+            },
+          });
+        } else {
+          setGrid((prevState) => ({ ...prevState, rows: res }));
+          setOpen(true);
+        }
+      });
+    },
+    [handleRowDoubleClick, search],
+  );
 
-  const handleOpen = () => {
+  const handleOpen = useCallback(() => {
     search(
       'comCommonPopup',
       'getCommonPopupInfo',
@@ -163,7 +169,17 @@ const ComSearchPopup = ({ control, popupid, search, ...props }) => {
       parseColumns(res.SERS_GRDC);
       handleSearch({ COMM_CDNM: nameField.value });
     });
-  };
+  }, [handleSearch, nameField.value, parseSearchItems, popupid, search]);
+
+  const handleTextFieldChange = useCallback(
+    (e) => {
+      nameField.onChange(e.target.value);
+      if (e.target.value === '') {
+        codeField.onChange(e.target.value);
+      }
+    },
+    [codeField, nameField],
+  );
 
   return (
     <div
@@ -215,7 +231,7 @@ const ComSearchPopup = ({ control, popupid, search, ...props }) => {
               padding: '0 14px',
             },
           }}
-          error={error ?  true : false}
+          error={error ? true : false}
           readOnly
           autoComplete="false"
         />
@@ -237,12 +253,7 @@ const ComSearchPopup = ({ control, popupid, search, ...props }) => {
       <TextField
         {...nameField}
         {...props}
-        onChange={(e) => {
-          nameField.onChange(e.target.value);
-          if (e.target.value === '') {
-            codeField.onChange(e.target.value);
-          }
-        }}
+        onChange={handleTextFieldChange}
         //style={{ height: '100%', flex: '3 1 auto' }}
         sx={{
           flex: 2,
@@ -256,7 +267,7 @@ const ComSearchPopup = ({ control, popupid, search, ...props }) => {
             padding: '0 14px',
           },
         }}
-        error={error ?  true : false}
+        error={error ? true : false}
         autoComplete="false"
       />
     </div>

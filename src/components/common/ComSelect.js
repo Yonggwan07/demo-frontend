@@ -1,7 +1,7 @@
 import { MenuItem, Select, styled } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
 import { PropTypes } from 'prop-types';
-import { memo } from 'react';
+import { memo, useCallback } from 'react';
 import { useController } from 'react-hook-form';
 import { constStr } from '../../utils/constStr';
 
@@ -39,6 +39,16 @@ const ComSelect = ({ control, defaultValue, ...props }) => {
     },
   });
 
+  const handleChange = useCallback(
+    (e) => {
+      field.onChange(e);
+      if (props.onChange) {
+        props.onChange(e);
+      }
+    },
+    [field, props],
+  );
+
   return (
     props.options && (
       <Tooltip
@@ -54,12 +64,7 @@ const ComSelect = ({ control, defaultValue, ...props }) => {
           {...props}
           label=""
           displayEmpty
-          onChange={(e) => {
-            field.onChange(e);
-            if (props.onChange) {
-              props.onChange(e);
-            }
-          }}
+          onChange={handleChange}
           error={error ? true : false}
           MenuProps={{
             sx: {

@@ -13,6 +13,26 @@ import { useTheme } from '@mui/material/styles';
 import { memo, useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
+/* Level 2, 3 */
+const CustomListItemButton = memo(({ handleClick, menuId, children }) => {
+  const _handleClick = useCallback(() => {
+    handleClick(menuId);
+  }, [handleClick, menuId]);
+
+  return <ListItemButton onClick={_handleClick}>{children}</ListItemButton>;
+});
+
+/* Level 4 */
+const BottomListItemButton = memo(
+  ({ handleClick, progId, menuName, children }) => {
+    const _handleClick = useCallback(() => {
+      handleClick(progId, menuName);
+    }, [handleClick, menuName, progId]);
+
+    return <ListItemButton onClick={_handleClick}>{children}</ListItemButton>;
+  },
+);
+
 const ComSideMenuList = ({ tabs, setTabs, setTabValue, open, setOpen }) => {
   const { menuList } = useSelector(({ menuList }) => ({
     menuList: menuList.menuList,
@@ -21,9 +41,9 @@ const ComSideMenuList = ({ tabs, setTabs, setTabValue, open, setOpen }) => {
   const theme = useTheme();
   const [menuOpen, setMenuOpen] = useState({});
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setOpen(false);
-  };
+  }, [setOpen]);
 
   const handleCollapsableMenuClick = useCallback(
     (menuIdxx) => {
@@ -82,10 +102,9 @@ const ComSideMenuList = ({ tabs, setTabs, setTabValue, open, setOpen }) => {
             .filter((menuItem) => menuItem.menuLevl === '2')
             .map((menuItemLevel2) => (
               <div key={menuItemLevel2.menuIdxx}>
-                <ListItemButton
-                  onClick={() =>
-                    handleCollapsableMenuClick(menuItemLevel2.menuIdxx)
-                  }
+                <CustomListItemButton
+                  handleClick={handleCollapsableMenuClick}
+                  menuId={menuItemLevel2.menuIdxx}
                 >
                   <ListItemText
                     primary={menuItemLevel2.menuName}
@@ -99,7 +118,7 @@ const ComSideMenuList = ({ tabs, setTabs, setTabValue, open, setOpen }) => {
                   ) : (
                     <ExpandMore />
                   )}
-                </ListItemButton>
+                </CustomListItemButton>
                 <Collapse
                   in={menuOpen[menuItemLevel2.menuIdxx]}
                   timeout="auto"
@@ -115,12 +134,9 @@ const ComSideMenuList = ({ tabs, setTabs, setTabValue, open, setOpen }) => {
                       )
                       .map((menuItemLevel3) => (
                         <div key={menuItemLevel3.menuIdxx}>
-                          <ListItemButton
-                            onClick={() =>
-                              handleCollapsableMenuClick(
-                                menuItemLevel3.menuIdxx,
-                              )
-                            }
+                          <CustomListItemButton
+                            handleClick={handleCollapsableMenuClick}
+                            menuId={menuItemLevel3.menuIdxx}
                           >
                             <ListItemText
                               primary={menuItemLevel3.menuName}
@@ -137,7 +153,7 @@ const ComSideMenuList = ({ tabs, setTabs, setTabValue, open, setOpen }) => {
                             ) : (
                               <ExpandMore />
                             )}
-                          </ListItemButton>
+                          </CustomListItemButton>
                           <Collapse
                             in={menuOpen[menuItemLevel3.menuIdxx]}
                             timeout="auto"
@@ -154,13 +170,10 @@ const ComSideMenuList = ({ tabs, setTabs, setTabValue, open, setOpen }) => {
                                 )
                                 .map((menuItemLevel4) => (
                                   <div key={menuItemLevel4.menuIdxx}>
-                                    <ListItemButton
-                                      onClick={() =>
-                                        handleWorkMenuClick(
-                                          menuItemLevel4.progIdxx,
-                                          menuItemLevel4.menuName,
-                                        )
-                                      }
+                                    <BottomListItemButton
+                                      handleClick={handleWorkMenuClick}
+                                      progId={menuItemLevel4.progIdxx}
+                                      menuName={menuItemLevel4.menuName}
                                     >
                                       <ListItemText
                                         primary={menuItemLevel4.menuName}
@@ -168,7 +181,7 @@ const ComSideMenuList = ({ tabs, setTabs, setTabValue, open, setOpen }) => {
                                           variant: 'subtitle1',
                                         }}
                                       />
-                                    </ListItemButton>
+                                    </BottomListItemButton>
                                   </div>
                                 ))
                             }
