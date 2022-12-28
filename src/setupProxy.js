@@ -1,14 +1,14 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
+require('dotenv').config();
 
 module.exports = function (app) {
-  app.use(
-    '/api',
-    createProxyMiddleware({
-      target:
-        process.env.MODE === 'DOCKER'
-          ? 'http://demoserver:8080'
-          : 'http://localhost:8080',
-      changeOrigin: true,
-    }),
-  );
+  if (process.env.NODE_ENV !== 'production') {
+    app.use(
+      '/api',
+      createProxyMiddleware({
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      }),
+    );
+  }
 };
