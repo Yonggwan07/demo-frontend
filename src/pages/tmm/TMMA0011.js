@@ -48,6 +48,7 @@ const columnInfo = [
     headerName: '시스템구분',
     width: 150,
     compType: 'select',
+    commCode: 'SYST_CODE',
     editable: true,
   },
   { field: 'CDGB_CODE', headerName: '코드구분' },
