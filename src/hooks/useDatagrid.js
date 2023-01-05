@@ -1,9 +1,9 @@
-import { InputBase } from '@mui/material';
+import { InputBase, MenuItem, Select } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useGridApiContext } from '@mui/x-data-grid';
 import { format, parseISO } from 'date-fns';
 import ko from 'date-fns/locale/ko';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 
 const StyledInput = styled(InputBase)({
@@ -12,39 +12,68 @@ const StyledInput = styled(InputBase)({
   },
 });
 
-const useDatagrid = (columnInfo, commCodes) => {
+const StyledMemuItem = styled(MenuItem)({
+  fontSize: '0.875rem',
+  justifyContent: 'center',
+  padding: '3px 8px',
+});
+
+const useDatagrid = (_columnInfo = [], _commCodes = []) => {
   const [rows, setRows] = useState([]);
   const [columns, setColumns] = useState([]);
+  const [columnInfo, setColumnInfo] = useState([]);
+  const [commCodes, setCommcodes] = useState([]);
+
+  useEffect(() => {
+    setColumnInfo(_columnInfo);
+    setCommcodes(_commCodes);
+  }, [_columnInfo, _commCodes]);
 
   // Select
-  const SelectInputCell = (props) => {
+  const SelectCell = (props) => {
     const { value, options } = props;
     const searched = options.find((option) => option.comdCode === value);
     return <div>{searched !== undefined ? searched.comdCdnm : ''}</div>;
   };
 
-  const SelectEditInputCell = (props) => {
+  const SelectEditCell = (props) => {
     const { id, value, field, options } = props;
     const apiRef = useGridApiContext();
 
-    const handleChange = async (event) => {
-      await apiRef.current.setEditCellValue({
-        id,
-        field,
-        value: event.target.value,
-      });
-      apiRef.current.stopCellEditMode({ id, field });
-    };
+    const handleChange = useCallback(
+      async (event) => {
+        await apiRef.current.setEditCellValue({
+          id,
+          field,
+          value: event.target.value,
+        });
+        apiRef.current.stopCellEditMode({ id, field });
+      },
+      [apiRef, field, id],
+    );
 
     return (
-      <select value={value} onChange={handleChange} autoFocus>
+      <Select
+        label=""
+        displayEmpty
+        MenuProps={{
+          sx: {
+            maxHeight: '15rem',
+          },
+        }}
+        sx={{ width: '100%' }}
+        value={value}
+        onChange={handleChange}
+        size="small"
+        autoFocus
+      >
         {options &&
           options.map((option) => (
-            <option key={option.id} value={option.comdCode}>
+            <StyledMemuItem key={option.id} value={option.comdCode}>
               {option.comdCdnm}
-            </option>
+            </StyledMemuItem>
           ))}
-      </select>
+      </Select>
     );
   };
 
@@ -57,14 +86,17 @@ const useDatagrid = (columnInfo, commCodes) => {
     const maxDate =
       props.maxDate && apiRef.current.getCellValue(id, props.maxDate);
 
-    const handleChange = async (date) => {
-      await apiRef.current.setEditCellValue({
-        id,
-        field,
-        value: format(date, 'yyyyMMdd'),
-      });
-      apiRef.current.stopCellEditMode({ id, field });
-    };
+    const handleChange = useCallback(
+      async (date) => {
+        await apiRef.current.setEditCellValue({
+          id,
+          field,
+          value: format(date, 'yyyyMMdd'),
+        });
+        apiRef.current.stopCellEditMode({ id, field });
+      },
+      [apiRef, field, id],
+    );
 
     return (
       <DatePicker
@@ -94,18 +126,19 @@ const useDatagrid = (columnInfo, commCodes) => {
         onChange={handleChange}
         readOnly={props.readOnly}
         customInput={<StyledInput />}
+        autoFocus
       />
     );
   };
 
-  const dateFormatter = (date) => {
+  const dateFormatter = useCallback((date) => {
     return (
       date &&
       parseISO(
         date.substr(0, 4) + '-' + date.substr(4, 2) + '-' + date.substr(6, 2),
       )
     );
-  };
+  }, []);
 
   useEffect(() => {
     if (Object.keys(commCodes).length > 0) {
@@ -113,17 +146,18 @@ const useDatagrid = (columnInfo, commCodes) => {
         if (columnInfo[key].compType === 'select') {
           columnInfo[key].renderCell = (params) => {
             return (
-              <SelectInputCell
+              <SelectCell
                 {...params}
-                options={commCodes[columnInfo[key].field]}
+                options={commCodes[columnInfo[key].commCode]}
               />
             );
           };
+          
           columnInfo[key].renderEditCell = (params) => {
             return (
-              <SelectEditInputCell
+              <SelectEditCell
                 {...params}
-                options={commCodes[columnInfo[key].field]}
+                options={commCodes[columnInfo[key].commCode]}
               />
             );
           };
@@ -152,13 +186,14 @@ const useDatagrid = (columnInfo, commCodes) => {
       }
       setColumns(columnInfo);
     }
-  }, [columnInfo, commCodes]);
+  }, [columnInfo, commCodes, dateFormatter]);
 
   return {
     rows,
     columns,
     setRows,
-    setColumns,
+    setColumnInfo,
+    setCommcodes,
   };
 };
 
