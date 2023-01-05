@@ -4,6 +4,25 @@ import { transaction } from '../lib/api/transaction';
 const useCombo = (codeOptions) => {
   const [comCombo, setComCombo] = useState({});
 
+  const getNewCombo = (code, postFn) => {
+    if (comCombo[code]) {
+      return;
+    }
+
+    transaction({
+      menuId: 'comCombo',
+      workId: 'getCombo',
+      params: [{ commCode: code, usexYsno: '1' }],
+    }).then((res) => {
+      if (res.status === 200) {
+        const newCode = res.data;
+        setComCombo((prev) => Object.assign(prev, newCode));
+        postFn(comCombo);
+      } else {
+        console.error(res);
+      }
+    });
+  };
   useEffect(() => {
     transaction({
       menuId: 'comCombo',
@@ -18,7 +37,7 @@ const useCombo = (codeOptions) => {
     });
   }, [codeOptions]);
 
-  return { comCombo };
+  return { comCombo, getNewCombo };
 };
 
 export default useCombo;
