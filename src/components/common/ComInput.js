@@ -1,3 +1,4 @@
+import React, { memo } from 'react';
 import { TextField } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
 import { PropTypes } from 'prop-types';
@@ -8,7 +9,7 @@ import { styled } from '@mui/material/styles';
 
 const StyledTextField = styled(TextField)({
   '& input:required + fieldset': {
-      borderColor: 'orange',
+    borderColor: 'orange',
   },
 });
 

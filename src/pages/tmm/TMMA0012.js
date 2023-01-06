@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import ComCompArea from '../../components/common/ComCompArea';
 import ComDatagrid from '../../components/common/ComDatagrid';
 import ComSearchArea from '../../components/common/ComSearchArea';

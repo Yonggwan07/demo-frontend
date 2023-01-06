@@ -1,3 +1,4 @@
+import React, { memo, useCallback, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import { TextField } from '@mui/material';
 import Button from '@mui/material/Button';
@@ -8,7 +9,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Tooltip from '@mui/material/Tooltip';
 import { DataGrid } from '@mui/x-data-grid';
 import { PropTypes } from 'prop-types';
-import { memo, useCallback, useState } from 'react';
 import { useController } from 'react-hook-form';
 import { constStr } from '../../utils/constStr';
 import ComSearchArea from './ComSearchArea';
@@ -43,33 +43,38 @@ const ComSearchPopup = ({ control, popupid, search, ...props }) => {
     columnVisibilityModel: null,
   });
 
-  const parseSearchItems = useCallback((strData) => {
-    let matches;
-    while ((matches = OBJECT_REG.exec(strData)) !== null) {
-      const newSearchItems = {};
-      newSearchItems.name = matches[1].match(FIELD_REX)[0];
-      newSearchItems.label = matches[1].match(
-        new RegExp('value' + PROP_REX),
-      )[1];
+  const parseSearchItems = useCallback(
+    (strData) => {
+      let matches;
+      while ((matches = OBJECT_REG.exec(strData)) !== null) {
+        const newSearchItems = {};
+        newSearchItems.name = matches[1].match(FIELD_REX)[0];
+        newSearchItems.label = matches[1].match(
+          new RegExp('value' + PROP_REX),
+        )[1];
 
-      const hiddenMatch = matches[1].match(new RegExp('hidden' + PROP_REX));
-      newSearchItems.hidden = hiddenMatch ? JSON.parse(hiddenMatch[1]) : false;
+        const hiddenMatch = matches[1].match(new RegExp('hidden' + PROP_REX));
+        newSearchItems.hidden = hiddenMatch
+          ? JSON.parse(hiddenMatch[1])
+          : false;
 
-      const labelSizeMatch = matches[1].match(
-        new RegExp('labelSize' + PROP_REX),
-      );
-      newSearchItems.style = {};
-      newSearchItems.style.width = labelSizeMatch
-        ? parseInt(matches[1].match(new RegExp('labelSize' + PROP_REX))[1]) *
-            5 +
-          'px'
-        : '';
+        const labelSizeMatch = matches[1].match(
+          new RegExp('labelSize' + PROP_REX),
+        );
+        newSearchItems.style = {};
+        newSearchItems.style.width = labelSizeMatch
+          ? parseInt(matches[1].match(new RegExp('labelSize' + PROP_REX))[1]) *
+              5 +
+            'px'
+          : '';
 
-      newSearchItems.initialvalue = nameField.value;
+        newSearchItems.initialvalue = nameField.value;
 
-      setSearchItems([...searchItems, newSearchItems]);
-    }
-  }, [nameField.value, searchItems]);
+        setSearchItems([...searchItems, newSearchItems]);
+      }
+    },
+    [nameField.value, searchItems],
+  );
 
   const parseColumns = (strData) => {
     let matches;
@@ -280,6 +285,8 @@ ComSearchPopup.propTypes = {
   name: PropTypes.string.isRequired,
   popupid: PropTypes.string.isRequired,
   search: PropTypes.func.isRequired,
+  required: PropTypes.bool,
+  disabled: PropTypes.bool,
 };
 
 export default memo(ComSearchPopup);

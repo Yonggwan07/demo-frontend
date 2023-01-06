@@ -20,10 +20,37 @@ export const getToday = () => {
 
 export const getFirstDateOfMonth = () => {
   let today = new Date();
-  return toStringByFormatting(new Date(today.getFullYear(), today.getMonth(), 1));
+  return toStringByFormatting(
+    new Date(today.getFullYear(), today.getMonth(), 1),
+  );
 };
 
 export const getLastDateOfMonth = () => {
   let today = new Date();
-  return toStringByFormatting(new Date(today.getFullYear(), today.getMonth(), 0));
+  return toStringByFormatting(
+    new Date(today.getFullYear(), today.getMonth(), 0),
+  );
+};
+
+export const propTypesDateValidation = (
+  props,
+  propName,
+  componentName,
+  isRequired,
+) => {
+  if (!isRequired && props[propName] === undefined) {
+    return;
+  }
+  if (!/^(\d{4})(-\d{2})?(-\d{2})?/.test(props[propName])) {
+    return new Error(
+      'Invalid prop `' +
+        propName +
+        '` supplied to' +
+        ' `' +
+        componentName +
+        '`. Validation failed. It' +
+        `'` +
+        's not valid date format. (ex. yyyy-mm-dd)',
+    );
+  }
 };

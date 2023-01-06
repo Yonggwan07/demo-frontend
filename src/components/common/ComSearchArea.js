@@ -1,7 +1,7 @@
+import React, { memo, useCallback } from 'react';
 import { Grid, Button, Paper } from '@mui/material';
 import ko from 'date-fns/locale/ko';
 import { PropTypes } from 'prop-types';
-import { memo, useCallback } from 'react';
 import { registerLocale } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useForm } from 'react-hook-form';
@@ -61,10 +61,7 @@ const ComSearchArea = ({ onSubmit, searchItems }) => {
             {Array.isArray(searchItems) &&
               searchItems.map((searchItem) => (
                 <Grid key={searchItem.name} item>
-                  <div
-                    className="compLabel"
-                    key={searchItem.name}
-                  >
+                  <div className="compLabel" key={searchItem.name}>
                     {searchItem.label}
                     {renderComp(searchItem)}
                   </div>

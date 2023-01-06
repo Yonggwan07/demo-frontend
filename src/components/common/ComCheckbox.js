@@ -1,3 +1,4 @@
+import React, { memo } from 'react';
 import { useController } from 'react-hook-form';
 import { PropTypes } from 'prop-types';
 import { memo } from 'react';

@@ -1,3 +1,4 @@
+import React, { lazy, memo, Suspense, useCallback, useMemo } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, Tab, Tabs } from '@mui/material';
 import { lazy, memo, Suspense, useCallback, useMemo } from 'react';

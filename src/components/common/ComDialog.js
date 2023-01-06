@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, memo } from 'react';
+import React, { useState, useCallback, useEffect, memo } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -32,7 +32,7 @@ const ComDialog = () => {
   }, [handleDialog]);
 
   const handleClose = useCallback(() => setOpen(false), []);
-  
+
   return (
     <Dialog open={open}>
       <DialogTitle>

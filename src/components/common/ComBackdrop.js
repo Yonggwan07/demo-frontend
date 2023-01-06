@@ -1,6 +1,6 @@
+import React, { useCallback, useEffect, useState } from 'react';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useCallback, useEffect, useState } from 'react';
 
 let handleBackdropFn;
 
@@ -25,7 +25,7 @@ const ComBackdrop = () => {
   );
 };
 
-export const handleBackdropExported = ( isOpen ) => {
+export const handleBackdropExported = (isOpen) => {
   handleBackdropFn(isOpen);
 };
 

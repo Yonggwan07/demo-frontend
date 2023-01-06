@@ -1,6 +1,6 @@
+import React, { memo } from 'react';
 import { Box, Typography, Breadcrumbs, Chip } from '@mui/material';
 import { PropTypes } from 'prop-types';
-import { memo } from 'react';
 import { styled } from '@mui/material/styles';
 
 const StyledBreadcrumbs = styled(Breadcrumbs)({
