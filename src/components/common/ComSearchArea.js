@@ -84,7 +84,24 @@ const ComSearchArea = ({ onSubmit, searchItems }) => {
 
 ComSearchArea.propTypes = {
   onSubmit: PropTypes.func.isRequired,
-  searchItems: PropTypes.array.isRequired,
+  searchItems: PropTypes.arrayOf(
+    PropTypes.shape({
+      label: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      type: PropTypes.oneOf([
+        'text',
+        'select',
+        'checkbox',
+        'date',
+        'month',
+        'year',
+        'dateRange',
+        'monthRange',
+        'yearRange',
+        undefined,
+      ]),
+    }),
+  ).isRequired,
 };
 
 export default memo(ComSearchArea);

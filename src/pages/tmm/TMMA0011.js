@@ -1,4 +1,5 @@
 import React, { memo, useCallback, useEffect, useMemo } from 'react';
+import { PropTypes } from 'prop-types';
 import {
   Table,
   TableBody,
@@ -7,7 +8,6 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import { memo, useCallback, useEffect, useMemo } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import ComCheckbox from '../../components/common/ComCheckbox';
 import ComCompArea from '../../components/common/ComCompArea';
@@ -24,6 +24,7 @@ import useCombo from '../../hooks/useCombo';
 import useDatagrid from '../../hooks/useDatagrid';
 import handleDialog from '../../lib/api/dialog';
 import { GridRowState } from '../../utils/gridRowState';
+import { commonMenuPropType } from '../../utils/commonMenuPropType';
 
 const codeOptions = [
   { commCode: 'SYST_CODE', usexYsno: '1' },
@@ -78,15 +79,15 @@ const columnInfo = [
   { field: 'REMK_100X', headerName: '비고' },
 ];
 
-const ConditionalCommCodeField = ({ ...props }) => {
+const ConditionalCommCodeField = ({ control }) => {
   const state = useWatch({
-    control: props.control,
+    control,
     name: 'state',
   });
 
   return (
     <ComInput
-      control={props.control}
+      control={control}
       name="COMM_CODE"
       InputProps={{
         readOnly: state !== GridRowState.inserted,
@@ -95,20 +96,29 @@ const ConditionalCommCodeField = ({ ...props }) => {
     />
   );
 };
+ConditionalCommCodeField.propTypes = {
+  control: PropTypes.object.isRequired,
+};
 
-const ConditionalSearchPopup = ({ ...props }) => {
+const ConditionalSearchPopup = ({ control, code, ...props }) => {
   const codeValue = useWatch({
-    control: props.control,
-    name: `${props.code.substr(0, 3)}T_CODE`,
+    control,
+    name: `${code.substr(0, 3)}T_CODE`,
   });
 
   return (
     <ComSearchPopup
       {...props}
+      control={control}
+      code={code}
       disabled={codeValue !== '01'}
       required={codeValue === '01'}
     />
   );
+};
+ConditionalSearchPopup.propTypes = {
+  control: PropTypes.object.isRequired,
+  code: PropTypes.string.isRequired,
 };
 
 const TMMA0011 = ({ menuInfo, search, save, remove }) => {
@@ -216,9 +226,9 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
       //   label: '일자',
       //   name: 'dateSingle',
       //   type: 'date',
-      //   currentDate: '2022-12-10',
+      //   date: '2022-12-10',
       //   required: true,
-      //   minDate: '2022-12-01',
+      //   minDate: '2022-12-05',
       // },
     ],
     [comCombo.SYST_CODE],
@@ -424,5 +434,7 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
     </ComWorkframe>
   );
 };
+
+TMMA0011.propTypes = commonMenuPropType;
 
 export default memo(TMMA0011);

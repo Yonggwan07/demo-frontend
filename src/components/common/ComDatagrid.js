@@ -1,4 +1,5 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
+import { PropTypes } from 'prop-types';
 import {
   DataGrid,
   GridToolbarColumnsButton,
@@ -6,15 +7,9 @@ import {
   GridToolbarExport,
   GridToolbarFilterButton,
 } from '@mui/x-data-grid';
-import { memo, useCallback, useEffect, useState } from 'react';
 import ComCommonButtons from './ComCommonButtons';
 
-const ComDatagrid = ({
-  rows,
-  columns,
-  reset,
-  ...props
-}) => {
+const ComDatagrid = ({ rows, columns, reset, commonButtons, ...props }) => {
   const [selectionModel, setSelectionModel] = useState([]);
   const handleCellKeyDown = useCallback(
     (params, e) => {
@@ -48,10 +43,10 @@ const ComDatagrid = ({
         <GridToolbarColumnsButton />
         <GridToolbarFilterButton />
         <GridToolbarExport />
-        <ComCommonButtons {...props.commonButtons} />
+        <ComCommonButtons {...commonButtons} />
       </GridToolbarContainer>
     ),
-    [props.commonButtons],
+    [commonButtons],
   );
 
   return (
@@ -68,6 +63,19 @@ const ComDatagrid = ({
       {...props}
     />
   );
+};
+
+ComDatagrid.propTypes = {
+  rows: PropTypes.array.isRequired,
+  columns: PropTypes.array.isRequired,
+  reset: PropTypes.func,
+  commonButtons: PropTypes.shape({
+    search: PropTypes.object,
+    cancel: PropTypes.object,
+    insert: PropTypes.object,
+    save: PropTypes.object,
+    remove: PropTypes.object,
+  }),
 };
 
 export default memo(ComDatagrid);

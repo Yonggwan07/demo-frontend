@@ -1,4 +1,5 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
+import { PropTypes } from 'prop-types';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import {
@@ -11,7 +12,6 @@ import {
   Typography,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { memo, useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 /* Level 2, 3 */
@@ -22,6 +22,12 @@ const CustomListItemButton = memo(({ handleClick, menuId, children }) => {
 
   return <ListItemButton onClick={_handleClick}>{children}</ListItemButton>;
 });
+CustomListItemButton.displayName = 'CustomListItemButton';
+CustomListItemButton.propTypes = {
+  handleClick: PropTypes.func.isRequired,
+  menuId: PropTypes.string.isRequired,
+  children: PropTypes.arrayOf(PropTypes.element).isRequired,
+};
 
 /* Level 4 */
 const BottomListItemButton = memo(
@@ -33,6 +39,13 @@ const BottomListItemButton = memo(
     return <ListItemButton onClick={_handleClick}>{children}</ListItemButton>;
   },
 );
+BottomListItemButton.displayName = 'BottomListItemButton';
+BottomListItemButton.propTypes = {
+  handleClick: PropTypes.func.isRequired,
+  progId: PropTypes.string.isRequired,
+  menuName: PropTypes.string.isRequired,
+  children: PropTypes.element.isRequired,
+};
 
 const ComSideMenuList = ({ tabs, setTabs, setTabValue, open, setOpen }) => {
   const { menuList } = useSelector(({ menuList }) => ({
@@ -196,6 +209,14 @@ const ComSideMenuList = ({ tabs, setTabs, setTabValue, open, setOpen }) => {
       </List>
     </Drawer>
   );
+};
+
+ComSideMenuList.propTypes = {
+  tabs: PropTypes.array.isRequired,
+  setTabs: PropTypes.func.isRequired,
+  setTabValue: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
+  setOpen: PropTypes.func.isRequired,
 };
 
 export default memo(ComSideMenuList);

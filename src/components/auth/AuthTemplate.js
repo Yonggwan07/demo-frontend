@@ -1,4 +1,5 @@
 import React from 'react';
+import { PropTypes } from 'prop-types';
 import styled from 'styled-components';
 import palette from '../../lib/styles/palette';
 import { Link } from 'react-router-dom';
@@ -42,6 +43,13 @@ const AuthTemplate = ({ children }) => {
       </WhiteBox>
     </AuthTemplateBlock>
   );
+};
+
+AuthTemplate.propTypes = {
+  children: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.arrayOf(PropTypes.element),
+  ]).isRequired,
 };
 
 export default AuthTemplate;

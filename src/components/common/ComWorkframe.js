@@ -1,4 +1,5 @@
 import React, { memo } from 'react';
+import { PropTypes } from 'prop-types';
 import Box from '@mui/material/Box';
 
 const ComWorkframe = ({ children }) => (
@@ -6,5 +7,12 @@ const ComWorkframe = ({ children }) => (
     {children}
   </Box>
 );
+
+ComWorkframe.propTypes = {
+  children: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.arrayOf(PropTypes.element),
+  ]).isRequired,
+};
 
 export default memo(ComWorkframe);

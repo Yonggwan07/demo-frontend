@@ -1,4 +1,5 @@
 import React from 'react';
+import { PropTypes } from 'prop-types';
 import { Paper } from '@mui/material';
 import ComWrapperHorizontal from './ComWrapperHorizontal';
 import ComWrapperVertical from './ComWrapperVertical';
@@ -27,6 +28,14 @@ const ComCompArea = ({ direction, children }) => {
       {d === h && <ComWrapperHorizontal>{children}</ComWrapperHorizontal>}
     </Paper>
   );
+};
+
+ComCompArea.propTypes = {
+  direction: PropTypes.string,
+  children: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.arrayOf(PropTypes.element),
+  ]).isRequired,
 };
 
 export default ComCompArea;

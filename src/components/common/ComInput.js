@@ -1,8 +1,7 @@
 import React, { memo } from 'react';
+import { PropTypes } from 'prop-types';
 import { TextField } from '@mui/material';
 import Tooltip from '@mui/material/Tooltip';
-import { PropTypes } from 'prop-types';
-import { memo } from 'react';
 import { useController } from 'react-hook-form';
 import { constStr } from '../../utils/constStr';
 import { styled } from '@mui/material/styles';
@@ -76,7 +75,13 @@ const ComInput = ({ control, defaultValue, ...props }) => {
 ComInput.propTypes = {
   name: PropTypes.string.isRequired,
   control: PropTypes.object.isRequired,
+  defaultValue: PropTypes.string,
   rules: PropTypes.object,
+  required: PropTypes.bool,
+  maxLength: PropTypes.number,
+  minLength: PropTypes.number,
+  type: PropTypes.string,
+  multiline: PropTypes.bool,
 };
 
 export default memo(ComInput);

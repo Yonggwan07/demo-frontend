@@ -6,6 +6,7 @@ import ComWorkframe from '../../components/common/ComWorkframe';
 import ComWorkTitleArea from '../../components/common/ComWorkTitleArea';
 import useCombo from '../../hooks/useCombo';
 import useDatagrid from '../../hooks/useDatagrid';
+import { commonMenuPropType } from '../../utils/commonMenuPropType';
 
 const codeOptions = [
   { commCode: 'SYST_CODE', usexYsno: '1' },
@@ -114,27 +115,27 @@ const TMMA0012 = ({ menuInfo, search }) => {
       <ComSearchArea onSubmit={handleSearch} searchItems={searchItems} />
       <ComCompArea>
         <div style={{ flex: 0.3 }}>
-        <ComDatagrid
-          columns={masterColumns}
-          rows={masterRows}
-          onRowClick={handleRowClick}
-          initialState={{
-            columns: {
-              columnVisibilityModel: {
-                SYST_CODE: false,
-                CDGB_CODE: false,
-                COCD_LNTH: false,
-                RE1F_DESC: false,
-                RE2F_DESC: false,
-                RE3F_DESC: false,
-                RE4F_DESC: false,
-                RE5F_DESC: false,
-                RE6F_DESC: false,
-                REMK_100X: false,
+          <ComDatagrid
+            columns={masterColumns}
+            rows={masterRows}
+            onRowClick={handleRowClick}
+            initialState={{
+              columns: {
+                columnVisibilityModel: {
+                  SYST_CODE: false,
+                  CDGB_CODE: false,
+                  COCD_LNTH: false,
+                  RE1F_DESC: false,
+                  RE2F_DESC: false,
+                  RE3F_DESC: false,
+                  RE4F_DESC: false,
+                  RE5F_DESC: false,
+                  RE6F_DESC: false,
+                  REMK_100X: false,
+                },
               },
-            },
-          }}
-        />
+            }}
+          />
         </div>
         <ComDatagrid
           columns={detailColumns}
@@ -161,5 +162,7 @@ const TMMA0012 = ({ menuInfo, search }) => {
     </ComWorkframe>
   );
 };
+
+TMMA0012.propTypes = commonMenuPropType;
 
 export default memo(TMMA0012);

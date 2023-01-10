@@ -7,6 +7,7 @@ import { useController } from 'react-hook-form';
 import { PropTypes } from 'prop-types';
 import { styled } from '@mui/material/styles';
 import { constStr } from '../../utils/constStr';
+import { propTypesDateValidation } from '../../utils/dateUtil';
 
 const StyledTextField = styled(TextField)({
   height: '1.5rem',
@@ -176,6 +177,21 @@ ComDateRangePicker.propTypes = {
   name: PropTypes.string.isRequired,
   control: PropTypes.object.isRequired,
   rules: PropTypes.object,
+  type: PropTypes.oneOf(['yearRange', 'monthRange', 'dateRange', undefined]),
+  from: function (props, propName, componentName) {
+    propTypesDateValidation(props, propName, componentName);
+  },
+  to: function (props, propName, componentName) {
+    propTypesDateValidation(props, propName, componentName);
+  },
+  minDate: function (props, propName, componentName) {
+    propTypesDateValidation(props, propName, componentName);
+  },
+  maxDate: function (props, propName, componentName) {
+    propTypesDateValidation(props, propName, componentName);
+  },
+  required: PropTypes.shape({ from: PropTypes.bool, to: PropTypes.bool }),
+  style: PropTypes.object,
 };
 
 export default ComDateRangePicker;

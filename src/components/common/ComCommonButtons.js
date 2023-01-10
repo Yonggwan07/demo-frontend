@@ -1,4 +1,5 @@
 import React from 'react';
+import { PropTypes } from 'prop-types';
 import { Button } from '@mui/material';
 import CancelIcon from '@mui/icons-material/Cancel';
 import SearchIcon from '@mui/icons-material/Search';
@@ -13,7 +14,6 @@ const ComCommonButtons = ({
   save,
   remove,
   isDirty,
-  ...props
 }) => {
   return (
     <div
@@ -81,6 +81,15 @@ const ComCommonButtons = ({
       )}
     </div>
   );
+};
+
+ComCommonButtons.propTypes = {
+  search: PropTypes.object,
+  cancel: PropTypes.object,
+  insert: PropTypes.object,
+  save: PropTypes.object,
+  remove: PropTypes.object,
+  isDirty: PropTypes.bool,
 };
 
 export default ComCommonButtons;

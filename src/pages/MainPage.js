@@ -3,6 +3,7 @@ import Brightness7Icon from '@mui/icons-material/Brightness7';
 import { Box, Button, IconButton } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import React, { useCallback, useContext, useState } from 'react';
+import { PropTypes } from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import ComBackdrop from '../components/common/ComBackdrop';
 import ComDialog from '../components/common/ComDialog';
@@ -84,6 +85,10 @@ const MainPage = ({ ColorModeContext }) => {
       )}
     </Box>
   );
+};
+
+MainPage.propTypes = {
+  ColorModeContext: PropTypes.elementType.isRequired,
 };
 
 export default MainPage;

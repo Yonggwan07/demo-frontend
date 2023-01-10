@@ -1,7 +1,7 @@
 import React, { lazy, memo, Suspense, useCallback, useMemo } from 'react';
+import { PropTypes } from 'prop-types';
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, Tab, Tabs } from '@mui/material';
-import { lazy, memo, Suspense, useCallback, useMemo } from 'react';
 import handleBackdrop from '../../lib/api/backdrop';
 import openSnackbar from '../../lib/api/snackbar';
 import { transaction } from '../../lib/api/transaction';
@@ -14,7 +14,7 @@ const NotFound = () => {
 };
 
 const TabPanel = memo(function TabPanel(props) {
-  const { children, value, menuId, label, upperMenus, ...other } = props;
+  const { value, menuId, label, upperMenus, ...other } = props;
   const menuInfo = useMemo(
     () => ({ id: menuId, name: label, upperMenus }),
     [label, menuId, upperMenus],
@@ -126,6 +126,13 @@ const TabPanel = memo(function TabPanel(props) {
   );
 });
 
+TabPanel.propTypes = {
+  value: PropTypes.string.isRequired,
+  menuId: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  upperMenus: PropTypes.array.isRequired,
+};
+
 function a11yProps(menuId) {
   return {
     id: `simple-tab-${menuId}`,
@@ -199,6 +206,13 @@ const ComWorkframeTab = ({ tabs, setTabs, tabValue, setTabValue }) => {
       ))}
     </Box>
   );
+};
+
+ComWorkframeTab.propTypes = {
+  tabs: PropTypes.array.isRequired,
+  setTabs: PropTypes.func.isRequired,
+  tabValue: PropTypes.string.isRequired,
+  setTabValue: PropTypes.func.isRequired,
 };
 
 export default ComWorkframeTab;

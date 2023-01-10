@@ -7,6 +7,7 @@ import { PropTypes } from 'prop-types';
 import { Tooltip, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { constStr } from '../../utils/constStr';
+import { propTypesDateValidation } from '../../utils/dateUtil';
 
 const StyledTextField = styled(TextField)({
   height: '1.5rem',
@@ -40,14 +41,14 @@ const ComDatePicker = ({ control, type, ...props }) => {
 
   const _type = useMemo(() => {
     switch (type) {
-      case 'monthRange':
+      case 'month':
         return {
           dateFormat: 'yyyy-MM',
           showMonthYearPicker: true,
           showYearPicker: false,
           defaultWidth: { width: '5rem' },
         };
-      case 'yearRange':
+      case 'year':
         return {
           dateFormat: 'yyyy',
           showMonthYearPicker: false,
@@ -64,11 +65,14 @@ const ComDatePicker = ({ control, type, ...props }) => {
     }
   }, [type]);
 
-  const handleChange = useCallback((date, e) => {
-    e.preventDefault();
-    setDate(date === null ? '' : date);
-    field.onChange(date === null ? '' : format(date, 'yyyy-MM-dd'));
-  }, [field]);
+  const handleChange = useCallback(
+    (date, e) => {
+      e.preventDefault();
+      setDate(date === null ? '' : date);
+      field.onChange(date === null ? '' : format(date, 'yyyy-MM-dd'));
+    },
+    [field],
+  );
 
   return (
     <div style={{ display: 'flex' }}>
@@ -109,6 +113,18 @@ ComDatePicker.propTypes = {
   name: PropTypes.string.isRequired,
   control: PropTypes.object.isRequired,
   rules: PropTypes.object,
+  type: PropTypes.oneOf(['year', 'month', 'date', undefined]),
+  date: function (props, propName, componentName) {
+    propTypesDateValidation(props, propName, componentName);
+  },
+  required: PropTypes.bool,
+  minDate: function (props, propName, componentName) {
+    propTypesDateValidation(props, propName, componentName);
+  },
+  maxDate: function (props, propName, componentName) {
+    propTypesDateValidation(props, propName, componentName);
+  },
+  style: PropTypes.object,
 };
 
 export default ComDatePicker;
