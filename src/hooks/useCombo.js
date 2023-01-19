@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { transaction } from '../lib/api/transaction';
+import { postApi } from '../lib/api/transaction';
 
 const useCombo = (codeOptions) => {
   const [comCombo, setComCombo] = useState({});
@@ -9,7 +9,7 @@ const useCombo = (codeOptions) => {
       return;
     }
 
-    transaction({
+    postApi({
       menuId: 'comCombo',
       workId: 'getCombo',
       params: [{ commCode: code, usexYsno: '1' }],
@@ -24,7 +24,7 @@ const useCombo = (codeOptions) => {
     });
   };
   useEffect(() => {
-    transaction({
+    postApi({
       menuId: 'comCombo',
       workId: 'getCombo',
       params: codeOptions,

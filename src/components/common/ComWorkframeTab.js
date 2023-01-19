@@ -4,7 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Box, Tab, Tabs } from '@mui/material';
 import handleBackdrop from '../../lib/api/backdrop';
 import openSnackbar from '../../lib/api/snackbar';
-import { transaction } from '../../lib/api/transaction';
+import { getApi, postApi } from '../../lib/api/transaction';
 import { constStr } from '../../utils/constStr';
 import { jsonKeyUpperCase, nullToEmptyString } from '../../utils/dataUtil';
 import { GridRowState } from '../../utils/gridRowState';
@@ -32,7 +32,7 @@ const TabPanel = memo(function TabPanel(props) {
   const search = useCallback((menuId, workId, params, useSnackbar = true) => {
     return new Promise((resolve, reject) => {
       handleBackdrop(true);
-      transaction({
+      getApi({
         menuId: menuId,
         workId: workId,
         params: params,
@@ -54,7 +54,7 @@ const TabPanel = memo(function TabPanel(props) {
             nullToEmptyString(res.data);
           }
 
-          resolve(jsonKeyUpperCase(res.data));
+          resolve(res.data);
         } else {
           handleBackdrop(false);
           openSnackbar(constStr.errorSearch, 'error', useSnackbar);
@@ -68,7 +68,7 @@ const TabPanel = memo(function TabPanel(props) {
   const save = useCallback((menuId, workId, data, useSnackbar = true) => {
     return new Promise((resolve, reject) => {
       handleBackdrop(true);
-      transaction({
+      postApi({
         menuId: menuId,
         workId: workId,
         params: data,
@@ -91,7 +91,7 @@ const TabPanel = memo(function TabPanel(props) {
     return new Promise((resolve, reject) => {
       handleBackdrop(true);
       const _data = data.map((item) => (item.state = GridRowState.deleted));
-      transaction({
+      postApi({
         menuId: menuId,
         workId: workId,
         params: _data,

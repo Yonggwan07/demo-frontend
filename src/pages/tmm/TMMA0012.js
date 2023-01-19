@@ -66,7 +66,7 @@ const TMMA0012 = ({ menuInfo, search }) => {
   /* 조회 버튼 클릭 */
   const handleSearch = useCallback(
     (data) => {
-      search(menuInfo.id, 'search00', data)
+      search(menuInfo.id, 'TmCodexh', data)
         .then((res) => {
           setMasterRows(res);
         })
@@ -79,7 +79,12 @@ const TMMA0012 = ({ menuInfo, search }) => {
 
   const handleRowClick = useCallback(
     (e) => {
-      search(menuInfo.id, 'search01', e.row, false).then((res) => {
+      search(
+        menuInfo.id,
+        'TmCodexd',
+        { COMM_CODE: e.row.COMM_CODE },
+        false,
+      ).then((res) => {
         setDetailRows(res);
       });
     },

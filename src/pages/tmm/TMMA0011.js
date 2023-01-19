@@ -134,7 +134,7 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
   const handleSearch = useCallback(
     (data) => {
       console.log(data);
-      search(menuInfo.id, 'search00', data)
+      search(menuInfo.id, 'TmCodexh', data)
         .then((res) => {
           setRows(res);
         })

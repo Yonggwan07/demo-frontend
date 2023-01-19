@@ -56,7 +56,7 @@ const TMMA0020 = ({ menuInfo, search }) => {
   /* 조회 버튼 클릭 */
   const handleSearch = useCallback(
     (data) => {
-      search(menuInfo.id, 'search00', data)
+      search(menuInfo.id, 'TmMessxm', data)
         .then((res) => {
           setRows(res);
         })
