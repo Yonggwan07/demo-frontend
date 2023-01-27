@@ -35,48 +35,47 @@ const codeOptions = [
 // 그리드 컬럼 설정
 const columnInfo = [
   {
-    field: 'COMM_CODE',
+    field: 'commonCode',
     headerName: '공통코드',
     width: 150,
   },
   {
-    field: 'COMM_CDNM',
+    field: 'commonCodeName',
     headerName: '공통코드명',
     flex: 1,
     editable: true,
   },
   {
-    field: 'SYST_CODE',
+    field: 'systemCode',
     headerName: '시스템구분',
     width: 150,
     compType: 'select',
-    commCode: 'SYST_CODE',
+    commonCode: 'SYST_CODE',
     editable: true,
   },
-  { field: 'CDGB_CODE', headerName: '코드구분' },
-  { field: 'COCD_LNTH', headerName: '세부코드길이' },
-  { field: 'ISET_YSNO', headerName: '초기세팅여부' },
-  { field: 'RE1F_DESC', headerName: '보조1필드설명' },
-  { field: 'RE1T_CODE', headerName: '보조1필드입력형태코드' },
-  { field: 'RE2F_DESC', headerName: '보조2필드설명' },
-  { field: 'RE2T_CODE', headerName: '보조2필드입력형태코드' },
-  { field: 'RE3F_DESC', headerName: '보조3필드설명' },
-  { field: 'RE3T_CODE', headerName: '보조3필드입력형태코드' },
-  { field: 'RE4F_DESC', headerName: '보조4필드설명' },
-  { field: 'RE4T_CODE', headerName: '보조4필드입력형태코드' },
-  { field: 'RE5F_DESC', headerName: '보조5필드설명' },
-  { field: 'RE5T_CODE', headerName: '보조5필드입력형태코드' },
-  { field: 'RE6F_DESC', headerName: '보조6필드설명' },
-  { field: 'RE6T_CODE', headerName: '보조6필드입력형태코드' },
-  { field: 'RE7F_DESC', headerName: '보조7필드설명' },
-  { field: 'RE7T_CODE', headerName: '보조7필드입력형태코드' },
-  { field: 'RE8F_DESC', headerName: '보조8필드설명' },
-  { field: 'RE8T_CODE', headerName: '보조8필드입력형태코드' },
-  { field: 'RE9F_DESC', headerName: '보조9필드설명' },
-  { field: 'RE9T_CODE', headerName: '보조9필드입력형태코드' },
-  { field: 'R10F_DESC', headerName: '보조10필드설명' },
-  { field: 'R10T_CODE', headerName: '보조10필드입력형태코드' },
-  { field: 'REMK_100X', headerName: '비고' },
+  { field: 'divisionCode', headerName: '코드구분' },
+  { field: 'commonCodeLength', headerName: '세부코드길이' },
+  { field: 'refFieldDesc1', headerName: '보조1필드설명' },
+  { field: 'refTypeCode1', headerName: '보조1필드입력형태코드' },
+  { field: 'refFieldDesc2', headerName: '보조2필드설명' },
+  { field: 'refTypeCode2', headerName: '보조2필드입력형태코드' },
+  { field: 'refFieldDesc3', headerName: '보조3필드설명' },
+  { field: 'refTypeCode3', headerName: '보조3필드입력형태코드' },
+  { field: 'refFieldDesc4', headerName: '보조4필드설명' },
+  { field: 'refTypeCode4', headerName: '보조4필드입력형태코드' },
+  { field: 'refFieldDesc5', headerName: '보조5필드설명' },
+  { field: 'refTypeCode5', headerName: '보조5필드입력형태코드' },
+  { field: 'refFieldDesc6', headerName: '보조6필드설명' },
+  { field: 'refTypeCode6', headerName: '보조6필드입력형태코드' },
+  { field: 'refFieldDesc7', headerName: '보조7필드설명' },
+  { field: 'refTypeCode7', headerName: '보조7필드입력형태코드' },
+  { field: 'refFieldDesc8', headerName: '보조8필드설명' },
+  { field: 'refTypeCode8', headerName: '보조8필드입력형태코드' },
+  { field: 'refFieldDesc9', headerName: '보조9필드설명' },
+  { field: 'refTypeCode9', headerName: '보조9필드입력형태코드' },
+  { field: 'refFieldDesc10', headerName: '보조10필드설명' },
+  { field: 'refTypeCode10', headerName: '보조10필드입력형태코드' },
+  { field: 'note', headerName: '비고' },
 ];
 
 const ConditionalCommCodeField = ({ control }) => {
@@ -88,7 +87,7 @@ const ConditionalCommCodeField = ({ control }) => {
   return (
     <ComInput
       control={control}
-      name="COMM_CODE"
+      name="commonCode"
       InputProps={{
         readOnly: state !== GridRowState.inserted,
       }}
@@ -182,7 +181,7 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
       // 모든 항목에 label, name 필수
       {
         label: '공통코드/명',
-        name: 'COMM_CDNM',
+        name: 'commonCodeName',
         style: { width: '10rem' },
         //defaultValue: 'ACCT',
         //required: true,
@@ -191,7 +190,7 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
       },
       {
         label: '시스템코드',
-        name: 'SYST_CODE',
+        name: 'systemCode',
         type: 'select',
         options: comCombo.SYST_CODE,
         nullvalue: 'all', // all, select
@@ -245,33 +244,33 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
           reset={reset}
           commonButtons={{ insert: { onClick: onInsert } }}
           disableMultipleSelection
+          getRowId={(row) => row.commonCode}
           initialState={{
             columns: {
               columnVisibilityModel: {
-                CDGB_CODE: false,
-                COCD_LNTH: false,
-                ISET_YSNO: false,
-                RE1F_DESC: false,
-                RE1T_CODE: false,
-                RE2F_DESC: false,
-                RE2T_CODE: false,
-                RE3F_DESC: false,
-                RE3T_CODE: false,
-                RE4F_DESC: false,
-                RE4T_CODE: false,
-                RE5F_DESC: false,
-                RE5T_CODE: false,
-                RE6F_DESC: false,
-                RE6T_CODE: false,
-                RE7F_DESC: false,
-                RE7T_CODE: false,
-                RE8F_DESC: false,
-                RE8T_CODE: false,
-                RE9F_DESC: false,
-                RE9T_CODE: false,
-                R10F_DESC: false,
-                R10T_CODE: false,
-                REMK_100X: false,
+                divisionCode: false,
+                commonCodeLength: false,
+                refFieldDesc1: false,
+                refTypeCode1: false,
+                refFieldDesc2: false,
+                refTypeCode2: false,
+                refFieldDesc3: false,
+                refTypeCode3: false,
+                refFieldDesc4: false,
+                refTypeCode4: false,
+                refFieldDesc5: false,
+                refTypeCode5: false,
+                refFieldDesc6: false,
+                refTypeCode6: false,
+                refFieldDesc7: false,
+                refTypeCode7: false,
+                refFieldDesc8: false,
+                refTypeCode8: false,
+                refFieldDesc9: false,
+                refTypeCode9: false,
+                refFieldDesc10: false,
+                refTypeCode10: false,
+                note: false,
               },
             },
           }}
@@ -292,7 +291,7 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
                   handleDialog(
                     'remove',
                     `공통코드: ${getValues(
-                      'COMM_CODE',
+                      'commonCode',
                     )} 항목을 삭제하시겠습니까?`,
                     () => onRemove,
                   ),
@@ -307,13 +306,17 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
                     <TableCell>
                       <ConditionalCommCodeField
                         control={control}
-                        name="COMM_CODE"
+                        name="commonCode"
                         required
                       />
                     </TableCell>
                     <TableCell variant="head">공통코드명</TableCell>
                     <TableCell>
-                      <ComInput control={control} name="COMM_CDNM" required />
+                      <ComInput
+                        control={control}
+                        name="commonCodeName"
+                        required
+                      />
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -321,7 +324,7 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
                     <TableCell>
                       <ComSelect
                         control={control}
-                        name="SYST_CODE"
+                        name="systemCode"
                         options={comCombo.SYST_CODE}
                         nullvalue="select"
                         required

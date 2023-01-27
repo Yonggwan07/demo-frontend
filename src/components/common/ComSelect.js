@@ -84,8 +84,11 @@ const ComSelect = ({ control, defaultValue, ...props }) => {
           )}
           {props.options &&
             props.options.map((option) => (
-              <StyledMemuItem key={option.id} value={option.comdCode}>
-                {option.comdCdnm}
+              <StyledMemuItem
+                key={option.commonDetailCode}
+                value={option.commonDetailCode}
+              >
+                {option.commonDetailCodeName}
               </StyledMemuItem>
             ))}
         </StyledSelect>
@@ -97,9 +100,12 @@ const ComSelect = ({ control, defaultValue, ...props }) => {
 ComSelect.propTypes = {
   name: PropTypes.string.isRequired,
   control: PropTypes.object.isRequired,
+  defaultValue: PropTypes.string,
+  required: PropTypes.bool,
   options: PropTypes.array,
   nullvalue: PropTypes.string,
   rules: PropTypes.object,
+  onChange: PropTypes.func,
 };
 
 export default memo(ComSelect);

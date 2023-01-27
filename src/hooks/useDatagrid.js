@@ -32,8 +32,8 @@ const useDatagrid = (_columnInfo = [], _commCodes = []) => {
   // Select
   const SelectCell = (props) => {
     const { value, options } = props;
-    const searched = options.find((option) => option.comdCode === value);
-    return <div>{searched !== undefined ? searched.comdCdnm : ''}</div>;
+    const searched = options.find((option) => option.commonDetailCode === value);
+    return <div>{searched !== undefined ? searched.commonDetailCodeName : ''}</div>;
   };
 
   const SelectEditCell = (props) => {
@@ -69,8 +69,8 @@ const useDatagrid = (_columnInfo = [], _commCodes = []) => {
       >
         {options &&
           options.map((option) => (
-            <StyledMemuItem key={option.id} value={option.comdCode}>
-              {option.comdCdnm}
+            <StyledMemuItem key={option.commonDetailCode} value={option.commonDetailCode}>
+              {option.commonDetailCodeName}
             </StyledMemuItem>
           ))}
       </Select>
@@ -148,7 +148,7 @@ const useDatagrid = (_columnInfo = [], _commCodes = []) => {
             return (
               <SelectCell
                 {...params}
-                options={commCodes[columnInfo[key].commCode]}
+                options={commCodes[columnInfo[key].commonCode]}
               />
             );
           };
@@ -157,7 +157,7 @@ const useDatagrid = (_columnInfo = [], _commCodes = []) => {
             return (
               <SelectEditCell
                 {...params}
-                options={commCodes[columnInfo[key].commCode]}
+                options={commCodes[columnInfo[key].commonCode]}
               />
             );
           };

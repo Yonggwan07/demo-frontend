@@ -60,34 +60,35 @@ const ComSideMenuList = ({ tabs, setTabs, setTabValue, open, setOpen }) => {
   }, [setOpen]);
 
   const handleCollapsableMenuClick = useCallback(
-    (menuIdxx) => {
-      setMenuOpen({ ...menuOpen, [menuIdxx]: !menuOpen[menuIdxx] });
+    (menuId) => {
+      setMenuOpen({ ...menuOpen, [menuId]: !menuOpen[menuId] });
     },
     [menuOpen],
   );
   const handleWorkMenuClick = useCallback(
-    (progIdxx, menuName) => {
-      if (tabs.find((tab) => tab.menuId === progIdxx) === undefined) {
+    (programId, menuName) => {
+      if (tabs.find((tab) => tab.menuId === programId) === undefined) {
         // 상위 메뉴 검색
         const level3 = menuList.find(
           (level3) =>
-            level3.menuIdxx ===
-            menuList.find((level4) => level4.progIdxx === progIdxx).upmeIdxx,
+            level3.menuId ===
+            menuList.find((level4) => level4.programId === programId)
+              .upperMenuId,
         );
         const level2 = menuList.find(
-          (level2) => level2.menuIdxx === level3.upmeIdxx,
+          (level2) => level2.menuId === level3.upperMenuId,
         );
 
         setTabs((tabs) =>
           tabs.concat({
-            menuId: progIdxx,
+            menuId: programId,
             label: menuName,
             upperMenus: [level2.menuName, level3.menuName],
           }),
         );
-        setTabValue(progIdxx);
+        setTabValue(programId);
       } else {
-        setTabValue(tabs.find((tab) => tab.menuId === progIdxx).menuId);
+        setTabValue(tabs.find((tab) => tab.menuId === programId).menuId);
       }
       setOpen(false);
     },
@@ -95,13 +96,15 @@ const ComSideMenuList = ({ tabs, setTabs, setTabValue, open, setOpen }) => {
   );
 
   useEffect(() => {
-    menuList
-      .filter(
-        (menuItem) => menuItem.menuLevl === '2' || menuItem.menuLevl === '3',
-      )
-      .forEach((menuItem) =>
-        setMenuOpen((prev) => ({ ...prev, [menuItem.menuIdxx]: false })),
-      );
+    if (menuList) {
+      menuList
+        .filter(
+          (menuItem) => menuItem.menuLevel === 2 || menuItem.menuLevel === 3,
+        )
+        .forEach((menuItem) =>
+          setMenuOpen((prev) => ({ ...prev, [menuItem.menuId]: false })),
+        );
+    }
   }, [menuList]);
 
   return (
@@ -113,12 +116,12 @@ const ComSideMenuList = ({ tabs, setTabs, setTabValue, open, setOpen }) => {
         {menuList &&
           /* Level 2 */
           menuList
-            .filter((menuItem) => menuItem.menuLevl === '2')
+            .filter((menuItem) => menuItem.menuLevel === 2)
             .map((menuItemLevel2) => (
-              <div key={menuItemLevel2.menuIdxx}>
+              <div key={menuItemLevel2.menuId}>
                 <CustomListItemButton
                   handleClick={handleCollapsableMenuClick}
-                  menuId={menuItemLevel2.menuIdxx}
+                  menuId={menuItemLevel2.menuId}
                 >
                   <ListItemText
                     primary={menuItemLevel2.menuName}
@@ -127,14 +130,14 @@ const ComSideMenuList = ({ tabs, setTabs, setTabValue, open, setOpen }) => {
                       sx: { color: theme.palette.primary[theme.palette.mode] },
                     }}
                   />
-                  {menuOpen[menuItemLevel2.menuIdxx] ? (
+                  {menuOpen[menuItemLevel2.menuId] ? (
                     <ExpandLess />
                   ) : (
                     <ExpandMore />
                   )}
                 </CustomListItemButton>
                 <Collapse
-                  in={menuOpen[menuItemLevel2.menuIdxx]}
+                  in={menuOpen[menuItemLevel2.menuId]}
                   timeout="auto"
                   unmountOnExit
                 >
@@ -143,14 +146,14 @@ const ComSideMenuList = ({ tabs, setTabs, setTabValue, open, setOpen }) => {
                     menuList
                       .filter(
                         (menuItemLevel3) =>
-                          menuItemLevel3.menuLevl === '3' &&
-                          menuItemLevel3.upmeIdxx === menuItemLevel2.menuIdxx,
+                          menuItemLevel3.menuLevel === 3 &&
+                          menuItemLevel3.upperMenuId === menuItemLevel2.menuId,
                       )
                       .map((menuItemLevel3) => (
-                        <div key={menuItemLevel3.menuIdxx}>
+                        <div key={menuItemLevel3.menuId}>
                           <CustomListItemButton
                             handleClick={handleCollapsableMenuClick}
-                            menuId={menuItemLevel3.menuIdxx}
+                            menuId={menuItemLevel3.menuId}
                           >
                             <ListItemText
                               primary={menuItemLevel3.menuName}
@@ -162,14 +165,14 @@ const ComSideMenuList = ({ tabs, setTabs, setTabValue, open, setOpen }) => {
                                 },
                               }}
                             />
-                            {menuOpen[menuItemLevel3.menuIdxx] ? (
+                            {menuOpen[menuItemLevel3.menuId] ? (
                               <ExpandLess />
                             ) : (
                               <ExpandMore />
                             )}
                           </CustomListItemButton>
                           <Collapse
-                            in={menuOpen[menuItemLevel3.menuIdxx]}
+                            in={menuOpen[menuItemLevel3.menuId]}
                             timeout="auto"
                             unmountOnExit
                           >
@@ -178,15 +181,15 @@ const ComSideMenuList = ({ tabs, setTabs, setTabValue, open, setOpen }) => {
                               menuList
                                 .filter(
                                   (menuItemLevel4) =>
-                                    menuItemLevel4.menuLevl === '4' &&
-                                    menuItemLevel4.upmeIdxx ===
-                                      menuItemLevel3.menuIdxx,
+                                    menuItemLevel4.menuLevel === 4 &&
+                                    menuItemLevel4.upperMenuId ===
+                                      menuItemLevel3.menuId,
                                 )
                                 .map((menuItemLevel4) => (
-                                  <div key={menuItemLevel4.menuIdxx}>
+                                  <div key={menuItemLevel4.menuId}>
                                     <BottomListItemButton
                                       handleClick={handleWorkMenuClick}
-                                      progId={menuItemLevel4.progIdxx}
+                                      progId={menuItemLevel4.programId}
                                       menuName={menuItemLevel4.menuName}
                                     >
                                       <ListItemText
