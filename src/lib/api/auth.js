@@ -1,7 +1,7 @@
 import client from './client';
 
-export const signin = ({ id, pw, scnbYsno }) =>
-  client.post('/api/auth/signin', { id, pw, scnbYsno });
+export const signin = ({ userId, password }) =>
+  client.post('/api/auth/signin', { userId, password });
 
 export const check = () => client.get('/api/auth/check');
 

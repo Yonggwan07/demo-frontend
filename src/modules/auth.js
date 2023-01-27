@@ -21,7 +21,10 @@ export const changeField = createAction(
   }),
 );
 export const initializeForm = createAction(INITIALIZE_FORM, (form) => form);
-export const signin = createAction(SIGNIN, ({ id, pw, scnbYsno }) => ({ id, pw, scnbYsno }));
+export const signin = createAction(SIGNIN, ({ userId, password }) => ({
+  userId,
+  password,
+}));
 
 const signinSaga = createRequestSaga(SIGNIN, authAPI.signin);
 export function* authSaga() {
@@ -30,8 +33,8 @@ export function* authSaga() {
 
 const initialState = {
   login: {
-    id: '',
-    pw: '',
+    userId: '',
+    password: '',
   },
   auth: null,
   authError: null,

@@ -28,13 +28,13 @@ const LoginForm = () => {
   };
   const onSubmit = (e) => {
     e.preventDefault();
-    const { id, pw } = form;
+    const { userId, password } = form;
 
-    if ([id, pw].includes('')) {
+    if ([userId, password].includes('')) {
       return;
     }
 
-    dispatch(signin({ id, pw, scnbYsno: '1' }));
+    dispatch(signin({ userId, password }));
   };
 
   useEffect(() => {
