@@ -1,5 +1,3 @@
-import React, { memo, useCallback, useEffect, useMemo } from 'react';
-import { PropTypes } from 'prop-types';
 import {
   Table,
   TableBody,
@@ -8,6 +6,8 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
+import { PropTypes } from 'prop-types';
+import React, { memo, useCallback, useEffect, useMemo } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import ComCheckbox from '../../components/common/ComCheckbox';
 import ComCompArea from '../../components/common/ComCompArea';
@@ -23,8 +23,8 @@ import ComWrapperVertical from '../../components/common/ComWrapperVertical';
 import useCombo from '../../hooks/useCombo';
 import useDatagrid from '../../hooks/useDatagrid';
 import handleDialog from '../../lib/api/dialog';
-import { GridRowState } from '../../utils/gridRowState';
 import { commonMenuPropType } from '../../utils/commonMenuPropType';
+import { GridRowState } from '../../utils/gridRowState';
 
 const codeOptions = [
   { commCode: 'SYST_CODE', usexYsno: '1' },
@@ -102,7 +102,7 @@ ConditionalCommCodeField.propTypes = {
 const ConditionalSearchPopup = ({ control, code, ...props }) => {
   const codeValue = useWatch({
     control,
-    name: `${code.substr(0, 3)}T_CODE`,
+    name: `${code.substr(0, 3)}T_CODE`, // TODO: field naming
   });
 
   return (
@@ -244,7 +244,6 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
           reset={reset}
           commonButtons={{ insert: { onClick: onInsert } }}
           disableMultipleSelection
-          getRowId={(row) => row.commonCode}
           initialState={{
             columns: {
               columnVisibilityModel: {
@@ -334,7 +333,7 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
                     <TableCell>
                       <ComSelect
                         control={control}
-                        name="CDGB_CODE"
+                        name="divisionCode"
                         options={comCombo.CDGB_CODE}
                         nullvalue="select"
                         required
@@ -346,7 +345,7 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
                     <TableCell>
                       <ComInput
                         control={control}
-                        name="COCD_LNTH"
+                        name="commonCodeLength"
                         type="number"
                       />
                     </TableCell>
@@ -369,16 +368,19 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {[...Array(9).keys()].map((i) => (
+                  {[...Array(10).keys()].map((i) => (
                     <TableRow key={i}>
                       <TableCell variant="head">{'항목' + (i + 1)}</TableCell>
                       <TableCell>
-                        <ComInput control={control} name={`RE${i + 1}F_DESC`} />
+                        <ComInput
+                          control={control}
+                          name={`refFieldDesc${i + 1}`}
+                        />
                       </TableCell>
                       <TableCell>
                         <ComSelect
                           control={control}
-                          name={`RE${i + 1}T_CODE`}
+                          name={`refTypeCode${i + 1}`}
                           nullvalue="select"
                           options={comCombo.REXT_CODE}
                         />
@@ -386,43 +388,20 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
                       <TableCell>
                         <ConditionalSearchPopup
                           control={control}
-                          code={`RE${i + 1}F_CMCD`}
-                          name={`RE${i + 1}F_CMNM`}
+                          code={`refFieldCommonCode${i + 1}`}
+                          name={`RE${i + 1}F_CMNM`} // TODO: commonCodeHeader subquery
                           popupid="TMM1003"
                           search={search}
                         />
                       </TableCell>
                     </TableRow>
                   ))}
-                  <TableRow>
-                    <TableCell variant="head">항목10</TableCell>
-                    <TableCell>
-                      <ComInput control={control} name="R10F_DESC" />
-                    </TableCell>
-                    <TableCell>
-                      <ComSelect
-                        control={control}
-                        name="R10T_CODE"
-                        nullvalue="select"
-                        options={comCombo.REXT_CODE}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <ConditionalSearchPopup
-                        control={control}
-                        code="R10F_CMCD"
-                        name="R10F_CMNM"
-                        popupid="TMM1003"
-                        search={search}
-                      />
-                    </TableCell>
-                  </TableRow>
                   <TableRow sx={{ height: '100%' }}>
                     <TableCell variant="head">비고</TableCell>
                     <TableCell colSpan={3}>
                       <ComInput
                         control={control}
-                        name="REMK_100X"
+                        name="note"
                         multiline
                         rows={5}
                       />
