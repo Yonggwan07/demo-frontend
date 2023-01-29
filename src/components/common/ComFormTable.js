@@ -11,10 +11,10 @@ const ComFormTable = ({
   commonButtons,
 }) => {
   const { isDirty } = useFormState({ control });
-  const id = useWatch({ control, name: 'id' });
+  const seq = useWatch({ control, name: 'seq' });
 
-  const getDisabled = (id, disabled) => {
-    if (!id) {
+  const getDisabled = (seq, disabled) => {
+    if (!seq) {
       return true;
     } else {
       return disabled ? disabled : false;
@@ -25,7 +25,7 @@ const ComFormTable = ({
     <form
       className={direction === 'v' ? 'wrapperVertical' : 'wrapperHorizontal'}
       onSubmit={onSubmit}
-      disabled={getDisabled(id, disabled)}
+      disabled={getDisabled(seq, disabled)}
       noValidate
     >
       <ComCommonButtons isDirty={isDirty} {...commonButtons} />
