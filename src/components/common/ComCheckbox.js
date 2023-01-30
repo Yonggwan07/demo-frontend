@@ -6,11 +6,11 @@ const ComCheckbox = ({ control, defaultValue, ...props }) => {
   const { field } = useController({
     name: props.name,
     control,
-    defaultValue: defaultValue ? '1' : '0',
+    defaultValue: defaultValue ? true : false,
   });
 
   const handleChange = (isChecked, field) => {
-    field.onChange(isChecked ? '1' : '0');
+    field.onChange(isChecked ? true : false);
   };
 
   return (
@@ -18,7 +18,7 @@ const ComCheckbox = ({ control, defaultValue, ...props }) => {
       type={'checkbox'}
       {...field}
       {...props}
-      checked={field.value === '1'}
+      checked={field.value}
       onChange={(e) => handleChange(e.target.checked, field)}
     />
   );
