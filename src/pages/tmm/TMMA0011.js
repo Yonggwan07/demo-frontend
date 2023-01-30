@@ -102,7 +102,7 @@ ConditionalCommCodeField.propTypes = {
 const ConditionalSearchPopup = ({ control, code, ...props }) => {
   const codeValue = useWatch({
     control,
-    name: `${code.substr(0, 3)}T_CODE`, // TODO: field naming
+    name: `refTypeCode${/\D+(\d+)/.exec(code)[1]}`,
   });
 
   return (
@@ -133,7 +133,7 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
   const handleSearch = useCallback(
     (data) => {
       console.log(data);
-      search(menuInfo.id, 'TmCodexh', data)
+      search(menuInfo.id, 'commonCodeHeader', data)
         .then((res) => {
           setRows(res);
         })
@@ -351,7 +351,7 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
                     </TableCell>
                     <TableCell variant="head">초기세팅여부</TableCell>
                     <TableCell>
-                      <ComCheckbox control={control} name="ISET_YSNO" />
+                      <ComCheckbox control={control} name="initialized" />
                     </TableCell>
                   </TableRow>
                 </TableBody>
@@ -389,7 +389,7 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
                         <ConditionalSearchPopup
                           control={control}
                           code={`refFieldCommonCode${i + 1}`}
-                          name={`RE${i + 1}F_CMNM`} // TODO: commonCodeHeader subquery
+                          name={`refFieldCommonCodeName${i + 1}`}
                           popupid="TMM1003"
                           search={search}
                         />
