@@ -18,7 +18,6 @@ export function* menuListSaga() {
 
 const initialState = {
   menuList: null,
-  checkError: null,
 };
 
 export default handleActions(
@@ -26,12 +25,10 @@ export default handleActions(
     [GET_MENULIST_SUCCESS]: (state, { payload: menuList }) => ({
       ...state,
       menuList,
-      checkError: null,
     }),
-    [GET_MENULIST_FAILURE]: (state, { payload: error }) => ({
+    [GET_MENULIST_FAILURE]: (state) => ({
       ...state,
       menuList: null,
-      checkError: error,
     }),
   },
   initialState,

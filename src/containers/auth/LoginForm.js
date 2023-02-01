@@ -45,27 +45,21 @@ const LoginForm = () => {
     if (_authError) {
       switch (_authError.response.status) {
         case 401:
-          setError('Invalid password!');
+          setError('Invalid user name or password');
           break;
 
         case 504:
-          setError('504 - Gateway timeout!');
+          setError('504 - Gateway timeout');
           break;
 
         default:
-          setError('Unknown error!');
+          setError('Unknown error');
       }
     }
 
     // 로그인 성공
-    if (_auth) {
+    if (_auth !== null && _auth.success) {
       dispatch(check());
-      try {
-        localStorage.setItem('user', JSON.stringify(_auth));
-      } catch (e) {
-        console.log('localStorage is not working!');
-      }
-
       dispatch(getMenuList());
       navigate('/main');
     }

@@ -16,26 +16,12 @@ export const logout = createAction(LOGOUT);
 
 const checkSaga = createRequestSaga(CHECK, authAPI.check);
 
-function checkFailureSaga() {
-  try {
-    localStorage.removeItem('user');
-  } catch (e) {
-    console.log('localStorage is not working!');
-  }
-}
-
 function* logoutSaga() {
-  try {
-    yield call(authAPI.logout);
-    localStorage.removeItem('user');
-  } catch (e) {
-    console.log('localStorage is not working!');
-  }
+  yield call(authAPI.logout);
 }
 
 export function* userSaga() {
   yield takeLatest(CHECK, checkSaga);
-  yield takeLatest(CHECK_FAILURE, checkFailureSaga);
   yield takeLatest(LOGOUT, logoutSaga);
 }
 
