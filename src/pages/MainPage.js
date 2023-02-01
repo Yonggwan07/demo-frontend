@@ -49,7 +49,10 @@ const MainPage = ({ ColorModeContext }) => {
           <Box sx={{ height: '100%' }}>
             {/* TOPFRAME*/}
             <Box>
-              This is mainpage. <b>ID: {user.userIdxx}</b>
+              This is mainpage.{' '}
+              <b>
+                ID/Name: {user.userId}/{user.username}
+              </b>
               <IconButton
                 sx={{ ml: 1 }}
                 onClick={colorMode.toggleColorMode}
