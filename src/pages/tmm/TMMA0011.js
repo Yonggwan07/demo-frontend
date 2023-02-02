@@ -78,7 +78,7 @@ const columnInfo = [
   { field: 'note', headerName: '비고' },
 ];
 
-const ConditionalCommCodeField = ({ control }) => {
+const ConditionalCommCodeField = ({ control, ...props }) => {
   const state = useWatch({
     control,
     name: 'state',
@@ -86,6 +86,7 @@ const ConditionalCommCodeField = ({ control }) => {
 
   return (
     <ComInput
+      {...props}
       control={control}
       name="commonCode"
       InputProps={{
@@ -146,7 +147,10 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
 
   /* 입력 버튼 클릭 */
   const onInsert = () => {
-    const newId = (parseInt(rows[rows.length - 1].id) + 1).toString();
+    const maxId = rows.reduce((max, curr) => {
+      return curr.id > max ? curr.id : max;
+    }, rows[0].id);
+    const newId = (parseInt(maxId) + 1).toString();
     const newRow = {
       id: newId,
       state: GridRowState.inserted,
@@ -307,6 +311,7 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
                         control={control}
                         name="commonCode"
                         required
+                        maxLength={9}
                       />
                     </TableCell>
                     <TableCell variant="head">공통코드명</TableCell>
