@@ -28,14 +28,10 @@ const TabPanel = memo(function TabPanel(props) {
     [menuId],
   );
 
-  const search = useCallback((menuId, params, workId, useSnackbar = true) => {
+  const search = useCallback((menuId, data, workId, useSnackbar = true) => {
     return new Promise((resolve, reject) => {
       handleBackdrop(true);
-      getApi({
-        menuId: menuId,
-        params: params,
-        workId: workId,
-      }).then((res) => {
+      getApi(menuId, { params: data }, workId).then((res) => {
         if (res.status === 200) {
           handleBackdrop(false);
           openSnackbar(
@@ -68,11 +64,7 @@ const TabPanel = memo(function TabPanel(props) {
     return new Promise((resolve, reject) => {
       handleBackdrop(true);
       emptyStringToNull(data);
-      postApi({
-        menuId: menuId,
-        params: data,
-        workId: workId,
-      }).then((res) => {
+      postApi(menuId, data, workId).then((res) => {
         if (res.status === 200) {
           handleBackdrop(false);
           openSnackbar(constStr.postSave, 'success', useSnackbar);
@@ -91,11 +83,7 @@ const TabPanel = memo(function TabPanel(props) {
     return new Promise((resolve, reject) => {
       handleBackdrop(true);
       emptyStringToNull(data);
-      putApi({
-        menuId: menuId,
-        params: data,
-        workId: workId,
-      }).then((res) => {
+      putApi(menuId, data, workId).then((res) => {
         if (res.status === 200) {
           handleBackdrop(false);
           openSnackbar(constStr.postSave, 'success', useSnackbar);
@@ -113,11 +101,7 @@ const TabPanel = memo(function TabPanel(props) {
   const remove = useCallback((menuId, data, workId) => {
     return new Promise((resolve, reject) => {
       handleBackdrop(true);
-      deleteApi({
-        menuId: menuId,
-        params: data,
-        workId: workId,
-      }).then((res) => {
+      deleteApi(menuId, { params: data }, workId).then((res) => {
         if (res.status === 200) {
           handleBackdrop(false);
           openSnackbar(constStr.postDelete);

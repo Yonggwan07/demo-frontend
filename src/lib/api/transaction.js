@@ -1,23 +1,25 @@
 import client from './client';
 
-export const getApi = ({ menuId, params, workId }) =>
-  client
-    .get(buildUrl(menuId, workId), { params })
+export const getApi = (menuId, params, workId) => {
+  console.log('params', params);
+  return client
+    .get(buildUrl(menuId, workId), params)
     .catch(({ response }) => response);
+};
 
-export const postApi = ({ menuId, params, workId }) =>
+export const postApi = (menuId, params, workId) =>
   client
     .post(buildUrl(menuId, workId), params)
     .catch(({ response }) => response);
 
-export const putApi = ({ menuId, params, workId }) =>
+export const putApi = (menuId, params, workId) =>
   client
     .put(buildUrl(menuId, workId), params)
     .catch(({ response }) => response);
 
-export const deleteApi = ({ menuId, params, workId }) =>
+export const deleteApi = (menuId, params, workId) =>
   client
-    .delete(buildUrl(menuId, workId), { params })
+    .delete(buildUrl(menuId, workId), params)
     .catch(({ response }) => response);
 
 const buildUrl = (menuId, workId) => {
