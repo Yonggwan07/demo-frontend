@@ -1,7 +1,6 @@
 import client from './client';
 
 export const getApi = (menuId, params, workId) => {
-  console.log('params', params);
   return client
     .get(buildUrl(menuId, workId), params)
     .catch(({ response }) => response);

@@ -1,5 +1,6 @@
+import QueryString from 'qs';
 import { useEffect, useState } from 'react';
-import { postApi } from '../lib/api/transaction';
+import { getApi } from '../lib/api/transaction';
 
 const useCombo = (codeOptions) => {
   const [comCombo, setComCombo] = useState({});
@@ -9,10 +10,9 @@ const useCombo = (codeOptions) => {
       return;
     }
 
-    postApi({
-      menuId: 'comCombo',
-      params: [{ commCode: code, usexYsno: '1' }],
-      workId: 'getCombo',
+    getApi({
+      menuId: 'combo',
+      params: [code],
     }).then((res) => {
       if (res.status === 200) {
         const newCode = res.data;
@@ -24,10 +24,11 @@ const useCombo = (codeOptions) => {
     });
   };
   useEffect(() => {
-    postApi({
-      menuId: 'comCombo',
-      params: codeOptions,
-      workId: 'getCombo',
+    getApi('combo', {
+      params: { codes: codeOptions },
+      paramsSerializer: (params) => {
+        return QueryString.stringify(params, { indices: false });
+      },
     }).then((res) => {
       if (res.status === 200) {
         setComCombo(res.data);

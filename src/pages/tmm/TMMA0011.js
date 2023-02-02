@@ -26,11 +26,7 @@ import handleDialog from '../../lib/api/dialog';
 import { commonMenuPropType } from '../../utils/commonMenuPropType';
 import { GridRowState } from '../../utils/gridRowState';
 
-const codeOptions = [
-  { commCode: 'SYST_CODE', usexYsno: '1' },
-  { commCode: 'CDGB_CODE', usexYsno: '1' },
-  { commCode: 'REXT_CODE', usexYsno: '1' },
-];
+const codeOptions = ['SYST_CODE', 'CDGB_CODE', 'REXT_CODE'];
 
 // 그리드 컬럼 설정
 const columnInfo = [
