@@ -92,7 +92,6 @@ const ConditionalCommCodeField = ({ control, ...props }) => {
       InputProps={{
         readOnly: state !== GridRowState.inserted,
       }}
-      required
     />
   );
 };
@@ -121,7 +120,7 @@ ConditionalSearchPopup.propTypes = {
   code: PropTypes.string.isRequired,
 };
 
-const TMMA0011 = ({ menuInfo, search, save, remove }) => {
+const TMMA0011 = ({ menuInfo, search, save, update, remove }) => {
   const { comCombo } = useCombo(codeOptions);
   const { rows, columns, setRows } = useDatagrid(columnInfo, comCombo);
   const { handleSubmit, reset, getValues, control } = useForm(); // 우측 테이블 form
@@ -134,7 +133,7 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
   const handleSearch = useCallback(
     (data) => {
       console.log(data);
-      search(menuInfo.id, 'commonCodeHeader', data)
+      search(menuInfo.id, data)
         .then((res) => {
           setRows(res);
         })
@@ -162,10 +161,18 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
   const onSave = (data) => {
     console.log('--- Save ---');
     console.log(data);
-    save(menuInfo.id, 'save00', [data]).then(() => {
-      setRows(rows.map((row) => (row.id === data.id ? data : row)));
-      reset({}, { keepValues: true });
-    });
+
+    if (data.state === GridRowState.inserted) {
+      save(menuInfo.id, data).then(() => {
+        setRows(rows.map((row) => (row.id === data.id ? data : row)));
+        reset({}, { keepValues: true });
+      });
+    } else {
+      update(menuInfo.id, data).then(() => {
+        setRows(rows.map((row) => (row.id === data.id ? data : row)));
+        reset({}, { keepValues: true });
+      });
+    }
   };
 
   /* 삭제 버튼 클릭 */
@@ -173,7 +180,7 @@ const TMMA0011 = ({ menuInfo, search, save, remove }) => {
     const data = getValues();
     console.log('--- Remove ---');
     console.log(data);
-    remove(menuInfo.id, 'save00', [data]).then(() => {
+    remove(menuInfo.id, { commonCode: data.commonCode }).then(() => {
       setRows(rows.filter((row) => row.id !== data.id));
       reset({}, { keepValues: true });
     });

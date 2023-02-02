@@ -48,3 +48,11 @@ export const nullToEmptyString = (obj) => {
     }
   });
 };
+
+export const emptyStringToNull = (obj) => {
+  Object.keys(obj).forEach((key) => {
+    if (obj[key] == '') {
+      obj[key] = null;
+    }
+  });
+};

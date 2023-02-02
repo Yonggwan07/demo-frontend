@@ -11,8 +11,8 @@ const useCombo = (codeOptions) => {
 
     postApi({
       menuId: 'comCombo',
-      workId: 'getCombo',
       params: [{ commCode: code, usexYsno: '1' }],
+      workId: 'getCombo',
     }).then((res) => {
       if (res.status === 200) {
         const newCode = res.data;
@@ -26,8 +26,8 @@ const useCombo = (codeOptions) => {
   useEffect(() => {
     postApi({
       menuId: 'comCombo',
-      workId: 'getCombo',
       params: codeOptions,
+      workId: 'getCombo',
     }).then((res) => {
       if (res.status === 200) {
         setComCombo(res.data);

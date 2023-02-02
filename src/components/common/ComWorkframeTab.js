@@ -4,10 +4,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Box, Tab, Tabs } from '@mui/material';
 import handleBackdrop from '../../lib/api/backdrop';
 import openSnackbar from '../../lib/api/snackbar';
-import { getApi, postApi } from '../../lib/api/transaction';
+import { getApi, postApi, putApi, deleteApi } from '../../lib/api/transaction';
 import { constStr } from '../../utils/constStr';
-import { jsonKeyUpperCase, nullToEmptyString } from '../../utils/dataUtil';
-import { GridRowState } from '../../utils/gridRowState';
+import { emptyStringToNull, nullToEmptyString } from '../../utils/dataUtil';
 
 const NotFound = () => {
   return <div>Not found</div>;
@@ -29,13 +28,13 @@ const TabPanel = memo(function TabPanel(props) {
     [menuId],
   );
 
-  const search = useCallback((menuId, workId, params, useSnackbar = true) => {
+  const search = useCallback((menuId, params, workId, useSnackbar = true) => {
     return new Promise((resolve, reject) => {
       handleBackdrop(true);
       getApi({
         menuId: menuId,
-        workId: workId,
         params: params,
+        workId: workId,
       }).then((res) => {
         if (res.status === 200) {
           handleBackdrop(false);
@@ -65,18 +64,19 @@ const TabPanel = memo(function TabPanel(props) {
     });
   }, []);
 
-  const save = useCallback((menuId, workId, data, useSnackbar = true) => {
+  const save = useCallback((menuId, data, workId, useSnackbar = true) => {
     return new Promise((resolve, reject) => {
       handleBackdrop(true);
+      emptyStringToNull(data);
       postApi({
         menuId: menuId,
-        workId: workId,
         params: data,
+        workId: workId,
       }).then((res) => {
         if (res.status === 200) {
           handleBackdrop(false);
-          openSnackbar(constStr.postSave(res.data), 'success', useSnackbar);
-          resolve(jsonKeyUpperCase(res.data));
+          openSnackbar(constStr.postSave, 'success', useSnackbar);
+          resolve(res.data);
         } else {
           handleBackdrop(false);
           openSnackbar(constStr.errorSave, 'error', useSnackbar);
@@ -87,19 +87,41 @@ const TabPanel = memo(function TabPanel(props) {
     });
   }, []);
 
-  const remove = useCallback((menuId, workId, data) => {
+  const update = useCallback((menuId, data, workId, useSnackbar = true) => {
     return new Promise((resolve, reject) => {
       handleBackdrop(true);
-      const _data = data.map((item) => (item.state = GridRowState.deleted));
-      postApi({
+      emptyStringToNull(data);
+      putApi({
         menuId: menuId,
+        params: data,
         workId: workId,
-        params: _data,
       }).then((res) => {
         if (res.status === 200) {
           handleBackdrop(false);
-          openSnackbar(constStr.postDelete(res.data));
-          resolve(jsonKeyUpperCase(res.data));
+          openSnackbar(constStr.postSave, 'success', useSnackbar);
+          resolve(res.data);
+        } else {
+          handleBackdrop(false);
+          openSnackbar(constStr.errorSave, 'error', useSnackbar);
+          console.error(res);
+          return reject();
+        }
+      });
+    });
+  }, []);
+
+  const remove = useCallback((menuId, data, workId) => {
+    return new Promise((resolve, reject) => {
+      handleBackdrop(true);
+      deleteApi({
+        menuId: menuId,
+        params: data,
+        workId: workId,
+      }).then((res) => {
+        if (res.status === 200) {
+          handleBackdrop(false);
+          openSnackbar(constStr.postDelete);
+          resolve(res.data);
         } else {
           handleBackdrop(false);
           openSnackbar(constStr.errorDelete, 'error');
@@ -120,7 +142,13 @@ const TabPanel = memo(function TabPanel(props) {
       sx={{ height: 'calc(100% - 49px)', padding: '0 1rem 1rem 1rem' }}
     >
       <Suspense>
-        <Menu menuInfo={menuInfo} search={search} save={save} remove={remove} />
+        <Menu
+          menuInfo={menuInfo}
+          search={search}
+          save={save}
+          update={update}
+          remove={remove}
+        />
       </Suspense>
     </Box>
   );
