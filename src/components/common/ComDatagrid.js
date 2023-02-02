@@ -33,7 +33,7 @@ const ComDatagrid = ({ rows, columns, reset, commonButtons, ...props }) => {
   /* Datagrid selectionModel 변경 시 form reset */
   useEffect(() => {
     if (typeof reset === 'function') {
-      reset(rows.find((row) => row.seq === selectionModel));
+      reset(rows.find((row) => row.id === selectionModel));
     }
   }, [reset, rows, selectionModel]);
 
@@ -60,7 +60,6 @@ const ComDatagrid = ({ rows, columns, reset, commonButtons, ...props }) => {
       onCellKeyDown={handleCellKeyDown}
       onSelectionModelChange={handleSelectionModelChange}
       selectionModel={selectionModel}
-      getRowId={(row) => row.seq}
       {...props}
     />
   );
