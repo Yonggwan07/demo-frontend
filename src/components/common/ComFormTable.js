@@ -1,6 +1,7 @@
 import React from 'react';
 import ComCommonButtons from './ComCommonButtons';
 import { useFormState, useWatch } from 'react-hook-form';
+import { PropTypes } from 'prop-types';
 
 const ComFormTable = ({
   children,
@@ -32,6 +33,25 @@ const ComFormTable = ({
       {children}
     </form>
   );
+};
+
+ComFormTable.propTypes = {
+  children: PropTypes.oneOfType([
+    PropTypes.element,
+    PropTypes.arrayOf(PropTypes.element),
+  ]).isRequired,
+  direction: PropTypes.oneOf(['v', 'h']),
+  disabled: PropTypes.bool,
+  control: PropTypes.object.isRequired,
+  onSubmit: PropTypes.func,
+  commonButtons: PropTypes.shape({
+    search: PropTypes.object,
+    cancel: PropTypes.object,
+    insert: PropTypes.object,
+    save: PropTypes.object,
+    remove: PropTypes.object,
+    isDirty: PropTypes.bool,
+  }),
 };
 
 export default ComFormTable;

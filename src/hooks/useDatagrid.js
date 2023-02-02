@@ -5,6 +5,7 @@ import { useGridApiContext } from '@mui/x-data-grid';
 import { format, parseISO } from 'date-fns';
 import ko from 'date-fns/locale/ko';
 import DatePicker from 'react-datepicker';
+import { PropTypes } from 'prop-types';
 
 const StyledInput = styled(InputBase)({
   '& .MuiInputBase-input': {
@@ -32,8 +33,16 @@ const useDatagrid = (_columnInfo = [], _commCodes = []) => {
   // Select
   const SelectCell = (props) => {
     const { value, options } = props;
-    const searched = options.find((option) => option.commonDetailCode === value);
-    return <div>{searched !== undefined ? searched.commonDetailCodeName : ''}</div>;
+    const searched = options.find(
+      (option) => option.commonDetailCode === value,
+    );
+    return (
+      <div>{searched !== undefined ? searched.commonDetailCodeName : ''}</div>
+    );
+  };
+  SelectCell.propTypes = {
+    value: PropTypes.string,
+    options: PropTypes.arrayOf(PropTypes.object),
   };
 
   const SelectEditCell = (props) => {
@@ -69,12 +78,21 @@ const useDatagrid = (_columnInfo = [], _commCodes = []) => {
       >
         {options &&
           options.map((option) => (
-            <StyledMemuItem key={option.commonDetailCode} value={option.commonDetailCode}>
+            <StyledMemuItem
+              key={option.commonDetailCode}
+              value={option.commonDetailCode}
+            >
               {option.commonDetailCodeName}
             </StyledMemuItem>
           ))}
       </Select>
     );
+  };
+  SelectEditCell.propTypes = {
+    id: PropTypes.string.isRequired,
+    value: PropTypes.string,
+    field: PropTypes.string.isRequired,
+    options: PropTypes.arrayOf(PropTypes.object),
   };
 
   // DatePicker
@@ -129,6 +147,14 @@ const useDatagrid = (_columnInfo = [], _commCodes = []) => {
         autoFocus
       />
     );
+  };
+  DatePickerEditCell.propTypes = {
+    id: PropTypes.string.isRequired,
+    value: PropTypes.string,
+    field: PropTypes.string.isRequired,
+    minDate: PropTypes.string,
+    maxDate: PropTypes.string,
+    readOnly: PropTypes.bool,
   };
 
   const dateFormatter = useCallback((date) => {
