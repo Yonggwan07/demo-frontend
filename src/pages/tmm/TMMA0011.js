@@ -398,7 +398,7 @@ const TMMA0011 = ({ menuInfo, search, save, update, remove }) => {
                           control={control}
                           code={`refFieldCommonCode${i + 1}`}
                           name={`refFieldCommonCodeName${i + 1}`}
-                          popupid="TMM1003"
+                          popupId="TMM1003"
                           search={search}
                         />
                       </TableCell>

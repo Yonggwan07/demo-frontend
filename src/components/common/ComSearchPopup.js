@@ -17,7 +17,7 @@ const OBJECT_REG = /<([^>]+?)\/>/g;
 const FIELD_REX = /[^\s]+/g;
 const PROP_REX = `\\s*=\\s*"(.+?)"`;
 
-const ComSearchPopup = ({ control, popupid, search, ...props }) => {
+const ComSearchPopup = ({ control, popupId, search, ...props }) => {
   const {
     field: codeField,
     fieldState: { error },
@@ -135,14 +135,14 @@ const ComSearchPopup = ({ control, popupid, search, ...props }) => {
   const handleSearch = useCallback(
     (data) => {
       search(
-        'comCommonPopup',
-        'getCommonPopupData',
+        'commonPopup',
         Object.assign(
           {
             POPP_XDAX: 'COMPOPUP.TMM1003',
           },
           data,
         ),
+        'data',
         false,
       ).then((res) => {
         res = res.map(({ ID, ...rest }) => ({ id: ID, ...rest }));
@@ -163,18 +163,13 @@ const ComSearchPopup = ({ control, popupid, search, ...props }) => {
   );
 
   const handleOpen = useCallback(() => {
-    search(
-      'comCommonPopup',
-      'getCommonPopupInfo',
-      { POPP_CODE: popupid },
-      false,
-    ).then((res) => {
-      setTitle(res.POPP_NAME);
-      parseSearchItems(res.SECN_SYNX);
-      parseColumns(res.SERS_GRDC);
+    search('commonPopup', { popupId }, 'info', false).then((res) => {
+      setTitle(res.popp_NAME);
+      parseSearchItems(res.secn_SYNX);
+      parseColumns(res.sers_GRDC);
       handleSearch({ COMM_CDNM: nameField.value });
     });
-  }, [handleSearch, nameField.value, parseSearchItems, popupid, search]);
+  }, [handleSearch, nameField.value, parseSearchItems, popupId, search]);
 
   const handleTextFieldChange = useCallback(
     (e) => {
@@ -283,7 +278,7 @@ ComSearchPopup.propTypes = {
   control: PropTypes.object.isRequired,
   code: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  popupid: PropTypes.string.isRequired,
+  popupId: PropTypes.string.isRequired,
   search: PropTypes.func.isRequired,
   required: PropTypes.bool,
   disabled: PropTypes.bool,
