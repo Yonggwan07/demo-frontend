@@ -161,7 +161,15 @@ const useDatagrid = (_columnInfo = [], _commCodes = []) => {
     return (
       date &&
       parseISO(
-        date.substr(0, 4) + '-' + date.substr(4, 2) + '-' + date.substr(6, 2),
+        /\d{8}/.test(date)
+          ? date.substr(0, 4) +
+              '-' +
+              date.substr(4, 2) +
+              '-' +
+              date.substr(6, 2)
+          : /\d{4}-\d{2}-\d{2}/.test(date)
+          ? date.substr(0, 10)
+          : '',
       )
     );
   }, []);
