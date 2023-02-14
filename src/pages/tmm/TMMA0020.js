@@ -9,42 +9,38 @@ import useDatagrid from '../../hooks/useDatagrid';
 import { commonMenuPropType } from '../../utils/commonMenuPropType';
 import { GridRowState } from '../../utils/gridRowState';
 
-const codeOptions = [
-  { commCode: 'MSKN_CODE', usexYsno: '1' },
-  { commCode: 'MSDV_CODE', usexYsno: '1' },
-];
-
+const codeOptions = ['MSKN_CODE', 'MSDV_CODE'];
 const columnInfo = [
   {
-    field: 'MSGE_CODE',
+    field: 'messageCode',
     headerName: '메시지코드',
     width: 150,
   },
   {
-    field: 'MSGE_CNTT',
+    field: 'messageContent',
     headerName: '메시지내용',
     flex: 1,
     editable: true,
   },
   {
-    field: 'MSEN_CNTT',
+    field: 'messageEnglishContent',
     headerName: '메시지영문내용',
     width: 150,
     flex: 1,
     editable: true,
   },
   {
-    field: 'MSKN_CODE',
+    field: 'messageTypeCode',
     headerName: '메시지종류',
     compType: 'select',
-    commCode: 'MSKN_CODE',
+    commonCode: 'MSKN_CODE',
     editable: true,
   },
   {
-    field: 'MSDV_CODE',
+    field: 'messageDivisionCode',
     headerName: '메시지구분',
     compType: 'select',
-    commCode: 'MSDV_CODE',
+    commonCode: 'MSDV_CODE',
     editable: true,
   },
 ];
@@ -56,7 +52,7 @@ const TMMA0020 = ({ menuInfo, search }) => {
   /* 조회 버튼 클릭 */
   const handleSearch = useCallback(
     (data) => {
-      search(menuInfo.id, 'TmMessxm', data)
+      search(menuInfo.id, data)
         .then((res) => {
           setRows(res);
         })
@@ -100,7 +96,7 @@ const TMMA0020 = ({ menuInfo, search }) => {
     () => [
       {
         label: '메시지내용',
-        name: 'MSGE_CNTT',
+        name: 'messageContent',
         style: { width: '15rem' },
       },
     ],
