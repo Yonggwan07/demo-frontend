@@ -2,22 +2,17 @@ html, body, #root {
   height: 100%;
 }
 
-.compLabel {
-  display: flex;
-  height: auto;
+.searchAreaTdLabel {
   font-size: 0.75rem;
   font-weight: bold;
   line-height: 1.5rem;
-  margin-right: 1.5rem;
+  padding-right: 0.25rem;
+  text-align: right;
 }
-.compLabel > *:first-child {
-  margin-left: 0.5rem;
-}
-.compLabel div > input + span {
-  margin-left: 0.25rem;
-}
-.compLabel div > input + span + input {
-  margin-left: 0.25rem;
+
+.searchAreaTdComp {
+  line-height: 1.5rem;
+  padding-right: 1.5rem;
 }
 
 .wrapperHorizontal {
