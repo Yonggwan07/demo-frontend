@@ -1,5 +1,5 @@
-import React, { memo, useCallback } from 'react';
-import { Grid, Button, Paper } from '@mui/material';
+import React, { memo, useCallback, Fragment } from 'react';
+import { Button, Paper } from '@mui/material';
 import ko from 'date-fns/locale/ko';
 import { PropTypes } from 'prop-types';
 import { registerLocale } from 'react-datepicker';
@@ -42,6 +42,47 @@ const ComSearchArea = ({ onSubmit, searchItems }) => {
     [control],
   );
 
+  const build = (searchItems) => {
+    console.log('Start Build');
+    let rows = [];
+    let dom = [];
+
+    if (!Array.isArray(searchItems[0])) {
+      searchItems.map((searchItem) => {
+        dom.push(
+          <Fragment key={searchItem.label}>
+            <td className="searchAreaTdLabel">{searchItem.label}</td>
+            <td className="searchAreaTdComp">{renderComp(searchItem)}</td>
+          </Fragment>,
+        );
+      });
+      rows.push(
+        <Fragment key={0}>
+          <tr>{dom}</tr>
+        </Fragment>,
+      );
+    } else {
+      searchItems.map((row, i) => {
+        row.map((item) => {
+          dom.push(
+            <Fragment key={item.label}>
+              <td className="searchAreaTdLabel">{item.label}</td>
+              <td className="searchAreaTdComp">{renderComp(item)}</td>
+            </Fragment>,
+          );
+        });
+        rows.push(
+          <Fragment key={i}>
+            <tr>{dom}</tr>
+          </Fragment>,
+        );
+        dom = [];
+      });
+    }
+
+    return rows;
+  };
+
   return (
     <Paper
       sx={{
@@ -57,17 +98,9 @@ const ComSearchArea = ({ onSubmit, searchItems }) => {
           style={{ display: 'flex' }}
           noValidate
         >
-          <Grid container spacing={1.5}>
-            {Array.isArray(searchItems) &&
-              searchItems.map((searchItem) => (
-                <Grid key={searchItem.name} item>
-                  <div className="compLabel" key={searchItem.name}>
-                    {searchItem.label}
-                    {renderComp(searchItem)}
-                  </div>
-                </Grid>
-              ))}
-          </Grid>
+          <table style={{ tableLayout: 'fixed' }}>
+            <tbody>{build(searchItems)}</tbody>
+          </table>
           <Button
             type="submit"
             size="small"
@@ -85,22 +118,42 @@ const ComSearchArea = ({ onSubmit, searchItems }) => {
 ComSearchArea.propTypes = {
   onSubmit: PropTypes.func.isRequired,
   searchItems: PropTypes.arrayOf(
-    PropTypes.shape({
-      label: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      type: PropTypes.oneOf([
-        'text',
-        'select',
-        'checkbox',
-        'date',
-        'month',
-        'year',
-        'dateRange',
-        'monthRange',
-        'yearRange',
-        undefined,
-      ]),
-    }),
+    PropTypes.oneOfType([
+      PropTypes.arrayOf(
+        PropTypes.shape({
+          label: PropTypes.string.isRequired,
+          name: PropTypes.string.isRequired,
+          type: PropTypes.oneOf([
+            'text',
+            'select',
+            'checkbox',
+            'date',
+            'month',
+            'year',
+            'dateRange',
+            'monthRange',
+            'yearRange',
+            undefined,
+          ]),
+        }),
+      ),
+      PropTypes.shape({
+        label: PropTypes.string.isRequired,
+        name: PropTypes.string.isRequired,
+        type: PropTypes.oneOf([
+          'text',
+          'select',
+          'checkbox',
+          'date',
+          'month',
+          'year',
+          'dateRange',
+          'monthRange',
+          'yearRange',
+          undefined,
+        ]),
+      }),
+    ]),
   ).isRequired,
 };
 
