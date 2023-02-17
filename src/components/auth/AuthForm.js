@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import palette from '../../lib/styles/palette';
 import Button from '../common/Button';
+import { PropTypes } from 'prop-types';
 
 const AuthFormBlock = styled.div`
   h3 {
@@ -80,6 +81,16 @@ const AuthForm = ({ form, onChange, onSubmit, error }) => {
       <Footer>Footer</Footer>
     </AuthFormBlock>
   );
+};
+
+AuthForm.propTypes = {
+  form: PropTypes.shape({
+    userId: PropTypes.string,
+    password: PropTypes.string,
+  }).required,
+  onChange: PropTypes.func.required,
+  onSubmit: PropTypes.func.required,
+  error: PropTypes.string,
 };
 
 export default AuthForm;
