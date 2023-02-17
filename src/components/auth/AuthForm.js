@@ -87,9 +87,9 @@ AuthForm.propTypes = {
   form: PropTypes.shape({
     userId: PropTypes.string,
     password: PropTypes.string,
-  }).required,
-  onChange: PropTypes.func.required,
-  onSubmit: PropTypes.func.required,
+  }),
+  onChange: PropTypes.func,
+  onSubmit: PropTypes.func,
   error: PropTypes.string,
 };
 
