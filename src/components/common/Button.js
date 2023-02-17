@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import React, { memo } from 'react';
 import styled, { css } from 'styled-components';
 import palette from '../../lib/styles/palette';
 
