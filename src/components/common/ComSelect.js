@@ -10,6 +10,7 @@ const StyledSelect = styled(Select)({
   '& .MuiSelect-select': {
     height: '1.5rem',
     fontSize: '0.875rem',
+    textAlign: 'center',
   },
   '& .MuiOutlinedInput-input': {
     height: '1.5rem',
