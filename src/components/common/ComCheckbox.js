@@ -27,7 +27,7 @@ const ComCheckbox = ({ control, defaultValue, ...props }) => {
 ComCheckbox.propTypes = {
   name: PropTypes.string.isRequired,
   control: PropTypes.object.isRequired,
-  defaultValue: PropTypes.string,
+  defaultValue: PropTypes.bool,
 };
 
 export default memo(ComCheckbox);
