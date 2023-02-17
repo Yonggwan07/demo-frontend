@@ -35,9 +35,11 @@ const ComDialog = () => {
 
   return (
     <Dialog open={open}>
-      <DialogTitle>
-        <DeleteIcon /> 삭제
-      </DialogTitle>
+      {type === 'remove' && (
+        <DialogTitle>
+          <DeleteIcon /> 삭제
+        </DialogTitle>
+      )}
       <DialogContent>
         <DialogContentText>{message}</DialogContentText>
       </DialogContent>
