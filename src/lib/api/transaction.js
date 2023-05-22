@@ -22,5 +22,5 @@ export const deleteApi = (menuId, params, workId) =>
     .catch(({ response }) => response);
 
 const buildUrl = (menuId, workId) => {
-  return `/api/${menuId}` + (workId ? `/${workId}` : '');
+  return `/api/${menuId.toLowerCase()}` + (workId ? `/${workId}` : '');
 };
